@@ -2,94 +2,985 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYF Gwarimpa Archdeaconry | Anglican Youth Fellowship</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>AYF Gwarimpa | Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 50%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Header & Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo-text h1 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .logo-text p {
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+
+        /* Desktop Navigation */
+        .nav-links-desktop {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .nav-links-desktop a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .nav-links-desktop a:hover,
+        .nav-links-desktop a.active {
+            background: rgba(102,126,234,0.2);
+            color: #667eea;
+        }
+
+        /* Mobile Menu Button */
+        .menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 999;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .mobile-nav.open {
+            display: flex;
+        }
+
+        .mobile-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .mobile-nav a:hover,
+        .mobile-nav a.active {
+            background: rgba(102,126,234,0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #667eea;
+            color: #667eea;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Feed Section */
+        .feed-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-chip:hover,
+        .filter-chip.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        /* Feed Grid */
+        .feed-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .post-card {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+            border-color: #667eea;
+        }
+
+        .post-header {
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .post-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .post-author {
+            flex: 1;
+        }
+
+        .post-author-name {
+            font-weight: 600;
+        }
+
+        .leadership-tag {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            background: #48bb78;
+            border-radius: 50px;
+            display: inline-block;
+            margin-left: 0.5rem;
+        }
+
+        .post-content {
+            padding: 1rem;
+        }
+
+        .post-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-text {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        .post-media {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            margin-top: 0.5rem;
+            border-radius: 12px;
+        }
+
+        .post-stats {
+            display: flex;
+            gap: 1rem;
+            padding: 0.5rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .post-stats span {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .post-actions {
+            display: flex;
+            gap: 1rem;
+            padding: 0.5rem 1rem 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            background: none;
+            border: none;
+            color: #888;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background: rgba(102,126,234,0.2);
+            color: #667eea;
+        }
+
+        .action-btn.liked {
+            color: #ff4757;
+        }
+
+        /* Modal for Post Detail */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            max-width: 800px;
+            width: 90%;
+            background: #1a1a2e;
+            border-radius: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: #1a1a2e;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .comments-section {
+            padding: 1rem;
+        }
+
+        .comment {
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            border-left: 2px solid #667eea;
+        }
+
+        .comment.reply {
+            margin-left: 2rem;
+        }
+
+        .comment-input {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .comment-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        /* Footer Navigation */
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: space-around;
+            padding: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .footer-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .footer-nav-item i {
+            font-size: 1.3rem;
+        }
+
+        .footer-nav-item.active,
+        .footer-nav-item:hover {
+            color: #667eea;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links-desktop {
+                display: none;
+            }
+            
+            .menu-btn {
+                display: block;
+            }
+            
+            .footer-nav {
+                display: flex;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .feed-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            body {
+                padding-bottom: 70px;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <div class="logo">✝️</div>
-            <div class="site-title">
-                <h1>AYF Gwarimpa</h1>
-                <div class="tagline">Arise & Shine</div>
+    <div class="bg-animation"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">✝️</div>
+                <div class="logo-text">
+                    <h1>AYF Gwarimpa</h1>
+                    <p>Arise & Shine</p>
+                </div>
             </div>
+            
+            <div class="nav-links-desktop">
+                <a href="index.html" class="active">Home</a>
+                <a href="videos.html">Videos</a>
+                <a href="plan.html">Plan</a>
+                <a href="parish.html">Parish</a>
+                <a href="profile.html">Profile</a>
+                <a href="admin/dashboard.html" id="adminLink" style="display:none;">Admin</a>
+            </div>
+            
+            <button class="menu-btn" id="menuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
         </div>
-        <nav>
+        
+        <!-- Mobile Navigation -->
+        <div class="mobile-nav" id="mobileNav">
             <a href="index.html" class="active">Home</a>
             <a href="videos.html">Videos</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
             <a href="profile.html">Profile</a>
-            <a href="admin/dashboard.html" id="adminLink" style="display:none;">Admin</a>
-        </nav>
-        <button id="themeToggle" class="theme-toggle">🌙</button>
+            <a href="admin/dashboard.html" id="adminLinkMobile" style="display:none;">Admin</a>
+        </div>
     </header>
 
-    <main>
-        <section class="hero">
-            <div class="hero-content">
-                <h2>Empowering Youth for Christ</h2>
-                <p>Join the Anglican Youth Fellowship, Gwarimpa Archdeaconry - a community of young people growing in faith, leadership, and service.</p>
-                <div class="hero-buttons">
-                    <button id="joinBtn" class="btn btn-primary">
-                        <i class="fas fa-user-plus"></i> Join Fellowship
-                    </button>
-                    <button id="eventsBtn" class="btn btn-secondary">
-                        <i class="fas fa-calendar-alt"></i> See Events
-                    </button>
-                </div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to AYF Gwarimpa Archdeaconry</h1>
+            <p>A vibrant community of young people dedicated to spiritual growth, leadership development, and community impact. Join us as we arise and shine for Christ!</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" id="joinBtn">Join Fellowship</button>
+                <button class="btn btn-outline" id="exploreBtn">Explore Events</button>
             </div>
-        </section>
-
-        <section class="featured-content">
-            <div class="container">
-                <h2 style="margin-bottom: 1rem;">Latest Updates</h2>
-                <div id="featuredFeed" class="feed-grid">
-                    <div class="loading"></div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <p>© 2025 Anglican Youth Fellowship - Gwarimpa Archdeaconry</p>
-            <p style="margin-top: 0.5rem;">
-                <i class="fas fa-heart" style="color: var(--danger);"></i> 
-                Growing in Faith, Leadership, and Service
-            </p>
         </div>
-    </footer>
+    </section>
+
+    <!-- Feed Section -->
+    <section class="feed-section">
+        <div class="section-header">
+            <h2 class="section-title">Latest Updates</h2>
+            <div class="category-filters" id="categoryFilters">
+                <button class="filter-chip active" data-category="all">All</button>
+                <button class="filter-chip" data-category="event">Events</button>
+                <button class="filter-chip" data-category="article">Articles</button>
+                <button class="filter-chip" data-category="notice">Notices</button>
+                <button class="filter-chip" data-category="video">Videos</button>
+            </div>
+        </div>
+        <div class="feed-grid" id="feedGrid">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
+    </section>
+
+    <!-- Footer Navigation -->
+    <div class="footer-nav">
+        <a href="index.html" class="footer-nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="parish.html" class="footer-nav-item">
+            <i class="fas fa-church"></i>
+            <span>Parish</span>
+        </a>
+        <a href="profile.html" class="footer-nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+        <a href="plan.html" class="footer-nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Plan</span>
+        </a>
+    </div>
+
+    <!-- Post Detail Modal -->
+    <div class="modal" id="postModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Post Details</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
 
     <script src="supabase/client.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/feeds.js"></script>
-    <script src="assets/js/main.js"></script>
-</body>
-</html>
-        </section>
+    <script>
+        // Global state
+        let currentUser = null;
+        let currentProfile = null;
+        let currentCategory = 'all';
+        let posts = [];
+        let currentPost = null;
 
-        <section class="featured-content">
-            <div class="container">
-                <h2>Featured Content</h2>
-                <div id="featuredFeed" class="feed-grid"></div>
-            </div>
-        </section>
-    </main>
+        // Initialize
+        async function init() {
+            await checkAuth();
+            await loadPosts();
+            setupEventListeners();
+            setupRealtime();
+        }
 
-    <footer>
-        <div class="footer-content">
-            <p>&copy; 2025 Anglican Youth Fellowship - Gwarimpa Archdeaconry</p>
-            <p>Growing in Faith, Leadership, and Service</p>
-        </div>
-    </footer>
+        // Check authentication
+        async function checkAuth() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                currentUser = session.user;
+                const { data: profile } = await supabaseClient
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                currentProfile = profile;
+                
+                if (profile?.role === 'admin') {
+                    document.getElementById('adminLink').style.display = 'block';
+                    document.getElementById('adminLinkMobile').style.display = 'block';
+                }
+            }
+        }
 
-    <script src="supabase/client.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/feeds.js"></script>
-    <script src="assets/js/main.js"></script>
+        // Load posts
+        async function loadPosts() {
+            const { data, error } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                console.error('Error loading posts:', error);
+                return;
+            }
+            
+            posts = data;
+            renderPosts();
+        }
+
+        // Render posts
+        function renderPosts() {
+            const filtered = currentCategory === 'all' 
+                ? posts 
+                : posts.filter(p => p.type === currentCategory);
+            
+            const grid = document.getElementById('feedGrid');
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No posts found</p>';
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(post => `
+                <div class="post-card" onclick="showPostDetail(${post.id})">
+                    <div class="post-header">
+                        <div class="post-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="post-author">
+                            <div class="post-author-name">Admin</div>
+                            <small>${new Date(post.created_at).toLocaleDateString()}</small>
+                        </div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-title">${post.title}</div>
+                        <div class="post-text">${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</div>
+                        ${post.media_url ? `<img src="${post.media_url}" class="post-media" alt="post media">` : ''}
+                    </div>
+                    <div class="post-stats">
+                        <span><i class="fas fa-eye"></i> ${post.view_count || 0}</span>
+                        <span><i class="fas fa-heart"></i> ${post.like_count || 0}</span>
+                        <span><i class="fas fa-comment"></i> ${post.comment_count || 0}</span>
+                    </div>
+                    <div class="post-actions">
+                        <button class="action-btn like-btn" data-post-id="${post.id}" onclick="event.stopPropagation(); toggleLike(${post.id})">
+                            <i class="far fa-heart"></i> Like
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
+                            <i class="far fa-comment"></i> Comment
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); sharePost(${post.id})">
+                            <i class="fas fa-share"></i> Share
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Update like button states
+            updateLikeButtons();
+        }
+
+        // Toggle like
+        async function toggleLike(postId) {
+            if (!currentUser) {
+                alert('Please login to like posts');
+                return;
+            }
+            
+            const { data: existing } = await supabaseClient
+                .from('likes')
+                .select('*')
+                .eq('post_id', postId)
+                .eq('user_id', currentUser.id)
+                .single();
+            
+            if (existing) {
+                await supabaseClient.from('likes').delete().eq('id', existing.id);
+                await supabaseClient.rpc('decrement_post_likes', { post_id: postId });
+            } else {
+                await supabaseClient.from('likes').insert([{
+                    post_id: postId,
+                    user_id: currentUser.id
+                }]);
+                await supabaseClient.rpc('increment_post_likes', { post_id: postId });
+            }
+            
+            await loadPosts();
+        }
+
+        // Update like buttons
+        async function updateLikeButtons() {
+            if (!currentUser) return;
+            
+            const { data: userLikes } = await supabaseClient
+                .from('likes')
+                .select('post_id')
+                .eq('user_id', currentUser.id);
+            
+            const likedPostIds = new Set(userLikes?.map(l => l.post_id) || []);
+            
+            document.querySelectorAll('.like-btn').forEach(btn => {
+                const postId = parseInt(btn.dataset.postId);
+                if (likedPostIds.has(postId)) {
+                    btn.innerHTML = '<i class="fas fa-heart"></i> Liked';
+                    btn.classList.add('liked');
+                } else {
+                    btn.innerHTML = '<i class="far fa-heart"></i> Like';
+                    btn.classList.remove('liked');
+                }
+            });
+        }
+
+        // Show post detail with comments
+        async function showPostDetail(postId) {
+            const post = posts.find(p => p.id === postId);
+            if (!post) return;
+            
+            // Increment view count
+            await supabaseClient.rpc('increment_post_views', { post_id: postId });
+            
+            // Load comments
+            const { data: comments } = await supabaseClient
+                .from('comments')
+                .select('*, profiles(full_name, leadership_tag)')
+                .eq('post_id', postId)
+                .is('parent_id', null)
+                .order('created_at', { ascending: true });
+            
+            const modal = document.getElementById('postModal');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalBody.innerHTML = `
+                <div style="padding:1rem;">
+                    <h2>${post.title}</h2>
+                    <p style="opacity:0.8; margin:1rem 0;">${post.content}</p>
+                    ${post.media_url ? `<img src="${post.media_url}" style="width:100%; border-radius:12px; margin:1rem 0;">` : ''}
+                    
+                    <div class="post-stats" style="margin:1rem 0;">
+                        <span><i class="fas fa-eye"></i> ${post.view_count || 0} views</span>
+                        <span><i class="fas fa-heart"></i> ${post.like_count || 0} likes</span>
+                        <span><i class="fas fa-comment"></i> ${post.comment_count || 0} comments</span>
+                    </div>
+                    
+                    <div class="comments-section">
+                        <h4>Comments (${comments?.length || 0})</h4>
+                        <div id="commentsList">
+                            ${comments?.map(comment => renderComment(comment)).join('') || '<p>No comments yet</p>'}
+                        </div>
+                        
+                        ${currentUser ? `
+                            <div class="comment-input">
+                                <input type="text" id="newComment" placeholder="Write a comment...">
+                                <button class="btn btn-primary" onclick="addComment(${postId}, null)">Post</button>
+                            </div>
+                        ` : '<p style="margin-top:1rem;">Login to comment</p>'}
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        // Render comment with replies
+        function renderComment(comment, isReply = false) {
+            const leadershipTag = comment.profiles?.leadership_tag ? 
+                `<span class="leadership-tag">${comment.profiles.leadership_tag}</span>` : '';
+            
+            return `
+                <div class="comment ${isReply ? 'reply' : ''}" data-comment-id="${comment.id}">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
+                        <strong>${comment.profiles?.full_name || 'User'}</strong>
+                        ${leadershipTag}
+                        <small style="color:#888;">${new Date(comment.created_at).toLocaleString()}</small>
+                    </div>
+                    <p>${comment.content}</p>
+                    <div style="margin-top:0.5rem;">
+                        <button class="action-btn" style="padding:0.2rem 0.5rem; font-size:0.8rem;" onclick="showReplyInput(${comment.id})">
+                            <i class="fas fa-reply"></i> Reply
+                        </button>
+                    </div>
+                    <div id="replies-${comment.id}" class="replies-container">
+                        ${comment.replies?.map(r => renderComment(r, true)).join('') || ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Add comment
+        async function addComment(postId, parentId = null) {
+            const input = document.getElementById(parentId ? `replyInput-${parentId}` : 'newComment');
+            const content = input?.value;
+            
+            if (!content?.trim()) return;
+            
+            const { error } = await supabaseClient.from('comments').insert([{
+                post_id: postId,
+                user_id: currentUser.id,
+                parent_id: parentId,
+                content: content
+            }]);
+            
+            if (!error) {
+                input.value = '';
+                await supabaseClient.rpc('increment_post_comments', { post_id: postId });
+                showPostDetail(postId);
+            }
+        }
+
+        // Share post
+        function sharePost(postId) {
+            const url = `${window.location.origin}/post.html?id=${postId}`;
+            navigator.clipboard.writeText(url);
+            alert('Link copied to clipboard!');
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Mobile menu toggle
+            document.getElementById('menuBtn').addEventListener('click', () => {
+                document.getElementById('mobileNav').classList.toggle('open');
+            });
+            
+            // Category filters
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+                    chip.classList.add('active');
+                    currentCategory = chip.dataset.category;
+                    renderPosts();
+                });
+            });
+            
+            // Modal close
+            document.querySelector('.close-modal').addEventListener('click', () => {
+                document.getElementById('postModal').style.display = 'none';
+            });
+            
+            // Join button
+            document.getElementById('joinBtn').addEventListener('click', () => {
+                window.location.href = 'profile.html';
+            });
+        }
+
+        // Setup realtime
+        function setupRealtime() {
+            const subscription = supabaseClient
+                .channel('public:posts')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+                    loadPosts();
+                })
+                .subscribe();
+        }
+
+        // Make functions global
+        window.showPostDetail = showPostDetail;
+        window.toggleLike = toggleLike;
+        window.addComment = addComment;
+        window.sharePost = sharePost;
+        
+        // Start app
+        init();
+    </script>
 </body>
 </html>
