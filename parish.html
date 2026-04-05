@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parish Feed - AYF Gwarimpa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="AYF Logo" class="logo">
+            <h1>Anglican Youth Fellowship</h1>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="videos.html">Videos</a>
+            <a href="plan.html">Plan</a>
+            <a href="parish.html" class="active">Parish</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </header>
+
+    <main class="container">
+        <h2 id="parishName">Your Parish Feed</h2>
+        <div id="parishFeed" class="feed-grid"></div>
+        
+        <!-- A-Squared Exclusive Section -->
+        <div id="aSquaredSection" style="display:none;">
+            <h3>A-Squared Leadership Group</h3>
+            <div id="aSquaredChat" class="chat-container"></div>
+            <input type="text" id="chatMessage" placeholder="Share message...">
+            <button id="sendMessage">Send</button>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Anglican Youth Fellowship - Gwarimpa Archdeaconry</p>
+    </footer>
+
+    <script src="supabase/client.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/feeds.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
