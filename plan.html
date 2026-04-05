@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yearly Plan - AYF Gwarimpa</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="AYF Logo" class="logo">
+            <h1>Anglican Youth Fellowship</h1>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="videos.html">Videos</a>
+            <a href="plan.html" class="active">Plan</a>
+            <a href="parish.html">Parish</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+        <button id="themeToggle" class="theme-toggle">🌙</button>
+    </header>
+
+    <main class="container">
+        <h2>Annual Plans & Quotas</h2>
+        <div id="plansList" class="plans-grid"></div>
+        
+        <!-- Parish Quota Display -->
+        <div id="quotaDisplay" class="quota-section"></div>
+    </main>
+
+    <!-- PDF Modal -->
+    <div id="pdfModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <canvas id="pdfCanvas"></canvas>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Anglican Youth Fellowship - Gwarimpa Archdeaconry</p>
+    </footer>
+
+    <script src="supabase/client.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
