@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AYF Gwarimpa | Home</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <title>AYF Gwarimpa | Anglican Youth Fellowship</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -45,7 +45,32 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Header & Navigation */
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(102,126,234,0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        /* Header */
         .header {
             position: fixed;
             top: 0;
@@ -83,12 +108,12 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            animation: float 3s ease-in-out infinite;
+            animation: pulse 2s ease-in-out infinite;
         }
 
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .logo-text h1 {
@@ -122,7 +147,23 @@
             color: #667eea;
         }
 
-        /* Mobile Menu Button */
+        /* Notification Badge */
+        .notification-badge {
+            position: relative;
+        }
+
+        .badge-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #f56565;
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        /* Mobile Menu */
         .menu-btn {
             display: none;
             background: none;
@@ -133,7 +174,6 @@
             padding: 0.5rem;
         }
 
-        /* Mobile Navigation */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -249,6 +289,44 @@
             color: white;
         }
 
+        /* Stats Section */
+        .stats-section {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .stat-label {
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
         /* Feed Section */
         .feed-section {
             max-width: 1200px;
@@ -318,18 +396,19 @@
             padding: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
         .post-avatar {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.2rem;
         }
 
         .post-author {
@@ -338,15 +417,18 @@
 
         .post-author-name {
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
         }
 
         .leadership-tag {
             font-size: 0.7rem;
-            padding: 0.2rem 0.5rem;
+            padding: 0.2rem 0.6rem;
             background: #48bb78;
             border-radius: 50px;
             display: inline-block;
-            margin-left: 0.5rem;
         }
 
         .post-content {
@@ -418,7 +500,7 @@
             color: #ff4757;
         }
 
-        /* Modal for Post Detail */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -467,12 +549,40 @@
 
         .comment {
             margin-bottom: 1rem;
-            padding: 0.5rem;
-            border-left: 2px solid #667eea;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            border-left: 3px solid #667eea;
         }
 
         .comment.reply {
             margin-left: 2rem;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .comment-author {
+            font-weight: 600;
+        }
+
+        .comment-time {
+            font-size: 0.7rem;
+            color: #888;
+        }
+
+        .reply-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
         }
 
         .comment-input {
@@ -512,7 +622,7 @@
             gap: 0.3rem;
             color: #888;
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             transition: all 0.3s;
         }
 
@@ -523,6 +633,32 @@
         .footer-nav-item.active,
         .footer-nav-item:hover {
             color: #667eea;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
         /* Responsive */
@@ -543,6 +679,10 @@
                 font-size: 2rem;
             }
             
+            .hero p {
+                font-size: 1rem;
+            }
+            
             .feed-grid {
                 grid-template-columns: 1fr;
             }
@@ -555,36 +695,21 @@
             body {
                 padding-bottom: 70px;
             }
-        }
-
-        /* Loading Spinner */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            
+            .comment.reply {
+                margin-left: 1rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
 
     <!-- Header -->
     <header class="header">
         <div class="nav-container">
-            <div class="logo">
+            <div class="logo" onclick="window.location.href='index.html'">
                 <div class="logo-icon">✝️</div>
                 <div class="logo-text">
                     <h1>AYF Gwarimpa</h1>
@@ -608,12 +733,12 @@
         
         <!-- Mobile Navigation -->
         <div class="mobile-nav" id="mobileNav">
-            <a href="index.html" class="active">Home</a>
-            <a href="videos.html">Videos</a>
-            <a href="plan.html">Plan</a>
-            <a href="parish.html">Parish</a>
-            <a href="profile.html">Profile</a>
-            <a href="admin/dashboard.html" id="adminLinkMobile" style="display:none;">Admin</a>
+            <a href="index.html" class="active">🏠 Home</a>
+            <a href="videos.html">🎥 Videos</a>
+            <a href="plan.html">📅 Plan</a>
+            <a href="parish.html">⛪ Parish</a>
+            <a href="profile.html">👤 Profile</a>
+            <a href="admin/dashboard.html" id="adminLinkMobile" style="display:none;">⚡ Admin</a>
         </div>
     </header>
 
@@ -623,11 +748,31 @@
             <h1>Welcome to AYF Gwarimpa Archdeaconry</h1>
             <p>A vibrant community of young people dedicated to spiritual growth, leadership development, and community impact. Join us as we arise and shine for Christ!</p>
             <div class="hero-buttons">
-                <button class="btn btn-primary" id="joinBtn">Join Fellowship</button>
-                <button class="btn btn-outline" id="exploreBtn">Explore Events</button>
+                <button class="btn btn-primary" id="joinBtn"><i class="fas fa-user-plus"></i> Join Fellowship</button>
+                <button class="btn btn-outline" id="exploreBtn"><i class="fas fa-calendar-alt"></i> Explore Events</button>
             </div>
         </div>
     </section>
+
+    <!-- Stats Section -->
+    <div class="stats-section">
+        <div class="stat-card">
+            <div class="stat-number" id="memberCount">500+</div>
+            <div class="stat-label">Active Members</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Parishes</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="eventCount">50+</div>
+            <div class="stat-label">Events Yearly</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number" id="aSquaredCount">20+</div>
+            <div class="stat-label">A-Squared Leaders</div>
+        </div>
+    </div>
 
     <!-- Feed Section -->
     <section class="feed-section">
@@ -671,7 +816,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Post Details</h3>
-                <button class="close-modal">&times;</button>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
             </div>
             <div id="modalBody"></div>
         </div>
@@ -685,11 +830,30 @@
         let currentCategory = 'all';
         let posts = [];
         let currentPost = null;
+        let repliesState = {};
+
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 5 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = Math.random() * 15 + 10 + 's';
+                container.appendChild(particle);
+            }
+        }
 
         // Initialize
         async function init() {
+            createParticles();
             await checkAuth();
             await loadPosts();
+            await loadStats();
             setupEventListeners();
             setupRealtime();
         }
@@ -705,12 +869,24 @@
                     .eq('id', session.user.id)
                     .single();
                 currentProfile = profile;
+                window.appState.currentProfile = profile;
                 
                 if (profile?.role === 'admin') {
                     document.getElementById('adminLink').style.display = 'block';
                     document.getElementById('adminLinkMobile').style.display = 'block';
                 }
             }
+        }
+
+        // Load stats
+        async function loadStats() {
+            const { data: profiles } = await supabaseClient.from('profiles').select('id');
+            const { data: aSquared } = await supabaseClient.from('profiles').select('id').eq('is_a_squared', true);
+            const { data: events } = await supabaseClient.from('posts').select('id').eq('type', 'event');
+            
+            document.getElementById('memberCount').innerHTML = profiles?.length || '500+';
+            document.getElementById('aSquaredCount').innerHTML = aSquared?.length || '20+';
+            document.getElementById('eventCount').innerHTML = events?.length || '50+';
         }
 
         // Load posts
@@ -738,7 +914,7 @@
             const grid = document.getElementById('feedGrid');
             
             if (filtered.length === 0) {
-                grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No posts found</p>';
+                grid.innerHTML = '<p style="text-align:center; grid-column:1/-1; padding:2rem;">No posts found</p>';
                 return;
             }
             
@@ -749,13 +925,16 @@
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="post-author">
-                            <div class="post-author-name">Admin</div>
+                            <div class="post-author-name">
+                                AYF Admin
+                                <span class="leadership-tag">Admin</span>
+                            </div>
                             <small>${new Date(post.created_at).toLocaleDateString()}</small>
                         </div>
                     </div>
                     <div class="post-content">
-                        <div class="post-title">${post.title}</div>
-                        <div class="post-text">${post.content.substring(0, 150)}${post.content.length > 150 ? '...' : ''}</div>
+                        <div class="post-title">${escapeHtml(post.title)}</div>
+                        <div class="post-text">${escapeHtml(post.content.substring(0, 150))}${post.content.length > 150 ? '...' : ''}</div>
                         ${post.media_url ? `<img src="${post.media_url}" class="post-media" alt="post media">` : ''}
                     </div>
                     <div class="post-stats">
@@ -777,14 +956,20 @@
                 </div>
             `).join('');
             
-            // Update like button states
             updateLikeButtons();
+        }
+
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         // Toggle like
         async function toggleLike(postId) {
             if (!currentUser) {
-                alert('Please login to like posts');
+                showToast('Please login to like posts', 'error');
                 return;
             }
             
@@ -798,12 +983,14 @@
             if (existing) {
                 await supabaseClient.from('likes').delete().eq('id', existing.id);
                 await supabaseClient.rpc('decrement_post_likes', { post_id: postId });
+                showToast('Unliked', 'info');
             } else {
                 await supabaseClient.from('likes').insert([{
                     post_id: postId,
                     user_id: currentUser.id
                 }]);
                 await supabaseClient.rpc('increment_post_likes', { post_id: postId });
+                showToast('Liked!', 'success');
             }
             
             await loadPosts();
@@ -832,29 +1019,44 @@
             });
         }
 
-        // Show post detail with comments
+        // Show post detail with threaded comments
         async function showPostDetail(postId) {
             const post = posts.find(p => p.id === postId);
             if (!post) return;
+            currentPost = post;
             
             // Increment view count
             await supabaseClient.rpc('increment_post_views', { post_id: postId });
             
-            // Load comments
+            // Load comments with replies
             const { data: comments } = await supabaseClient
                 .from('comments')
                 .select('*, profiles(full_name, leadership_tag)')
                 .eq('post_id', postId)
-                .is('parent_id', null)
                 .order('created_at', { ascending: true });
+            
+            // Build comment tree
+            const commentMap = new Map();
+            const rootComments = [];
+            
+            comments?.forEach(comment => {
+                comment.replies = [];
+                commentMap.set(comment.id, comment);
+                if (!comment.parent_id) {
+                    rootComments.push(comment);
+                } else {
+                    const parent = commentMap.get(comment.parent_id);
+                    if (parent) parent.replies.push(comment);
+                }
+            });
             
             const modal = document.getElementById('postModal');
             const modalBody = document.getElementById('modalBody');
             
             modalBody.innerHTML = `
                 <div style="padding:1rem;">
-                    <h2>${post.title}</h2>
-                    <p style="opacity:0.8; margin:1rem 0;">${post.content}</p>
+                    <h2>${escapeHtml(post.title)}</h2>
+                    <p style="opacity:0.8; margin:1rem 0; line-height:1.6;">${escapeHtml(post.content)}</p>
                     ${post.media_url ? `<img src="${post.media_url}" style="width:100%; border-radius:12px; margin:1rem 0;">` : ''}
                     
                     <div class="post-stats" style="margin:1rem 0;">
@@ -864,17 +1066,17 @@
                     </div>
                     
                     <div class="comments-section">
-                        <h4>Comments (${comments?.length || 0})</h4>
+                        <h4>Comments (${rootComments.length})</h4>
                         <div id="commentsList">
-                            ${comments?.map(comment => renderComment(comment)).join('') || '<p>No comments yet</p>'}
+                            ${rootComments.map(comment => renderCommentWithReplies(comment)).join('') || '<p style="text-align:center; padding:1rem;">No comments yet. Be the first!</p>'}
                         </div>
                         
                         ${currentUser ? `
                             <div class="comment-input">
                                 <input type="text" id="newComment" placeholder="Write a comment...">
-                                <button class="btn btn-primary" onclick="addComment(${postId}, null)">Post</button>
+                                <button class="btn btn-primary" onclick="addComment(${postId}, null)" style="padding:0.8rem 1.5rem;">Post</button>
                             </div>
-                        ` : '<p style="margin-top:1rem;">Login to comment</p>'}
+                        ` : '<p style="margin-top:1rem; text-align:center;"><a href="profile.html" style="color:#667eea;">Login</a> to comment</p>'}
                     </div>
                 </div>
             `;
@@ -883,48 +1085,77 @@
         }
 
         // Render comment with replies
-        function renderComment(comment, isReply = false) {
+        function renderCommentWithReplies(comment, depth = 0) {
             const leadershipTag = comment.profiles?.leadership_tag ? 
-                `<span class="leadership-tag">${comment.profiles.leadership_tag}</span>` : '';
+                `<span class="leadership-tag" style="font-size:0.6rem;">${comment.profiles.leadership_tag}</span>` : '';
+            
+            const repliesHtml = comment.replies?.map(reply => renderCommentWithReplies(reply, depth + 1)).join('') || '';
             
             return `
-                <div class="comment ${isReply ? 'reply' : ''}" data-comment-id="${comment.id}">
-                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;">
-                        <strong>${comment.profiles?.full_name || 'User'}</strong>
-                        ${leadershipTag}
-                        <small style="color:#888;">${new Date(comment.created_at).toLocaleString()}</small>
+                <div class="comment" data-comment-id="${comment.id}" style="${depth > 0 ? 'margin-left: 2rem;' : ''}">
+                    <div class="comment-header">
+                        <span class="comment-author"><strong>${comment.profiles?.full_name || 'User'}</strong> ${leadershipTag}</span>
+                        <span class="comment-time">${new Date(comment.created_at).toLocaleString()}</span>
                     </div>
-                    <p>${comment.content}</p>
-                    <div style="margin-top:0.5rem;">
-                        <button class="action-btn" style="padding:0.2rem 0.5rem; font-size:0.8rem;" onclick="showReplyInput(${comment.id})">
-                            <i class="fas fa-reply"></i> Reply
-                        </button>
+                    <p>${escapeHtml(comment.content)}</p>
+                    ${currentUser ? `<button class="reply-btn" onclick="showReplyInput(${comment.id}, ${comment.post_id})"><i class="fas fa-reply"></i> Reply</button>` : ''}
+                    <div id="reply-input-${comment.id}" style="display:none; margin-top:0.5rem;">
+                        <div class="comment-input" style="margin-top:0.5rem;">
+                            <input type="text" id="replyText-${comment.id}" placeholder="Write a reply...">
+                            <button class="btn btn-primary" onclick="addComment(${comment.post_id}, ${comment.id})" style="padding:0.5rem 1rem;">Reply</button>
+                        </div>
                     </div>
-                    <div id="replies-${comment.id}" class="replies-container">
-                        ${comment.replies?.map(r => renderComment(r, true)).join('') || ''}
+                    <div class="replies-container">
+                        ${repliesHtml}
                     </div>
                 </div>
             `;
         }
 
-        // Add comment
+        // Show reply input
+        function showReplyInput(commentId, postId) {
+            const inputDiv = document.getElementById(`reply-input-${commentId}`);
+            if (inputDiv) {
+                inputDiv.style.display = inputDiv.style.display === 'none' ? 'block' : 'none';
+            }
+        }
+
+        // Add comment or reply
         async function addComment(postId, parentId = null) {
-            const input = document.getElementById(parentId ? `replyInput-${parentId}` : 'newComment');
-            const content = input?.value;
+            let content;
+            if (parentId) {
+                const input = document.getElementById(`replyText-${parentId}`);
+                content = input?.value;
+            } else {
+                const input = document.getElementById('newComment');
+                content = input?.value;
+            }
             
-            if (!content?.trim()) return;
+            if (!content?.trim()) {
+                showToast('Please enter a comment', 'error');
+                return;
+            }
             
             const { error } = await supabaseClient.from('comments').insert([{
                 post_id: postId,
                 user_id: currentUser.id,
                 parent_id: parentId,
-                content: content
+                content: content.trim()
             }]);
             
             if (!error) {
-                input.value = '';
+                if (parentId) {
+                    document.getElementById(`replyText-${parentId}`).value = '';
+                    document.getElementById(`reply-input-${parentId}`).style.display = 'none';
+                } else {
+                    document.getElementById('newComment').value = '';
+                }
                 await supabaseClient.rpc('increment_post_comments', { post_id: postId });
+                await loadPosts();
                 showPostDetail(postId);
+                showToast('Comment posted!', 'success');
+            } else {
+                showToast('Error posting comment', 'error');
             }
         }
 
@@ -932,7 +1163,32 @@
         function sharePost(postId) {
             const url = `${window.location.origin}/post.html?id=${postId}`;
             navigator.clipboard.writeText(url);
-            alert('Link copied to clipboard!');
+            showToast('Link copied to clipboard!', 'success');
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('postModal').style.display = 'none';
+        }
+
+        // Show toast
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 80px;
+                right: 20px;
+                padding: 12px 20px;
+                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
+                color: white;
+                border-radius: 10px;
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+                font-family: 'Inter', sans-serif;
+            `;
+            toast.innerHTML = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
         }
 
         // Setup event listeners
@@ -952,14 +1208,13 @@
                 });
             });
             
-            // Modal close
-            document.querySelector('.close-modal').addEventListener('click', () => {
-                document.getElementById('postModal').style.display = 'none';
-            });
-            
             // Join button
             document.getElementById('joinBtn').addEventListener('click', () => {
                 window.location.href = 'profile.html';
+            });
+            
+            document.getElementById('exploreBtn').addEventListener('click', () => {
+                document.getElementById('categoryFilters').scrollIntoView({ behavior: 'smooth' });
             });
         }
 
@@ -978,6 +1233,9 @@
         window.toggleLike = toggleLike;
         window.addComment = addComment;
         window.sharePost = sharePost;
+        window.closeModal = closeModal;
+        window.showReplyInput = showReplyInput;
+        window.showToast = showToast;
         
         // Start app
         init();
