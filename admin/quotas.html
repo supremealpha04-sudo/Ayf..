@@ -11,7 +11,7 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a;
+            background: #0f0f0f;
             color: white;
         }
         
@@ -21,7 +21,7 @@
             top: 0;
             width: 260px;
             height: 100%;
-            background: #1a1a2e;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             padding: 2rem 1rem;
         }
         
@@ -34,7 +34,6 @@
             text-decoration: none;
             border-radius: 12px;
             margin: 0.5rem 0;
-            transition: all 0.3s;
         }
         
         .sidebar-nav a:hover, .sidebar-nav a.active {
@@ -71,7 +70,6 @@
             border-radius: 10px;
             background: rgba(255,255,255,0.05);
             color: white;
-            font-family: inherit;
         }
         
         .btn {
@@ -81,7 +79,6 @@
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             cursor: pointer;
-            font-weight: 600;
         }
         
         .notification-preview {
@@ -114,9 +111,7 @@
 </head>
 <body>
     <div class="admin-sidebar">
-        <div style="margin-bottom:2rem; text-align:center;">
-            <h3>⚡ AYF Admin</h3>
-        </div>
+        <div style="margin-bottom:2rem; text-align:center;"><h3>⚡ AYF Admin</h3></div>
         <div class="sidebar-nav">
             <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a href="users.html"><i class="fas fa-users"></i> Users</a>
@@ -191,13 +186,11 @@
                 return;
             }
             
-            // Calculate per parish (3 parishes)
             const perParish = Math.floor(total / 3);
             const remainder = total % 3;
             const parishes = ['St. Mathus Anglican Church', 'St. Philip Anglican Church', 'St. Barnabas Jaiyuan'];
             const distribution = parishes.map((p, i) => `${p}: ₦${perParish + (i < remainder ? 1 : 0)}`).join('\n');
             
-            // Preview
             const preview = document.getElementById('preview');
             preview.style.display = 'block';
             preview.innerHTML = `
@@ -209,7 +202,6 @@
                 <strong>⚠️ This will be sent as a private notification to all parish presidents only.</strong>
             `;
             
-            // Get all parish presidents
             const { data: presidents } = await supabaseClient
                 .from('profiles')
                 .select('id')
@@ -217,7 +209,6 @@
                 .or('leadership_tag.ilike.%President%');
             
             if (presidents && presidents.length) {
-                // Send private notifications to each president
                 for (const president of presidents) {
                     await supabaseClient.from('notifications').insert([{
                         user_id: president.id,
