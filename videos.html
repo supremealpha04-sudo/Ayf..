@@ -2,53 +2,329 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Videos - AYF Gwarimpa</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Video Gallery | AYF Media</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: white;
+        }
+
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: rgba(102,126,234,0.2);
+        }
+
+        .hero-banner {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero-banner h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .filter-bar {
+            padding: 1rem 2rem;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 70px;
+            z-index: 99;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .video-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            height: 200px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-overlay {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .video-card:hover .play-overlay {
+            transform: scale(1.1);
+            background: #667eea;
+        }
+
+        .video-info {
+            padding: 1rem;
+        }
+
+        .video-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #888;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            width: 80%;
+            max-width: 900px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            font-size: 2rem;
+            cursor: pointer;
+            color: white;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-banner h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo-container">
-            <img src="assets/images/logo.png" alt="AYF Logo" class="logo">
-            <h1>Anglican Youth Fellowship</h1>
+    <div class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <div class="logo-icon">🎥</div>
+            <h3>AYF Media</h3>
         </div>
-        <nav>
+        <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="videos.html" class="active">Videos</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
             <a href="profile.html">Profile</a>
-        </nav>
-        <button id="themeToggle" class="theme-toggle">🌙</button>
-    </header>
-
-    <main class="container">
-        <h2>Video Library</h2>
-        <div class="filter-bar">
-            <select id="parishFilter">
-                <option value="all">All Parishes</option>
-                <option value="St. Mathus Anglican Church">St. Mathus</option>
-                <option value="St. Philip Anglican Church">St. Philip</option>
-                <option value="St. Barnabas Jaiyuan">St. Barnabas Jaiyuan</option>
-            </select>
-            <select id="categoryFilter">
-                <option value="all">All Categories</option>
-                <option value="sermon">Sermons</option>
-                <option value="talk">Talks</option>
-                <option value="program">Fellowship Programs</option>
-            </select>
         </div>
-        <div id="videosGrid" class="videos-grid"></div>
-    </main>
+    </div>
 
-    <footer>
-        <p>&copy; 2025 Anglican Youth Fellowship - Gwarimpa Archdeaconry</p>
-    </footer>
+    <div class="hero-banner">
+        <h1>Video Gallery</h1>
+        <p>Watch sermons, talks, and fellowship programs</p>
+    </div>
+
+    <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">All Videos</button>
+        <button class="filter-btn" data-filter="sermon">Sermons</button>
+        <button class="filter-btn" data-filter="talk">Talks</button>
+        <button class="filter-btn" data-filter="program">Programs</button>
+    </div>
+
+    <div class="video-grid" id="videoGrid"></div>
+
+    <div class="modal" id="videoModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeVideoModal()">&times;</span>
+            <video id="modalVideo" controls autoplay></video>
+        </div>
+    </div>
 
     <script src="supabase/client.js"></script>
-    <script src="assets/js/auth.js"></script>
-    <script src="assets/js/feeds.js"></script>
-    <script src="assets/js/main.js"></script>
+    <script>
+        let videos = [];
+
+        async function loadVideos() {
+            const { data } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('type', 'video')
+                .order('created_at', { ascending: false });
+            
+            if (data) {
+                videos = data;
+                renderVideos('all');
+            }
+        }
+
+        function renderVideos(filter) {
+            const filtered = filter === 'all' ? videos : videos.filter(v => v.category === filter);
+            const grid = document.getElementById('videoGrid');
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align:center; grid-column:1/-1;">No videos found</p>';
+                return;
+            }
+            
+            grid.innerHTML = filtered.map(video => `
+                <div class="video-card" onclick="playVideo('${video.media_url}')">
+                    <div class="video-thumbnail">
+                        <i class="fas fa-play-circle" style="font-size:3rem; opacity:0.5;"></i>
+                        <div class="play-overlay"><i class="fas fa-play"></i></div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${escapeHtml(video.title)}</div>
+                        <p style="font-size:0.85rem; opacity:0.7; margin:0.5rem 0;">${escapeHtml(video.content.substring(0, 80))}...</p>
+                        <div class="video-meta">
+                            <span><i class="far fa-calendar"></i> ${new Date(video.created_at).toLocaleDateString()}</span>
+                            <span><i class="far fa-eye"></i> ${video.view_count || 0} views</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function playVideo(url) {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
+            modal.style.display = 'flex';
+            video.src = url;
+            video.play();
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const video = document.getElementById('modalVideo');
+            modal.style.display = 'none';
+            video.pause();
+            video.src = '';
+        }
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderVideos(btn.dataset.filter);
+            });
+        });
+
+        loadVideos();
+    </script>
 </body>
 </html>
