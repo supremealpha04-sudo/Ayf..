@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Squared Approvals - Admin</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <img src="../assets/images/logo.png" alt="AYF Logo" class="logo">
+            <h1>A-Squared Approvals</h1>
+        </div>
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="users.html">Users</a>
+            <a href="posts.html">Posts</a>
+            <a href="quotas.html">Quotas</a>
+            <a href="approvals.html" class="active">Approvals</a>
+        </nav>
+    </header>
+
+    <main class="container">
+        <h3>Pending A-Squared Requests</h3>
+        <div id="pendingRequests"></div>
+    </main>
+
+    <script src="../supabase/client.js"></script>
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/admin.js"></script>
+</body>
+</html>
