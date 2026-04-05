@@ -1,0 +1,13 @@
+{
+  "name": "ayf-gwarimpa-platform",
+  "version": "1.0.0",
+  "description": "Anglican Youth Fellowship Platform - Gwarimpa Archdeaconry",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "npx live-server --port=8000"
+  },
+  "keywords": ["ayf", "fellowship", "church", "youth"],
+  "author": "AYF Gwarimpa Archdeaconry",
+  "license": "MIT"
+}
