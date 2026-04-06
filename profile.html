@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>My Profile | AYF Account</title>
+    <title>My Profile | AYF Gwarimpa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
             color: white;
-            padding-bottom: 70px;
+            min-height: 100vh;
+            padding-bottom: 80px;
         }
+        
+        /* Header */
         .header {
             background: rgba(10,10,10,0.95);
             backdrop-filter: blur(10px);
@@ -26,13 +29,16 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        
         .logo {
             display: flex;
             align-items: center;
             gap: 1rem;
             cursor: pointer;
         }
+        
         .logo-icon {
             width: 45px;
             height: 45px;
@@ -41,26 +47,48 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 1.5rem;
         }
+        
+        .logo-text h1 { font-size: 1.3rem; font-weight: 700; }
+        .logo-text p { font-size: 0.7rem; opacity: 0.7; }
+        
         .nav-links { display: flex; gap: 1rem; }
         .nav-links a {
             color: white;
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
+            transition: all 0.3s;
         }
+        .nav-links a:hover { background: rgba(102,126,234,0.2); }
+        
+        /* Profile Container */
         .profile-container {
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
         }
+        
         .profile-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
             padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            animation: fadeInUp 0.6s ease;
         }
-        .avatar-section { text-align: center; margin-bottom: 2rem; }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
         .avatar {
             width: 120px;
             height: 120px;
@@ -71,34 +99,70 @@
             justify-content: center;
             font-size: 3rem;
             margin: 0 auto 1rem;
+            border: 3px solid rgba(255,255,255,0.2);
         }
+        
         .info-field {
             margin: 1rem 0;
             padding: 1rem;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
+            transition: all 0.3s;
         }
-        .info-label { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.3rem; }
-        .info-value { font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        
+        .info-field:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(5px);
+        }
+        
+        .info-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 0.3rem;
+        }
+        
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
         .leadership-badge {
             background: #48bb78;
             padding: 0.3rem 0.8rem;
             border-radius: 50px;
             font-size: 0.8rem;
         }
+        
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin: 1.5rem 0;
         }
+        
         .stat-item {
             text-align: center;
             padding: 1rem;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
+            transition: all 0.3s;
         }
-        .stat-number { font-size: 1.5rem; font-weight: 700; color: #667eea; }
+        
+        .stat-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-3px);
+        }
+        
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
         .btn {
             width: 100%;
             padding: 1rem;
@@ -108,9 +172,47 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 1rem;
+            font-family: inherit;
         }
-        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .btn-danger { background: #f56565; color: white; }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        }
+        
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            background: #e53e3e;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* Footer Navigation */
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -124,6 +226,7 @@
             border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
+        
         .footer-nav-item {
             display: flex;
             flex-direction: column;
@@ -134,22 +237,15 @@
             font-size: 0.7rem;
             transition: all 0.3s;
         }
+        
         .footer-nav-item i { font-size: 1.3rem; }
-        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
-        .loading { text-align: center; padding: 2rem; }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; transform: translateY(-3px); }
+        
         @media (max-width: 768px) {
             .profile-container { padding: 1rem; margin: 1rem; }
             .nav-links { display: none; }
+            .stats-grid { gap: 0.5rem; }
+            .stat-number { font-size: 1.2rem; }
         }
     </style>
 </head>
@@ -157,11 +253,13 @@
     <header class="header">
         <div class="logo" onclick="window.location.href='index.html'">
             <div class="logo-icon">👤</div>
-            <h3>My Profile</h3>
+            <div class="logo-text">
+                <h1>AYF Gwarimpa</h1>
+                <p>Arise & Shine</p>
+            </div>
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="about.html">About</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
             <a href="profile.html">Profile</a>
@@ -173,21 +271,10 @@
     </div>
 
     <div class="footer-nav">
-        <a href="index.html" class="footer-nav-item">
-            <i class="fas fa-home"></i><span>Home</span>
-        </a>
-        <a href="about.html" class="footer-nav-item">
-            <i class="fas fa-info-circle"></i><span>About</span>
-        </a>
-        <a href="plan.html" class="footer-nav-item">
-            <i class="fas fa-calendar-alt"></i><span>Plan</span>
-        </a>
-        <a href="parish.html" class="footer-nav-item">
-            <i class="fas fa-church"></i><span>Parish</span>
-        </a>
-        <a href="profile.html" class="footer-nav-item active">
-            <i class="fas fa-user"></i><span>Profile</span>
-        </a>
+        <a href="index.html" class="footer-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="plan.html" class="footer-nav-item"><i class="fas fa-calendar-alt"></i><span>Plan</span></a>
+        <a href="parish.html" class="footer-nav-item"><i class="fas fa-church"></i><span>Parish</span></a>
+        <a href="profile.html" class="footer-nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
     </div>
 
     <script src="supabase/client.js"></script>
@@ -196,90 +283,102 @@
             const isLoggedIn = await window.checkAuth(true);
             if (!isLoggedIn) return;
             
-            const { data: profile } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('id', window.appState.currentUser.id)
-                .single();
-            
-            const { count: postsCount } = await supabaseClient
-                .from('posts')
-                .select('*', { count: 'exact', head: true })
-                .eq('author_id', window.appState.currentUser.id);
-            
-            const { count: commentsCount } = await supabaseClient
-                .from('comments')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', window.appState.currentUser.id);
-            
-            const { count: likesReceived } = await supabaseClient
-                .from('likes')
-                .select('*, posts!inner(author_id)', { count: 'exact', head: true })
-                .eq('posts.author_id', window.appState.currentUser.id);
-            
             const container = document.getElementById('profileContainer');
+            const user = window.getCurrentUser();
+            const profile = window.getCurrentProfile();
+            
+            if (!profile) {
+                container.innerHTML = `
+                    <div class="profile-card" style="text-align:center;">
+                        <div class="avatar-section">
+                            <div class="avatar">${user?.email?.[0]?.toUpperCase() || 'U'}</div>
+                        </div>
+                        <h2>Welcome!</h2>
+                        <p>Your profile is being set up...</p>
+                        <button class="btn btn-primary" onclick="window.location.href='index.html'">Go to Home</button>
+                    </div>
+                `;
+                return;
+            }
             
             container.innerHTML = `
                 <div class="profile-card">
                     <div class="avatar-section">
-                        <div class="avatar">${(profile.full_name?.[0] || window.appState.currentUser.email[0]).toUpperCase()}</div>
-                        <button class="btn" style="width:auto; padding:0.5rem 1rem; background:rgba(255,255,255,0.1);" onclick="alert('Avatar upload coming soon!')">Change Avatar</button>
+                        <div class="avatar">${(profile.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}</div>
                     </div>
                     
                     <div class="info-field">
-                        <div class="info-label">Full Name</div>
-                        <div class="info-value">${profile.full_name || window.appState.currentUser.email.split('@')[0]}</div>
+                        <div class="info-label"><i class="fas fa-user"></i> Full Name</div>
+                        <div class="info-value">${profile.full_name || 'Not set'}</div>
                     </div>
                     
                     <div class="info-field">
-                        <div class="info-label">Email Address</div>
-                        <div class="info-value">${window.appState.currentUser.email}</div>
+                        <div class="info-label"><i class="fas fa-envelope"></i> Email Address</div>
+                        <div class="info-value">${user?.email || profile.email}</div>
                     </div>
                     
                     <div class="info-field">
-                        <div class="info-label">Parish</div>
-                        <div class="info-value">${profile.parish || "Not assigned"}</div>
+                        <div class="info-label"><i class="fas fa-church"></i> Parish</div>
+                        <div class="info-value">${profile.parish || 'Not assigned'}</div>
                     </div>
                     
                     ${profile.leadership_tag ? `
                         <div class="info-field">
-                            <div class="info-label">Leadership Status</div>
-                            <div class="info-value"><span class="leadership-badge"><i class="fas fa-crown"></i> ${profile.leadership_tag}</span></div>
+                            <div class="info-label"><i class="fas fa-crown"></i> Leadership Status</div>
+                            <div class="info-value">
+                                <span class="leadership-badge"><i class="fas fa-star"></i> ${profile.leadership_tag}</span>
+                            </div>
                         </div>
                     ` : ''}
                     
                     <div class="stats-grid">
-                        <div class="stat-item"><div class="stat-number">${postsCount || 0}</div><div class="stat-label">Posts</div></div>
-                        <div class="stat-item"><div class="stat-number">${commentsCount || 0}</div><div class="stat-label">Comments</div></div>
-                        <div class="stat-item"><div class="stat-number">${likesReceived || 0}</div><div class="stat-label">Likes Received</div></div>
+                        <div class="stat-item">
+                            <div class="stat-number">${profile.likes_received || 0}</div>
+                            <div class="stat-label">Likes</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${profile.comments_made || 0}</div>
+                            <div class="stat-label">Comments</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">${profile.is_a_squared ? '✓' : '○'}</div>
+                            <div class="stat-label">A-Squared</div>
+                        </div>
                     </div>
                     
                     ${!profile.is_a_squared && !profile.a_squared_requested ? `
-                        <button class="btn btn-primary" onclick="requestASquared()"><i class="fas fa-star"></i> Request A-Squared Membership</button>
+                        <button class="btn btn-primary" onclick="requestASquared()">
+                            <i class="fas fa-star"></i> Request A-Squared Membership
+                        </button>
                     ` : profile.a_squared_requested && !profile.is_a_squared ? `
                         <div style="text-align:center; padding:1rem; background:rgba(237,137,54,0.2); border-radius:16px;">
                             <i class="fas fa-clock"></i> A-Squared Request Pending Admin Approval
                         </div>
                     ` : ''}
                     
-                    <button class="btn btn-danger" onclick="window.logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <button class="btn btn-danger" onclick="window.logout()">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
                 </div>
             `;
         }
-
+        
         async function requestASquared() {
+            const user = window.getCurrentUser();
+            if (!user) return;
+            
             const type = confirm("Request Parish A-Squared? Click OK for Parish, Cancel for Archdeaconry");
             const aSquaredType = type ? "Parish A-Squared" : "Archdeaconry A-Squared";
             
             await supabaseClient
                 .from('profiles')
                 .update({ a_squared_requested: true, a_squared_type: aSquaredType })
-                .eq('id', window.appState.currentUser.id);
+                .eq('id', user.id);
             
-            window.showToast("Request submitted to admin! You will be notified upon approval.", "success");
+            window.showToast("Request submitted to admin!", "success");
             loadProfile();
         }
-
+        
         loadProfile();
     </script>
 </body>
