@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>AYF GWARIMPA - Welcome</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -199,7 +199,7 @@
 
         .role-option {
             flex: 1;
-            min-width: 120px;
+            min-width: 100px;
         }
 
         .role-option input {
@@ -270,10 +270,20 @@
             display: none;
             text-align: center;
             padding: 20px;
+            background: rgba(255,255,255,0.95);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            border-radius: 20px;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .loading.active {
-            display: block;
+            display: flex;
         }
 
         .spinner {
@@ -309,7 +319,7 @@
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="auth-container" style="position: relative;">
         <div class="auth-header">
             <div class="logo">
                 <i class="fas fa-church"></i>
@@ -319,8 +329,8 @@
         </div>
 
         <div class="auth-tabs">
-            <div class="auth-tab active" onclick="switchTab(\'login\')">Login</div>
-            <div class="auth-tab" onclick="switchTab(\'register\')">Register</div>
+            <div class="auth-tab active" data-tab="login">Login</div>
+            <div class="auth-tab" data-tab="register">Register</div>
         </div>
 
         <!-- Login Form -->
@@ -329,12 +339,12 @@
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="loginEmail" required placeholder="Enter your email">
+                <input type="email" id="loginEmail" required placeholder="Enter your email" autocomplete="email">
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="loginPassword" required placeholder="Enter your password">
+                <input type="password" id="loginPassword" required placeholder="Enter your password" autocomplete="current-password">
             </div>
 
             <button type="submit" class="btn-primary">
@@ -357,17 +367,17 @@
 
             <div class="form-group">
                 <label>Full Name</label>
-                <input type="text" id="fullName" required placeholder="Enter your full name">
+                <input type="text" id="fullName" required placeholder="Enter your full name" autocomplete="name">
             </div>
 
             <div class="form-group">
                 <label>Email</label>
-                <input type="email" id="regEmail" required placeholder="Enter your email">
+                <input type="email" id="regEmail" required placeholder="Enter your email" autocomplete="email">
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)">
+                <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)" autocomplete="new-password">
             </div>
 
             <div class="form-group">
@@ -375,10 +385,10 @@
                 <select id="parish" required>
                     <option value="">Select your parish</option>
                     <option value="St. Matthews">St. Matthews</option>
-                    <option value="St. Pauls">St. Paul\'s</option>
-                    <option value="St. Johns">St. John\'s</option>
+                    <option value="St. Pauls">St. Paul's</option>
+                    <option value="St. Johns">St. John's</option>
                     <option value="All Saints">All Saints</option>
-                    <option value="St. Peters">St. Peter\'s</option>
+                    <option value="St. Peters">St. Peter's</option>
                     <option value="Holy Trinity">Holy Trinity</option>
                 </select>
             </div>
@@ -428,7 +438,7 @@
             <i class="fas fa-clock pending-icon"></i>
             <h2>Approval Pending</h2>
             <p>Your Exco/Archediceanry role request has been sent to the admin for approval. You will be notified once approved.</p>
-            <button class="btn-primary" onclick="switchTab(\'login\')" style="margin-top: 20px;">
+            <button class="btn-primary" id="pendingBackToLogin" style="margin-top: 20px;">
                 Go to Login
             </button>
         </div>
@@ -436,197 +446,370 @@
 
     <script>
         // Supabase Configuration
-        const SUPABASE_URL = \'https://jvfdcuvinlimurlttiqy.supabase.co\';
-        const SUPABASE_KEY = \'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg\';
+        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
 
-        let supabase;
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch (e) {
-            console.error(\'Supabase init failed:\', e);
+        // Initialize Supabase client
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const loadingDiv = document.getElementById('loading');
+        const pendingDiv = document.getElementById('pendingApproval');
+        const loginAlert = document.getElementById('loginAlert');
+        const registerAlert = document.getElementById('registerAlert');
+        
+        // Helper: Show alert message
+        function showAlert(element, message, type) {
+            if (!element) return;
+            element.textContent = message;
+            element.className = `alert ${type}`;
+            element.style.display = 'block';
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                if (element) element.style.display = 'none';
+            }, 5000);
         }
-
-        // Tab Switching
-        function switchTab(tab) {
-            document.querySelectorAll(\'.auth-tab\').forEach(t => t.classList.remove(\'active\'));
-            document.querySelectorAll(\'.auth-form\').forEach(f => f.classList.remove(\'active\'));
-            document.getElementById(\'loading\').classList.remove(\'active\');
-            document.getElementById(\'pendingApproval\').classList.remove(\'active\');
-
-            if (tab === \'login\') {
-                document.querySelector(\'.auth-tab:first-child\').classList.add(\'active\');
-                document.getElementById(\'loginForm\').classList.add(\'active\');
-            } else {
-                document.querySelector(\'.auth-tab:last-child\').classList.add(\'active\');
-                document.getElementById(\'registerForm\').classList.add(\'active\');
-            }
+        
+        // Helper: Hide all alerts
+        function hideAlerts() {
+            if (loginAlert) loginAlert.style.display = 'none';
+            if (registerAlert) registerAlert.style.display = 'none';
         }
-
-        // Image Preview
-        document.getElementById(\'profileImage\').addEventListener(\'change\', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(\'previewImage\').src = e.target.result;
-                    document.getElementById(\'uploadLabel\').classList.add(\'has-image\');
-                };
-                reader.readAsDataURL(file);
-            }
+        
+        // Tab switching - fixed double quotes escaping and event binding
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.auth-tab');
+            const forms = document.querySelectorAll('.auth-form');
+            
+            tabs.forEach(tab => {
+                const tabValue = tab.getAttribute('data-tab');
+                if (tabValue === tabName) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            forms.forEach(form => {
+                if ((tabName === 'login' && form.id === 'loginForm') ||
+                    (tabName === 'register' && form.id === 'registerForm')) {
+                    form.classList.add('active');
+                } else {
+                    form.classList.remove('active');
+                }
+            });
+            
+            // Hide pending screen and loading if visible
+            if (pendingDiv) pendingDiv.classList.remove('active');
+            if (loadingDiv) loadingDiv.classList.remove('active');
+            hideAlerts();
+        }
+        
+        // Attach tab click handlers
+        document.querySelectorAll('.auth-tab').forEach(tab => {
+            tab.addEventListener('click', function(e) {
+                const tabName = this.getAttribute('data-tab');
+                if (tabName === 'login') switchTab('login');
+                else if (tabName === 'register') switchTab('register');
+            });
         });
-
-        // Show Alert
-        function showAlert(id, message, type) {
-            const alert = document.getElementById(id);
-            alert.textContent = message;
-            alert.className = `alert ${type}`;
-            alert.style.display = \'block\';
-            setTimeout(() => alert.style.display = \'none\', 5000);
+        
+        // Image Preview
+        const profileImageInput = document.getElementById('profileImage');
+        const uploadLabel = document.getElementById('uploadLabel');
+        const previewImg = document.getElementById('previewImage');
+        
+        if (profileImageInput) {
+            profileImageInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(ev) {
+                        if (previewImg) {
+                            previewImg.src = ev.target.result;
+                            if (uploadLabel) uploadLabel.classList.add('has-image');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                } else if (file) {
+                    showAlert(registerAlert, 'Please select a valid image file', 'error');
+                    profileImageInput.value = '';
+                }
+            });
         }
-
-        // Register
-        document.getElementById(\'registerForm\').addEventListener(\'submit\', async (e) => {
+        
+        // Register submission
+        registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const btn = document.getElementById(\'registerBtn\');
-            const loading = document.getElementById(\'loading\');
-
+            hideAlerts();
+            
+            const btn = document.getElementById('registerBtn');
+            if (!btn) return;
+            
+            // Get form values
+            const email = document.getElementById('regEmail')?.value.trim();
+            const password = document.getElementById('regPassword')?.value;
+            const fullName = document.getElementById('fullName')?.value.trim();
+            const parish = document.getElementById('parish')?.value;
+            const gender = document.getElementById('gender')?.value;
+            const roleRadio = document.querySelector('input[name="role"]:checked');
+            const role = roleRadio ? roleRadio.value : 'member';
+            const profileImageFile = profileImageInput?.files[0] || null;
+            
+            // Validation
+            if (!email || !password || !fullName || !parish || !gender) {
+                showAlert(registerAlert, 'All fields are required', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showAlert(registerAlert, 'Password must be at least 6 characters', 'error');
+                return;
+            }
+            
             btn.disabled = true;
-            loading.classList.add(\'active\');
-
+            loadingDiv.classList.add('active');
+            
             try {
-                const email = document.getElementById(\'regEmail\').value;
-                const password = document.getElementById(\'regPassword\').value;
-                const fullName = document.getElementById(\'fullName\').value;
-                const parish = document.getElementById(\'parish\').value;
-                const gender = document.getElementById(\'gender\').value;
-                const role = document.querySelector(\'input[name="role"]:checked\').value;
-                const profileImage = document.getElementById(\'profileImage\').files[0];
-
-                // Create auth user
+                // Step 1: Sign up user with Supabase Auth
                 const { data: authData, error: authError } = await supabase.auth.signUp({
                     email,
-                    password
+                    password,
+                    options: {
+                        data: { full_name: fullName, role: role }
+                    }
                 });
-
+                
                 if (authError) throw authError;
-
-                // Upload image if exists
+                if (!authData.user) throw new Error('Signup failed, please try again');
+                
+                const userId = authData.user.id;
                 let imageUrl = null;
-                if (profileImage) {
-                    const fileExt = profileImage.name.split(\'.\').pop();
-                    const fileName = `${authData.user.id}-${Date.now()}.${fileExt}`;
-
-                    const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from(\'profiles\')
-                        .upload(fileName, profileImage);
-
+                
+                // Step 2: Upload profile image to storage if provided
+                if (profileImageFile) {
+                    const fileExt = profileImageFile.name.split('.').pop();
+                    const fileName = `${userId}-${Date.now()}.${fileExt}`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('profiles')
+                        .upload(fileName, profileImageFile);
+                    
                     if (!uploadError) {
                         const { data: urlData } = supabase.storage
-                            .from(\'profiles\')
+                            .from('profiles')
                             .getPublicUrl(fileName);
                         imageUrl = urlData.publicUrl;
+                    } else {
+                        console.warn('Image upload skipped:', uploadError.message);
                     }
                 }
-
-                // Create user profile
+                
+                // Step 3: Insert user profile into 'users' table
+                const isMember = role === 'member';
+                const approvalStatus = isMember ? 'approved' : 'pending';
+                
                 const { error: profileError } = await supabase
-                    .from(\'users\')
+                    .from('users')
                     .insert([{
-                        id: authData.user.id,
-                        email,
+                        id: userId,
+                        email: email,
                         full_name: fullName,
-                        parish,
-                        gender,
-                        role,
+                        parish: parish,
+                        gender: gender,
+                        role: role,
                         profile_image: imageUrl,
-                        is_approved: role === \'member\',
-                        approval_status: role === \'member\' ? \'approved\' : \'pending\',
+                        is_approved: isMember,
+                        approval_status: approvalStatus,
                         created_at: new Date().toISOString()
                     }]);
-
-                if (profileError) throw profileError;
-
-                // Create role request if not member
-                if (role !== \'member\') {
-                    await supabase
-                        .from(\'role_requests\')
+                
+                if (profileError) {
+                    console.error('Profile insert error:', profileError);
+                    // Attempt to clean up auth user if profile insert fails (optional)
+                    throw new Error(`Profile creation failed: ${profileError.message}`);
+                }
+                
+                // Step 4: If role is not member, create role request entry
+                if (role !== 'member') {
+                    const { error: requestError } = await supabase
+                        .from('role_requests')
                         .insert([{
-                            user_id: authData.user.id,
+                            user_id: userId,
                             requested_role: role,
-                            status: \'pending\',
+                            status: 'pending',
                             created_at: new Date().toISOString()
                         }]);
-
-                    document.getElementById(\'registerForm\').style.display = \'none\';
-                    document.getElementById(\'pendingApproval\').classList.add(\'active\');
+                    
+                    if (requestError) {
+                        console.warn('Role request not saved:', requestError.message);
+                        // Non-critical, continue
+                    }
+                    
+                    // Show pending approval screen instead of login form
+                    registerForm.classList.remove('active');
+                    pendingDiv.classList.add('active');
                 } else {
-                    showAlert(\'registerAlert\', \'Account created successfully! Please login.\', \'success\');
-                    setTimeout(() => switchTab(\'login\'), 2000);
+                    // Member: show success and redirect to login tab
+                    showAlert(registerAlert, 'Account created successfully! Please login.', 'success');
+                    // Reset form fields
+                    registerForm.reset();
+                    if (uploadLabel) uploadLabel.classList.remove('has-image');
+                    if (previewImg) previewImg.src = '';
+                    // Switch to login tab after short delay
+                    setTimeout(() => {
+                        switchTab('login');
+                        // Clear any leftover messages
+                        hideAlerts();
+                    }, 2000);
                 }
-
+                
             } catch (error) {
-                showAlert(\'registerAlert\', error.message, \'error\');
+                console.error('Registration error:', error);
+                let errorMsg = error.message || 'Registration failed. Please try again.';
+                if (errorMsg.includes('User already registered')) {
+                    errorMsg = 'This email is already registered. Please login instead.';
+                }
+                showAlert(registerAlert, errorMsg, 'error');
             } finally {
                 btn.disabled = false;
-                loading.classList.remove(\'active\');
+                loadingDiv.classList.remove('active');
             }
         });
-
-        // Login
-        document.getElementById(\'loginForm\').addEventListener(\'submit\', async (e) => {
+        
+        // Login submission - FIXED REDIRECT
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            const btn = document.querySelector(\'#loginForm .btn-primary\');
-            const loading = document.getElementById(\'loading\');
-
+            hideAlerts();
+            
+            const btn = loginForm.querySelector('.btn-primary');
+            const email = document.getElementById('loginEmail')?.value.trim();
+            const password = document.getElementById('loginPassword')?.value;
+            
+            if (!email || !password) {
+                showAlert(loginAlert, 'Please enter email and password', 'error');
+                return;
+            }
+            
             btn.disabled = true;
-            loading.classList.add(\'active\');
-
+            loadingDiv.classList.add('active');
+            
             try {
-                const email = document.getElementById(\'loginEmail\').value;
-                const password = document.getElementById(\'loginPassword\').value;
-
+                // Sign in with password
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email,
                     password
                 });
-
+                
                 if (error) throw error;
-
-                // Check approval status
-                const { data: userData, error: userError } = await supabase
-                    .from(\'users\')
-                    .select(\'approval_status, role\')
-                    .eq(\'id\', data.user.id)
-                    .single();
-
-                if (userError) throw userError;
-
-                if (userData.approval_status === \'pending\' && userData.role !== \'member\') {
+                if (!data.user) throw new Error('Login failed');
+                
+                const userId = data.user.id;
+                
+                // Fetch user profile from 'users' table to check approval status
+                const { data: userProfile, error: fetchError } = await supabase
+                    .from('users')
+                    .select('approval_status, role, is_approved')
+                    .eq('id', userId)
+                    .maybeSingle();  // use maybeSingle to avoid 406 error if missing
+                
+                // If no profile found, it's inconsistent: sign out and show error
+                if (fetchError || !userProfile) {
+                    console.error('Profile fetch error:', fetchError);
                     await supabase.auth.signOut();
-                    showAlert(\'loginAlert\', \'Your Exco/Archediceanry role is pending approval. Please wait for admin confirmation.\', \'error\');
-                } else {
-                    window.location.href = \'home.html\';
+                    throw new Error('Account profile missing. Please contact support or register again.');
                 }
-
+                
+                // Check approval: if role is not member and approval_status is 'pending' → block access
+                const isNonMember = userProfile.role !== 'member';
+                const isPending = userProfile.approval_status === 'pending';
+                
+                if (isNonMember && isPending) {
+                    // Sign out immediately to prevent session
+                    await supabase.auth.signOut();
+                    showAlert(loginAlert, 'Your role is pending admin approval. Please wait for confirmation.', 'error');
+                    btn.disabled = false;
+                    loadingDiv.classList.remove('active');
+                    return;
+                }
+                
+                // ✅ APPROVED OR REGULAR MEMBER: Redirect to home.html
+                // Use window.location.replace to avoid back button issues and ensure clean redirect
+                window.location.replace('home.html');
+                
             } catch (error) {
-                showAlert(\'loginAlert\', error.message, \'error\');
-            } finally {
+                console.error('Login error:', error);
+                let friendlyMsg = error.message || 'Invalid email or password. Please try again.';
+                if (friendlyMsg.includes('Invalid login credentials')) {
+                    friendlyMsg = 'Incorrect email or password. Please try again.';
+                }
+                showAlert(loginAlert, friendlyMsg, 'error');
                 btn.disabled = false;
-                loading.classList.remove(\'active\');
+                loadingDiv.classList.remove('active');
             }
         });
-
-        // Check if already logged in
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = \'home.html\';
+        
+        // "Go to Login" button on pending screen
+        const pendingBackBtn = document.getElementById('pendingBackToLogin');
+        if (pendingBackBtn) {
+            pendingBackBtn.addEventListener('click', () => {
+                pendingDiv.classList.remove('active');
+                switchTab('login');
+                // Optionally clear registration form to avoid confusion
+                if (registerForm) registerForm.reset();
+                if (uploadLabel) uploadLabel.classList.remove('has-image');
+                if (previewImg) previewImg.src = '';
+                hideAlerts();
+            });
+        }
+        
+        // Check session on page load (auto-redirect if already logged in & approved)
+        async function checkSessionAndRedirect() {
+            try {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session && session.user) {
+                    const userId = session.user.id;
+                    // Fetch approval status to verify if allowed
+                    const { data: profile, error } = await supabase
+                        .from('users')
+                        .select('approval_status, role')
+                        .eq('id', userId)
+                        .maybeSingle();
+                    
+                    if (error || !profile) {
+                        // No profile: sign out and stay on page
+                        await supabase.auth.signOut();
+                        return;
+                    }
+                    
+                    const isBlocked = (profile.role !== 'member' && profile.approval_status === 'pending');
+                    if (!isBlocked) {
+                        // Already approved or regular member → redirect immediately
+                        window.location.replace('home.html');
+                    } else {
+                        // Pending approval: sign out to avoid stuck session
+                        await supabase.auth.signOut();
+                        // Show message on login form
+                        showAlert(loginAlert, 'Your account is pending admin approval. Please wait.', 'error');
+                    }
+                }
+            } catch (err) {
+                console.warn('Session check error:', err);
             }
         }
-
-        checkSession();
+        
+        // Initialize
+        checkSessionAndRedirect();
+        
+        // Additional fix: ensure any leftover loading/pending states are hidden after tab switch
+        window.switchTab = switchTab; // for global safety
+        
+        // Clear loading on any manual interaction if stuck (just in case)
+        document.querySelectorAll('.auth-tab').forEach(t => {
+            t.addEventListener('click', () => {
+                loadingDiv.classList.remove('active');
+            });
+        });
     </script>
 </body>
 </html>
