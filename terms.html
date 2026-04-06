@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms of Service | AYF Gwarimpa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            padding-bottom: 70px;
+        }
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links { display: flex; gap: 1rem; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+        h1 { margin-bottom: 1rem; }
+        h2 { margin: 1.5rem 0 1rem; color: #667eea; }
+        p { margin-bottom: 1rem; line-height: 1.6; opacity: 0.9; }
+        ul { margin-left: 2rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+        .footer-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+        .footer-nav-item i { font-size: 1.3rem; }
+        .footer-nav-item:hover { color: #667eea; }
+        @media (max-width: 768px) {
+            .container { margin: 1rem; padding: 1rem; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <div class="logo-icon">📜</div>
+            <h3>Terms of Service</h3>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="plan.html">Plan</a>
+            <a href="parish.html">Parish</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Terms of Service</h1>
+        <p>Last updated: January 2026</p>
+        
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing or using the Anglican Youth Fellowship (AYF) Gwarimpa Archdeaconry platform, you agree to be bound by these Terms of Service.</p>
+        
+        <h2>2. User Accounts</h2>
+        <p>To access certain features, you must create an account. You are responsible for:</p>
+        <ul>
+            <li>Maintaining the confidentiality of your password</li>
+            <li>All activities that occur under your account</li>
+            <li>Providing accurate and complete information</li>
+        </ul>
+        
+        <h2>3. User Conduct</h2>
+        <p>You agree not to:</p>
+        <ul>
+            <li>Post offensive, discriminatory, or harassing content</li>
+            <li>Impersonate another person or entity</li>
+            <li>Share inappropriate or explicit material</li>
+            <li>Use the platform for unauthorized commercial purposes</li>
+            <li>Attempt to gain unauthorized access to other accounts</li>
+        </ul>
+        
+        <h2>4. Content Ownership</h2>
+        <p>You retain ownership of content you post. By posting, you grant AYF a license to display and distribute your content on the platform.</p>
+        
+        <h2>5. A-Squared Membership</h2>
+        <p>A-Squared membership requires admin approval. We reserve the right to revoke A-Squared status for violation of these terms.</p>
+        
+        <h2>6. Termination</h2>
+        <p>We may terminate or suspend your account immediately for violation of these terms.</p>
+        
+        <h2>7. Disclaimer</h2>
+        <p>The platform is provided "as is" without warranties. We are not responsible for user-generated content.</p>
+        
+        <h2>8. Changes to Terms</h2>
+        <p>We may modify these terms at any time. Continued use of the platform constitutes acceptance of modified terms.</p>
+        
+        <h2>9. Contact</h2>
+        <p>For questions about these Terms, contact legal@ayfgwarimpa.org</p>
+    </div>
+
+    <div class="footer-nav">
+        <a href="index.html" class="footer-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="about.html" class="footer-nav-item"><i class="fas fa-info-circle"></i><span>About</span></a>
+        <a href="plan.html" class="footer-nav-item"><i class="fas fa-calendar-alt"></i><span>Plan</span></a>
+        <a href="parish.html" class="footer-nav-item"><i class="fas fa-church"></i><span>Parish</span></a>
+        <a href="profile.html" class="footer-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
+    </div>
+</body>
+</html>
