@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>About | AYF Gwarimpa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
+            padding-bottom: 70px;
+        }
+        .header {
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-links { display: flex; gap: 1rem; }
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+        }
+        .nav-links a:hover { background: rgba(102,126,234,0.2); }
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+        }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.15); }
+        .stat-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: #667eea; }
+        .stat-label { margin-top: 0.5rem; opacity: 0.8; }
+        .parish-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        .parish-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .parish-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1.5rem;
+        }
+        .parish-name { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: #667eea; }
+        .leader-list { margin-top: 1rem; }
+        .leader-item {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+        }
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+        .footer-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+        .footer-nav-item i { font-size: 1.3rem; }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        .loading { text-align: center; padding: 2rem; }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 1.5rem; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo" onclick="window.location.href='index.html'">
+            <div class="logo-icon">ℹ️</div>
+            <h3>About AYF</h3>
+        </div>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="plan.html">Plan</a>
+            <a href="parish.html">Parish</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </header>
+
+    <div class="hero">
+        <h1>About Anglican Youth Fellowship</h1>
+        <p>Gwarimpa Archdeaconry - Empowering youth for Christ-like leadership</p>
+    </div>
+
+    <div class="stats-container">
+        <div class="stats-grid" id="statsGrid">
+            <div class="loading"><div class="spinner"></div></div>
+        </div>
+        
+        <div class="parish-section">
+            <h2>Our Parishes</h2>
+            <div class="parish-grid" id="parishGrid"></div>
+        </div>
+    </div>
+
+    <div class="footer-nav">
+        <a href="index.html" class="footer-nav-item">
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="about.html" class="footer-nav-item active">
+            <i class="fas fa-info-circle"></i><span>About</span>
+        </a>
+        <a href="plan.html" class="footer-nav-item">
+            <i class="fas fa-calendar-alt"></i><span>Plan</span>
+        </a>
+        <a href="parish.html" class="footer-nav-item">
+            <i class="fas fa-church"></i><span>Parish</span>
+        </a>
+        <a href="profile.html" class="footer-nav-item">
+            <i class="fas fa-user"></i><span>Profile</span>
+        </a>
+    </div>
+
+    <script src="supabase/client.js"></script>
+    <script>
+        const parishes = [
+            "St. Mathus Anglican Church",
+            "St. Philip Anglican Church",
+            "St. Barnabas Jaiyuan"
+        ];
+
+        async function loadStats() {
+            const { data: profiles } = await supabaseClient.from('profiles').select('*');
+            const { data: posts } = await supabaseClient.from('posts').select('*');
+            const { data: comments } = await supabaseClient.from('comments').select('*');
+            const { data: likes } = await supabaseClient.from('likes').select('*');
+            const { data: aSquared } = await supabaseClient.from('profiles').select('*').eq('is_a_squared', true);
+            
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = `
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number">${profiles?.length || 0}</div><div class="stat-label">Total Members</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-crown"></i></div><div class="stat-number">${aSquared?.length || 0}</div><div class="stat-label">A-Squared Leaders</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-newspaper"></i></div><div class="stat-number">${posts?.length || 0}</div><div class="stat-label">Total Posts</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-comments"></i></div><div class="stat-number">${comments?.length || 0}</div><div class="stat-label">Comments</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-heart"></i></div><div class="stat-number">${likes?.length || 0}</div><div class="stat-label">Total Likes</div></div>
+                <div class="stat-card"><div class="stat-icon"><i class="fas fa-church"></i></div><div class="stat-number">${parishes.length}</div><div class="stat-label">Parishes</div></div>
+            `;
+            
+            // Load parish data
+            const parishGrid = document.getElementById('parishGrid');
+            const parishData = [];
+            
+            for (const parish of parishes) {
+                const members = profiles?.filter(p => p.parish === parish) || [];
+                const leaders = members.filter(m => m.is_a_squared);
+                parishData.push({ name: parish, members: members.length, leaders: leaders.length, leaderList: leaders.slice(0, 3) });
+            }
+            
+            parishGrid.innerHTML = parishData.map(p => `
+                <div class="parish-card">
+                    <div class="parish-name">${p.name}</div>
+                    <div><i class="fas fa-users"></i> ${p.members} Members</div>
+                    <div><i class="fas fa-crown"></i> ${p.leaders} Leaders</div>
+                    ${p.leaderList.length > 0 ? `
+                        <div class="leader-list">
+                            <strong>Leadership:</strong>
+                            ${p.leaderList.map(l => `<div class="leader-item"><span>${l.full_name || l.email}</span><span class="leadership-tag" style="background:#48bb78; padding:0.2rem 0.5rem; border-radius:50px; font-size:0.7rem;">${l.leadership_tag || 'Leader'}</span></div>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        loadStats();
+    </script>
+</body>
+</html>
