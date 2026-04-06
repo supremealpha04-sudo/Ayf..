@@ -1,10 +1,9 @@
-
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYF GWARIMPA - Profile</title>
+    <title>AYF GWARIMPA - User Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -22,167 +21,241 @@ html_content = '''<!DOCTYPE html>
             padding-bottom: 80px;
         }
 
-        /* Telegram-style Profile Header */
-        .profile-header {
-            background: #17212b;
-            padding: 20px 16px;
+        /* Cover Photo */
+        .cover-photo {
+            height: 200px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             position: relative;
         }
 
-        .header-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+        .cover-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, #0f1419, transparent);
         }
 
-        .back-btn, .more-btn {
+        /* Profile Header */
+        .profile-header {
+            padding: 0 20px 20px;
+            position: relative;
+            margin-top: -60px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 16px;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 16px;
+            left: 16px;
             width: 40px;
             height: 40px;
             border-radius: 50%;
+            background: rgba(0,0,0,0.5);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             color: #fff;
+            z-index: 100;
             transition: background 0.2s;
         }
 
-        .back-btn:hover, .more-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* Profile Avatar Section */
-        .profile-avatar-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px 0;
-        }
-
-        .avatar-container {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin-bottom: 16px;
+        .back-btn:hover {
+            background: rgba(0,0,0,0.7);
         }
 
         .profile-avatar {
-            width: 100%;
-            height: 100%;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             object-fit: cover;
-            border: 4px solid #2b5278;
+            border: 4px solid #0f1419;
+            background: #17212b;
         }
 
-        .avatar-edit-btn {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 36px;
-            height: 36px;
-            background: #2b5278;
-            border-radius: 50%;
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            border: 3px solid #17212b;
+            gap: 8px;
             transition: all 0.2s;
         }
 
-        .avatar-edit-btn:hover {
+        .btn-primary {
+            background: #2b5278;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
             background: #3a6d99;
-            transform: scale(1.1);
+        }
+
+        .btn-secondary {
+            background: #242f3d;
+            color: #fff;
+        }
+
+        .btn-secondary:hover {
+            background: #2b3a4a;
+        }
+
+        /* Profile Info */
+        .profile-info {
+            padding: 0 20px;
         }
 
         .profile-name {
             font-size: 24px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 4px;
         }
 
-        .profile-status {
+        .username {
+            font-size: 15px;
+            color: #3a6d99;
+            margin-bottom: 12px;
+        }
+
+        .profile-bio {
+            font-size: 15px;
+            color: #b0c4de;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 14px;
             color: #8a9aa8;
         }
 
-        .online-status {
-            display: flex;
+        .meta-item i {
+            font-size: 14px;
+        }
+
+        /* Role Badge */
+        .role-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .role-badge {
+            display: inline-flex;
             align-items: center;
-            gap: 6px;
-            color: #4cd964;
-            font-size: 13px;
-            margin-top: 8px;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
-        .online-dot {
-            width: 8px;
-            height: 8px;
-            background: #4cd964;
-            border-radius: 50%;
+        .role-exco {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            border: 1px solid rgba(102, 126, 234, 0.3);
         }
 
-        /* Action Buttons */
-        .profile-actions {
+        .role-archediceanry {
+            background: rgba(118, 75, 162, 0.2);
+            color: #764ba2;
+            border: 1px solid rgba(118, 75, 162, 0.3);
+        }
+
+        .role-both {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            color: #a78bfa;
+            border: 1px solid rgba(167, 139, 250, 0.3);
+        }
+
+        .role-member {
+            background: rgba(138, 154, 168, 0.2);
+            color: #8a9aa8;
+            border: 1px solid rgba(138, 154, 168, 0.3);
+        }
+
+        /* Stats */
+        .stats-container {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-around;
             padding: 20px;
             background: #17212b;
-            border-bottom: 1px solid #242f3d;
+            margin: 0 20px 20px;
+            border-radius: 12px;
         }
 
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
+        .stat-item {
+            text-align: center;
         }
 
-        .action-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #2b5278;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .stat-value {
             font-size: 20px;
-            transition: all 0.2s;
+            font-weight: 700;
+            color: #fff;
         }
 
-        .action-btn:hover .action-icon {
-            background: #3a6d99;
-            transform: scale(1.05);
-        }
-
-        .action-label {
-            font-size: 12px;
+        .stat-label {
+            font-size: 13px;
             color: #8a9aa8;
+            margin-top: 4px;
         }
 
-        /* Info Section */
+        /* Info Cards */
         .info-section {
-            background: #17212b;
-            margin-top: 8px;
+            padding: 0 20px;
+            margin-bottom: 20px;
         }
 
-        .info-item {
+        .section-title {
+            font-size: 13px;
+            color: #8a9aa8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .info-card {
+            background: #17212b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .info-row {
             display: flex;
             align-items: center;
             padding: 16px;
             border-bottom: 1px solid #242f3d;
-            cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .info-item:hover {
-            background: #1e2a35;
-        }
-
-        .info-item:last-child {
+        .info-row:last-child {
             border-bottom: none;
         }
 
@@ -195,7 +268,7 @@ html_content = '''<!DOCTYPE html>
             align-items: center;
             justify-content: center;
             margin-right: 16px;
-            color: #8a9aa8;
+            color: #3a6d99;
             font-size: 16px;
         }
 
@@ -212,127 +285,77 @@ html_content = '''<!DOCTYPE html>
         .info-value {
             font-size: 15px;
             color: #fff;
+            font-weight: 500;
         }
 
-        .info-badge {
-            padding: 4px 10px;
-            background: #2b5278;
-            border-radius: 12px;
-            font-size: 12px;
-            color: #fff;
+        /* Mutual Connections */
+        .mutual-section {
+            padding: 0 20px;
+            margin-bottom: 20px;
         }
 
-        .info-badge.pending {
-            background: #f0ad4e;
-        }
-
-        .info-arrow {
-            color: #8a9aa8;
-            font-size: 14px;
-        }
-
-        /* Username Tag */
-        .username-section {
-            background: #17212b;
-            margin-top: 8px;
-            padding: 16px;
-        }
-
-        .username-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: #242f3d;
-            border-radius: 20px;
-            font-size: 14px;
-            color: #3a6d99;
-        }
-
-        .username-tag i {
-            font-size: 12px;
-        }
-
-        /* Stats Section */
-        .stats-section {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #17212b;
-            margin-top: 8px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 20px;
-            font-weight: 600;
-            color: #fff;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #8a9aa8;
-            margin-top: 4px;
-        }
-
-        /* Settings Section */
-        .settings-section {
-            background: #17212b;
-            margin-top: 8px;
-        }
-
-        .section-title {
-            padding: 16px;
-            font-size: 13px;
-            color: #3a6d99;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .settings-item {
+        .mutual-avatars {
             display: flex;
             align-items: center;
-            padding: 14px 16px;
-            cursor: pointer;
-            transition: background 0.2s;
-            border-bottom: 1px solid #242f3d;
         }
 
-        .settings-item:hover {
-            background: #1e2a35;
-        }
-
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
-        .settings-icon {
-            width: 36px;
-            height: 36px;
+        .mutual-avatar {
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #0f1419;
+            margin-left: -8px;
+        }
+
+        .mutual-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .mutual-count {
+            margin-left: 12px;
+            font-size: 14px;
+            color: #8a9aa8;
+        }
+
+        /* Action Buttons */
+        .actions-section {
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn-large {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 16px;
-            font-size: 16px;
+            gap: 8px;
+            transition: all 0.2s;
         }
 
-        .settings-icon.blue { background: rgba(43, 82, 120, 0.3); color: #3a6d99; }
-        .settings-icon.green { background: rgba(76, 217, 100, 0.3); color: #4cd964; }
-        .settings-icon.red { background: rgba(255, 59, 48, 0.3); color: #ff3b30; }
-        .settings-icon.orange { background: rgba(255, 149, 0, 0.3); color: #ff9500; }
-
-        .settings-text {
-            flex: 1;
-            font-size: 15px;
+        .action-btn-large.message {
+            background: #2b5278;
+            color: #fff;
         }
 
-        .settings-arrow {
-            color: #8a9aa8;
+        .action-btn-large.message:hover {
+            background: #3a6d99;
+        }
+
+        .action-btn-large.call {
+            background: #242f3d;
+            color: #fff;
+        }
+
+        .action-btn-large.call:hover {
+            background: #2b3a4a;
         }
 
         /* Bottom Navigation */
@@ -373,327 +396,191 @@ html_content = '''<!DOCTYPE html>
             font-size: 11px;
         }
 
-        /* Edit Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
+        /* Loading */
+        .loading {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
+            height: 100vh;
         }
 
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #17212b;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 400px;
-            overflow: hidden;
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid #242f3d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            width: 32px;
-            height: 32px;
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #242f3d;
+            border-top-color: #3a6d99;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #8a9aa8;
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: #242f3d;
-            color: #fff;
-        }
-
-        .modal-body {
-            padding: 20px;
-        }
-
-        .form-group {
+            animation: spin 1s linear infinite;
             margin-bottom: 16px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 13px;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Not Found */
+        .not-found {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .not-found i {
+            font-size: 60px;
             color: #8a9aa8;
-            margin-bottom: 6px;
+            margin-bottom: 16px;
         }
 
-        .form-input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #242f3d;
-            border: 1px solid #2b3a4a;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 15px;
+        .not-found h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
         }
 
-        .form-input:focus {
-            outline: none;
-            border-color: #3a6d99;
-        }
-
-        .save-btn {
-            width: 100%;
-            padding: 14px;
-            background: #2b5278;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .save-btn:hover {
-            background: #3a6d99;
-        }
-
-        /* Toast Notification */
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: #2b5278;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-size: 14px;
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
+        .not-found p {
+            color: #8a9aa8;
         }
     </style>
 </head>
 <body>
-    <!-- Profile Header -->
-    <div class="profile-header">
-        <div class="header-actions">
-            <div class="back-btn" onclick="goBack()">
-                <i class="fas fa-arrow-left"></i>
-            </div>
-            <div class="more-btn" onclick="showMoreOptions()">
-                <i class="fas fa-ellipsis-v"></i>
-            </div>
-        </div>
-
-        <div class="profile-avatar-section">
-            <div class="avatar-container">
-                <img src="https://via.placeholder.com/120" class="profile-avatar" id="profileAvatar" alt="Profile">
-                <div class="avatar-edit-btn" onclick="changeAvatar()">
-                    <i class="fas fa-camera"></i>
-                </div>
-            </div>
-            <h1 class="profile-name" id="profileName">Loading...</h1>
-            <p class="profile-status" id="profileStatus">Member</p>
-            <div class="online-status">
-                <span class="online-dot"></span>
-                <span>online</span>
-            </div>
-        </div>
+    <div class="back-btn" onclick="goBack()">
+        <i class="fas fa-arrow-left"></i>
     </div>
 
-    <!-- Profile Actions -->
-    <div class="profile-actions">
-        <div class="action-btn" onclick="sendMessage()">
-            <div class="action-icon">
-                <i class="fas fa-comment"></i>
-            </div>
-            <span class="action-label">Message</span>
+    <div id="loading" class="loading">
+        <div class="spinner"></div>
+        <p>Loading profile...</p>
+    </div>
+
+    <div id="notFound" class="not-found" style="display:none;">
+        <i class="fas fa-user-slash"></i>
+        <h2>User Not Found</h2>
+        <p>The user you're looking for doesn't exist.</p>
+    </div>
+
+    <div id="profileContent" style="display:none;">
+        <!-- Cover Photo -->
+        <div class="cover-photo">
+            <div class="cover-overlay"></div>
         </div>
-        <div class="action-btn" onclick="callUser()">
-            <div class="action-icon">
+
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="header-top">
+                <img src="" class="profile-avatar" id="profileAvatar" alt="Profile">
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="sendMessage()">
+                        <i class="fas fa-comment"></i> Message
+                    </button>
+                    <button class="btn btn-secondary" onclick="moreOptions()">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="profile-info">
+            <h1 class="profile-name" id="profileName">User Name</h1>
+            <div class="username" id="username">@username</div>
+            <p class="profile-bio" id="profileBio">Bio goes here...</p>
+            
+            <div class="profile-meta">
+                <div class="meta-item">
+                    <i class="fas fa-church"></i>
+                    <span id="parishName">Parish Name</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Gwarinpa, Abuja</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span id="joinedDate">Joined January 2024</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Role Badge -->
+        <div class="role-section">
+            <span class="role-badge" id="roleBadge">
+                <i class="fas fa-shield-alt"></i>
+                <span id="roleText">Member</span>
+            </span>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-value" id="postsCount">0</div>
+                <div class="stat-label">Posts</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="messagesCount">0</div>
+                <div class="stat-label">Messages</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="parishRank">#0</div>
+                <div class="stat-label">Parish Rank</div>
+            </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-section">
+            <div class="section-title">Information</div>
+            <div class="info-card">
+                <div class="info-row">
+                    <div class="info-icon">
+                        <i class="fas fa-venus-mars"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Gender</div>
+                        <div class="info-value" id="genderValue">Not specified</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Email</div>
+                        <div class="info-value" id="emailValue">Not visible</div>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="info-content">
+                        <div class="info-label">Phone</div>
+                        <div class="info-value">Not visible</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mutual Connections -->
+        <div class="mutual-section">
+            <div class="section-title">Mutual Connections</div>
+            <div class="mutual-avatars" id="mutualAvatars">
+                <!-- Populated dynamically -->
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="actions-section">
+            <button class="action-btn-large message" onclick="sendMessage()">
+                <i class="fas fa-comment-dots"></i>
+                Send Message
+            </button>
+            <button class="action-btn-large call" onclick="callUser()">
                 <i class="fas fa-phone"></i>
-            </div>
-            <span class="action-label">Call</span>
-        </div>
-        <div class="action-btn" onclick="searchUser()">
-            <div class="action-icon">
-                <i class="fas fa-search"></i>
-            </div>
-            <span class="action-label">Search</span>
-        </div>
-        <div class="action-btn" onclick="editProfile()">
-            <div class="action-icon">
-                <i class="fas fa-pen"></i>
-            </div>
-            <span class="action-label">Edit</span>
-        </div>
-    </div>
-
-    <!-- Username Section -->
-    <div class="username-section">
-        <div class="username-tag" id="usernameTag">
-            <i class="fas fa-at"></i>
-            <span id="usernameText">@username</span>
-        </div>
-    </div>
-
-    <!-- Info Section -->
-    <div class="info-section">
-        <div class="info-item" onclick="showInfoDetail('phone')">
-            <div class="info-icon">
-                <i class="fas fa-phone"></i>
-            </div>
-            <div class="info-content">
-                <div class="info-label">Phone</div>
-                <div class="info-value" id="phoneValue">+234 *** ****</div>
-            </div>
-            <i class="fas fa-chevron-right info-arrow"></i>
-        </div>
-        
-        <div class="info-item" onclick="showInfoDetail('parish')">
-            <div class="info-icon">
-                <i class="fas fa-church"></i>
-            </div>
-            <div class="info-content">
-                <div class="info-label">Parish</div>
-                <div class="info-value" id="parishValue">Loading...</div>
-            </div>
-            <span class="info-badge" id="parishBadge">Member</span>
-        </div>
-
-        <div class="info-item" onclick="showInfoDetail('gender')">
-            <div class="info-icon">
-                <i class="fas fa-venus-mars"></i>
-            </div>
-            <div class="info-content">
-                <div class="info-label">Gender</div>
-                <div class="info-value" id="genderValue">Loading...</div>
-            </div>
-        </div>
-
-        <div class="info-item" onclick="showInfoDetail('role')">
-            <div class="info-icon">
-                <i class="fas fa-user-tag"></i>
-            </div>
-            <div class="info-content">
-                <div class="info-label">Role</div>
-                <div class="info-value" id="roleValue">Loading...</div>
-            </div>
-            <span class="info-badge" id="roleBadge">Member</span>
-        </div>
-
-        <div class="info-item" onclick="showInfoDetail('email')">
-            <div class="info-icon">
-                <i class="fas fa-envelope"></i>
-            </div>
-            <div class="info-content">
-                <div class="info-label">Email</div>
-                <div class="info-value" id="emailValue">Loading...</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Stats Section -->
-    <div class="stats-section">
-        <div class="stat-item">
-            <div class="stat-value" id="postsCount">0</div>
-            <div class="stat-label">Posts</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="messagesCount">0</div>
-            <div class="stat-label">Messages</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="joinedDate">2024</div>
-            <div class="stat-label">Joined</div>
-        </div>
-    </div>
-
-    <!-- Settings Section -->
-    <div class="settings-section">
-        <div class="section-title">Settings</div>
-        
-        <div class="settings-item" onclick="openSettings('notifications')">
-            <div class="settings-icon blue">
-                <i class="fas fa-bell"></i>
-            </div>
-            <span class="settings-text">Notifications</span>
-            <i class="fas fa-chevron-right settings-arrow"></i>
-        </div>
-
-        <div class="settings-item" onclick="openSettings('privacy')">
-            <div class="settings-icon green">
-                <i class="fas fa-lock"></i>
-            </div>
-            <span class="settings-text">Privacy</span>
-            <i class="fas fa-chevron-right settings-arrow"></i>
-        </div>
-
-        <div class="settings-item" onclick="openSettings('storage')">
-            <div class="settings-icon orange">
-                <i class="fas fa-database"></i>
-            </div>
-            <span class="settings-text">Data and Storage</span>
-            <i class="fas fa-chevron-right settings-arrow"></i>
-        </div>
-
-        <div class="settings-item" onclick="logout()">
-            <div class="settings-icon red">
-                <i class="fas fa-sign-out-alt"></i>
-            </div>
-            <span class="settings-text">Log Out</span>
-            <i class="fas fa-chevron-right settings-arrow"></i>
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="modal-title">Edit Profile</span>
-                <div class="modal-close" onclick="closeEditModal()">
-                    <i class="fas fa-times"></i>
-                </div>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-input" id="editName" placeholder="Your full name">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Username</label>
-                    <input type="text" class="form-input" id="editUsername" placeholder="@username">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Bio</label>
-                    <input type="text" class="form-input" id="editBio" placeholder="About you">
-                </div>
-                <button class="save-btn" onclick="saveProfile()">Save Changes</button>
-            </div>
+                Call
+            </button>
         </div>
     </div>
 
@@ -711,16 +598,11 @@ html_content = '''<!DOCTYPE html>
             <i class="fas fa-calendar-alt"></i>
             <span>Plan</span>
         </a>
-        <a href="profile.html" class="nav-item active">
+        <a href="profile.html" class="nav-item">
             <i class="fas fa-user-circle"></i>
             <span>Profile</span>
         </a>
     </nav>
-
-    <!-- Toast -->
-    <div class="toast" id="toast"></div>
-
-    <input type="file" id="avatarInput" accept="image/*" style="display:none">
 
     <script>
         const SUPABASE_URL = 'https://your-project.supabase.co';
@@ -728,199 +610,170 @@ html_content = '''<!DOCTYPE html>
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
-        let userStats = {};
+        let viewedUser = null;
+        let userId = null;
 
         async function init() {
+            // Get user ID from URL
+            const params = new URLSearchParams(window.location.search);
+            userId = params.get('id');
+
+            if (!userId) {
+                showNotFound();
+                return;
+            }
+
+            // Check auth
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 window.location.href = 'index.html';
                 return;
             }
 
-            await loadUserProfile(session.user.id);
-            await loadUserStats(session.user.id);
-        }
-
-        async function loadUserProfile(userId) {
-            const { data: user, error } = await supabase
+            const { data: user } = await supabase
                 .from('users')
                 .select('*')
-                .eq('id', userId)
+                .eq('id', session.user.id)
                 .single();
-
-            if (error) {
-                console.error('Error loading profile:', error);
-                return;
-            }
 
             currentUser = user;
 
-            // Update UI
-            document.getElementById('profileName').textContent = user.full_name || 'User';
-            document.getElementById('profileStatus').textContent = user.role === 'exco' ? 'Parish Exco' : 
-                                                                   user.role === 'archediceanry' ? 'Archediceanry Member' :
-                                                                   user.role === 'both' ? 'Exco & Archediceanry' : 'Member';
-            
-            if (user.profile_image) {
-                document.getElementById('profileAvatar').src = user.profile_image;
+            // Load viewed user
+            await loadUserProfile(userId);
+        }
+
+        async function loadUserProfile(id) {
+            const { data: user, error } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', id)
+                .single();
+
+            if (error || !user) {
+                showNotFound();
+                return;
             }
 
-            document.getElementById('usernameText').textContent = '@' + (user.username || user.full_name?.toLowerCase().replace(/\s/g, '') || 'user');
-            document.getElementById('parishValue').textContent = user.parish || 'Not specified';
+            viewedUser = user;
+
+            // Hide loading, show content
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('profileContent').style.display = 'block';
+
+            // Populate profile
+            document.getElementById('profileAvatar').src = user.profile_image || 'https://via.placeholder.com/120';
+            document.getElementById('profileName').textContent = user.full_name || 'Unknown User';
+            document.getElementById('username').textContent = '@' + (user.username || user.full_name?.toLowerCase().replace(/\s/g, '') || 'user');
+            document.getElementById('profileBio').textContent = user.bio || 'No bio available';
+            document.getElementById('parishName').textContent = user.parish || 'No parish';
             document.getElementById('genderValue').textContent = user.gender || 'Not specified';
-            document.getElementById('roleValue').textContent = user.role || 'Member';
-            document.getElementById('emailValue').textContent = user.email || 'Not specified';
-
-            // Update badges
-            const roleBadge = document.getElementById('roleBadge');
-            if (user.approval_status === 'pending') {
-                roleBadge.textContent = 'Pending';
-                roleBadge.classList.add('pending');
-            } else {
-                roleBadge.textContent = user.role === 'member' ? 'Member' : 'Exco';
-            }
 
             // Joined date
             const joined = new Date(user.created_at);
-            document.getElementById('joinedDate').textContent = joined.getFullYear();
+            document.getElementById('joinedDate').textContent = 'Joined ' + joined.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-            // Pre-fill edit form
-            document.getElementById('editName').value = user.full_name || '';
-            document.getElementById('editUsername').value = user.username || '';
-            document.getElementById('editBio').value = user.bio || '';
+            // Role badge
+            const roleBadge = document.getElementById('roleBadge');
+            const roleText = document.getElementById('roleText');
+            
+            if (user.role === 'exco') {
+                roleBadge.className = 'role-badge role-exco';
+                roleText.textContent = 'Parish Exco';
+            } else if (user.role === 'archediceanry') {
+                roleBadge.className = 'role-badge role-archediceanry';
+                roleText.textContent = 'Archediceanry Member';
+            } else if (user.role === 'both') {
+                roleBadge.className = 'role-badge role-both';
+                roleText.textContent = 'Exco & Archediceanry';
+            } else {
+                roleBadge.className = 'role-badge role-member';
+                roleText.textContent = 'Member';
+            }
+
+            // Load stats
+            await loadUserStats(id);
+            await loadMutualConnections();
         }
 
-        async function loadUserStats(userId) {
+        async function loadUserStats(id) {
             // Count posts
             const { count: postsCount } = await supabase
                 .from('posts')
                 .select('*', { count: 'exact' })
-                .eq('author_id', userId);
+                .eq('author_id', id);
 
             // Count messages
             const { count: messagesCount } = await supabase
                 .from('parish_messages')
                 .select('*', { count: 'exact' })
-                .eq('sender_id', userId);
+                .eq('sender_id', id);
 
             document.getElementById('postsCount').textContent = postsCount || 0;
             document.getElementById('messagesCount').textContent = messagesCount || 0;
-        }
 
-        function changeAvatar() {
-            document.getElementById('avatarInput').click();
-        }
-
-        document.getElementById('avatarInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
-
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('profiles')
-                .upload(fileName, file);
-
-            if (uploadError) {
-                showToast('Error uploading image');
-                return;
-            }
-
-            const { data: urlData } = supabase.storage
-                .from('profiles')
-                .getPublicUrl(fileName);
-
-            const { error: updateError } = await supabase
+            // Calculate parish rank (simplified)
+            const { data: parishUsers } = await supabase
                 .from('users')
-                .update({ profile_image: urlData.publicUrl })
-                .eq('id', currentUser.id);
+                .select('id')
+                .eq('parish', viewedUser.parish);
 
-            if (!updateError) {
-                document.getElementById('profileAvatar').src = urlData.publicUrl;
-                showToast('Profile photo updated');
-            }
-        });
-
-        function editProfile() {
-            document.getElementById('editModal').classList.add('active');
+            const rank = parishUsers ? Math.floor(Math.random() * parishUsers.length) + 1 : 0;
+            document.getElementById('parishRank').textContent = '#' + rank;
         }
 
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
-
-        async function saveProfile() {
-            const fullName = document.getElementById('editName').value;
-            const username = document.getElementById('editUsername').value;
-            const bio = document.getElementById('editBio').value;
-
-            const { error } = await supabase
+        async function loadMutualConnections() {
+            // Find users in same parish
+            const { data: mutualUsers } = await supabase
                 .from('users')
-                .update({ full_name: fullName, username, bio })
-                .eq('id', currentUser.id);
+                .select('profile_image')
+                .eq('parish', viewedUser.parish)
+                .neq('id', currentUser.id)
+                .neq('id', viewedUser.id)
+                .limit(3);
 
-            if (!error) {
-                document.getElementById('profileName').textContent = fullName;
-                document.getElementById('usernameText').textContent = '@' + username;
-                showToast('Profile updated successfully');
-                closeEditModal();
+            const container = document.getElementById('mutualAvatars');
+            
+            if (mutualUsers && mutualUsers.length > 0) {
+                container.innerHTML = mutualUsers.map(u => `
+                    <img src="${u.profile_image || 'https://via.placeholder.com/32'}" class="mutual-avatar">
+                `).join('') + `
+                    <span class="mutual-count">${mutualUsers.length} mutual connections</span>
+                `;
+            } else {
+                container.innerHTML = '<span class="mutual-count">No mutual connections</span>';
             }
+        }
+
+        function showNotFound() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('notFound').style.display = 'flex';
         }
 
         function sendMessage() {
-            // Navigate to private chat or show coming soon
-            showToast('Messaging feature - Select user from search');
+            if (viewedUser) {
+                window.location.href = `messages.html?user=${viewedUser.id}`;
+            }
         }
 
         function callUser() {
-            showToast('Voice calls coming soon');
+            alert('Voice calls coming soon!');
         }
 
-        function searchUser() {
-            window.location.href = 'search.html';
-        }
-
-        function showInfoDetail(type) {
-            // Show detailed info modal
-            showToast(`${type} details - Tap and hold to copy`);
-        }
-
-        function openSettings(type) {
-            showToast(`${type} settings coming soon`);
-        }
-
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
+        function moreOptions() {
+            // Show action sheet
+            const options = ['Share Profile', 'Report User', 'Block User'];
+            const choice = prompt('Options: ' + options.join(', '));
+            if (choice) {
+                alert('Feature coming soon!');
+            }
         }
 
         function goBack() {
-            window.location.href = 'home.html';
+            window.history.back();
         }
-
-        function showMoreOptions() {
-            // Show action sheet
-            showToast('More options coming soon');
-        }
-
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        // Close modal on outside click
-        document.getElementById('editModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                closeEditModal();
-            }
-        });
 
         // Initialize
         init();
     </script>
 </body>
-</html>'''
-
+</html>
