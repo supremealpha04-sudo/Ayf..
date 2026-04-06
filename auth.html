@@ -7,17 +7,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 2rem;
             position: relative;
         }
+
+        /* Animated Background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -27,77 +34,153 @@
             z-index: -1;
             overflow: hidden;
         }
+
         .bg-animation::before {
             content: '';
             position: absolute;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 50%);
+            background: radial-gradient(circle, rgba(102,126,234,0.15) 0%, transparent 50%);
             animation: rotate 20s linear infinite;
         }
+
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(118,75,162,0.1) 0%, transparent 50%);
+            animation: rotate 25s linear infinite reverse;
+        }
+
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
+
         .auth-container {
             width: 100%;
             max-width: 500px;
             animation: fadeInUp 0.6s ease;
         }
+
         @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        .brand { text-align: center; margin-bottom: 2rem; }
+
+        /* Brand */
+        .brand {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
         .logo {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 20px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin: 0 auto 1rem;
             animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
         }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
-        .brand h1 { font-size: 1.8rem; color: white; margin-bottom: 0.3rem; }
-        .brand p { color: rgba(255,255,255,0.7); font-size: 0.9rem; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .brand h1 {
+            font-size: 2rem;
+            color: white;
+            margin-bottom: 0.3rem;
+        }
+
+        .brand p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Auth Card */
         .auth-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
             padding: 2rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
+
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 1rem;
             margin-bottom: 2rem;
             background: rgba(255,255,255,0.05);
-            border-radius: 50px;
+            border-radius: 60px;
             padding: 0.3rem;
         }
+
         .tab-btn {
             flex: 1;
             padding: 0.8rem;
             border: none;
             background: none;
-            color: white;
+            color: rgba(255,255,255,0.7);
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            border-radius: 50px;
+            border-radius: 60px;
             transition: all 0.3s;
         }
-        .tab-btn.active { background: linear-gradient(135deg, #667eea, #764ba2); }
-        .form { display: none; }
-        .form.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .form-group { margin-bottom: 1.2rem; }
-        label { display: block; margin-bottom: 0.5rem; color: rgba(255,255,255,0.9); font-size: 0.9rem; }
-        .input-group { position: relative; }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
+        }
+
+        /* Forms */
+        .form {
+            display: none;
+        }
+
+        .form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
         .input-group i {
             position: absolute;
             left: 1rem;
@@ -105,22 +188,37 @@
             transform: translateY(-50%);
             color: #667eea;
         }
+
         input, select {
             width: 100%;
             padding: 0.9rem 1rem 0.9rem 2.8rem;
             border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 12px;
+            border-radius: 16px;
             background: rgba(255,255,255,0.05);
             color: white;
             font-size: 1rem;
+            transition: all 0.3s;
         }
-        input:focus, select:focus { outline: none; border-color: #667eea; background: rgba(255,255,255,0.1); }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 0 3px rgba(102,126,234,0.2);
+        }
+
+        input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+
+        /* Radio Group */
         .radio-group {
             display: flex;
-            gap: 1rem;
+            gap: 1.5rem;
             margin-top: 0.5rem;
             flex-wrap: wrap;
         }
+
         .radio-group label {
             display: flex;
             align-items: center;
@@ -128,38 +226,127 @@
             cursor: pointer;
             margin-bottom: 0;
         }
+
+        .radio-group input {
+            width: auto;
+            padding: 0;
+            margin: 0;
+        }
+
         .asquared-options {
             background: rgba(102,126,234,0.1);
-            border-radius: 12px;
+            border-radius: 16px;
             padding: 1rem;
             margin-top: 0.5rem;
+            border: 1px solid rgba(102,126,234,0.3);
         }
+
+        .asquared-options p {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* Button */
         .btn {
             width: 100%;
             padding: 1rem;
             border: none;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 1rem;
         }
-        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Alert */
         .alert {
-            padding: 0.8rem;
-            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
             margin-bottom: 1rem;
             display: none;
+            align-items: center;
+            gap: 0.5rem;
         }
-        .alert.show { display: block; animation: slideIn 0.3s ease; }
-        .alert-error { background: rgba(245,101,101,0.2); border: 1px solid #f56565; color: #f56565; }
-        .alert-success { background: rgba(72,187,120,0.2); border: 1px solid #48bb78; color: #48bb78; }
+
+        .alert.show {
+            display: flex;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-error {
+            background: rgba(245,101,101,0.2);
+            border: 1px solid #f56565;
+            color: #f56565;
+        }
+
+        .alert-success {
+            background: rgba(72,187,120,0.2);
+            border: 1px solid #48bb78;
+            color: #48bb78;
+        }
+
+        /* Forgot Password Link */
+        .forgot-link {
+            text-align: right;
+            margin-top: 0.5rem;
+        }
+
+        .forgot-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-size: 0.8rem;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            body { padding: 1rem; }
-            .auth-card { padding: 1.5rem; }
-            .brand h1 { font-size: 1.5rem; }
+            body {
+                padding: 1rem;
+            }
+            
+            .auth-card {
+                padding: 1.5rem;
+            }
+            
+            .brand h1 {
+                font-size: 1.5rem;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
         }
     </style>
 </head>
@@ -174,13 +361,16 @@
         </div>
 
         <div class="auth-card">
+            <!-- Tabs -->
             <div class="tabs">
                 <button class="tab-btn active" data-tab="login">Login</button>
                 <button class="tab-btn" data-tab="register">Register</button>
             </div>
 
+            <!-- Login Form -->
             <div class="form active" id="loginForm">
                 <div class="alert" id="loginAlert"></div>
+                
                 <div class="form-group">
                     <label>Email Address</label>
                     <div class="input-group">
@@ -188,18 +378,25 @@
                         <input type="email" id="loginEmail" placeholder="your@email.com">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Password</label>
                     <div class="input-group">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="loginPassword" placeholder="Enter your password">
                     </div>
+                    <div class="forgot-link">
+                        <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                    </div>
                 </div>
+
                 <button class="btn btn-primary" id="loginBtn">Login</button>
             </div>
 
+            <!-- Register Form -->
             <div class="form" id="registerForm">
                 <div class="alert" id="registerAlert"></div>
+
                 <div class="form-group">
                     <label>Full Name</label>
                     <div class="input-group">
@@ -207,6 +404,7 @@
                         <input type="text" id="regFullName" placeholder="Enter your full name">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Email Address</label>
                     <div class="input-group">
@@ -214,6 +412,7 @@
                         <input type="email" id="regEmail" placeholder="your@email.com">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Password</label>
                     <div class="input-group">
@@ -221,6 +420,7 @@
                         <input type="password" id="regPassword" placeholder="Create a password (min 6 characters)">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Confirm Password</label>
                     <div class="input-group">
@@ -228,6 +428,7 @@
                         <input type="password" id="regConfirmPassword" placeholder="Confirm your password">
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Select Parish</label>
                     <div class="input-group">
@@ -240,17 +441,25 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>A-Squared Membership (Optional)</label>
                     <div class="radio-group">
-                        <label><input type="radio" name="aSquared" value="none" checked> No</label>
-                        <label><input type="radio" name="aSquared" value="parish"> Parish A-Squared</label>
-                        <label><input type="radio" name="aSquared" value="archdeaconry"> Archdeaconry A-Squared</label>
+                        <label>
+                            <input type="radio" name="aSquared" value="none" checked> No
+                        </label>
+                        <label>
+                            <input type="radio" name="aSquared" value="parish"> Parish A-Squared (Local Executive)
+                        </label>
+                        <label>
+                            <input type="radio" name="aSquared" value="archdeaconry"> Archdeaconry A-Squared (IC3A / ASGSK)
+                        </label>
                     </div>
                     <div class="asquared-options" id="asquaredOptions" style="display: none;">
-                        <p style="font-size: 0.8rem;">After registration, your request will be sent to the admin for verification.</p>
+                        <p><i class="fas fa-info-circle"></i> After registration, your request will be sent to the admin for verification. Upon approval, you'll receive a leadership tag.</p>
                     </div>
                 </div>
+
                 <button class="btn btn-primary" id="registerBtn">Create Account</button>
             </div>
         </div>
@@ -258,6 +467,7 @@
 
     <script src="supabase/client.js"></script>
     <script>
+        // Tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const tab = btn.dataset.tab;
@@ -269,9 +479,11 @@
             });
         });
 
+        // Show/hide A-Squared options
         document.querySelectorAll('input[name="aSquared"]').forEach(radio => {
             radio.addEventListener('change', () => {
-                document.getElementById('asquaredOptions').style.display = radio.value !== 'none' ? 'block' : 'none';
+                const options = document.getElementById('asquaredOptions');
+                options.style.display = radio.value !== 'none' ? 'block' : 'none';
             });
         });
 
@@ -284,35 +496,42 @@
             element.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
             element.classList.add('show');
             element.className = `alert alert-${type} show`;
-            setTimeout(() => element.classList.remove('show'), 5000);
+            setTimeout(() => {
+                element.classList.remove('show');
+            }, 5000);
         }
 
+        // Handle Login
         document.getElementById('loginBtn').addEventListener('click', async () => {
             const email = document.getElementById('loginEmail').value.trim();
             const password = document.getElementById('loginPassword').value;
             const alertEl = document.getElementById('loginAlert');
+            const loginBtn = document.getElementById('loginBtn');
             
             if (!email || !password) {
                 showAlert(alertEl, 'Please enter both email and password', 'error');
                 return;
             }
             
-            const btn = document.getElementById('loginBtn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            btn.disabled = true;
+            // Show loading state
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+            loginBtn.disabled = true;
             
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            const result = await window.login(email, password);
             
-            if (error) {
-                showAlert(alertEl, error.message, 'error');
-                btn.innerHTML = 'Login';
-                btn.disabled = false;
-            } else {
+            if (result.success) {
                 showAlert(alertEl, 'Login successful! Redirecting...', 'success');
-                setTimeout(() => window.location.href = 'index.html', 1500);
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } else {
+                showAlert(alertEl, result.error, 'error');
+                loginBtn.innerHTML = 'Login';
+                loginBtn.disabled = false;
             }
         });
 
+        // Handle Register
         document.getElementById('registerBtn').addEventListener('click', async () => {
             const fullName = document.getElementById('regFullName').value.trim();
             const email = document.getElementById('regEmail').value.trim();
@@ -322,57 +541,104 @@
             const aSquaredRadio = document.querySelector('input[name="aSquared"]:checked');
             const aSquaredValue = aSquaredRadio ? aSquaredRadio.value : 'none';
             const alertEl = document.getElementById('registerAlert');
+            const registerBtn = document.getElementById('registerBtn');
             
-            if (!fullName) { showAlert(alertEl, 'Please enter your full name', 'error'); return; }
-            if (!email) { showAlert(alertEl, 'Please enter your email', 'error'); return; }
-            if (!email.includes('@')) { showAlert(alertEl, 'Please enter a valid email', 'error'); return; }
-            if (!password) { showAlert(alertEl, 'Please create a password', 'error'); return; }
-            if (password.length < 6) { showAlert(alertEl, 'Password must be at least 6 characters', 'error'); return; }
-            if (password !== confirmPassword) { showAlert(alertEl, 'Passwords do not match', 'error'); return; }
-            if (!parish) { showAlert(alertEl, 'Please select your parish', 'error'); return; }
-            
-            const btn = document.getElementById('registerBtn');
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-            btn.disabled = true;
-            
-            const { data, error } = await supabaseClient.auth.signUp({
-                email, password,
-                options: { data: { full_name: fullName, parish: parish } }
-            });
-            
-            if (error) {
-                showAlert(alertEl, error.message, 'error');
-                btn.innerHTML = 'Create Account';
-                btn.disabled = false;
+            // Validation
+            if (!fullName) {
+                showAlert(alertEl, 'Please enter your full name', 'error');
                 return;
             }
             
-            const aSquaredRequested = aSquaredValue !== 'none';
-            const aSquaredType = aSquaredValue === 'parish' ? 'Parish A-Squared' : aSquaredValue === 'archdeaconry' ? 'Archdeaconry A-Squared' : null;
+            if (!email) {
+                showAlert(alertEl, 'Please enter your email', 'error');
+                return;
+            }
             
-            await supabaseClient.from('profiles').insert([{
-                id: data.user.id,
-                full_name: fullName,
-                email: email,
-                parish: parish,
-                role: 'user',
-                is_a_squared: false,
-                a_squared_requested: aSquaredRequested,
-                a_squared_type: aSquaredType
-            }]);
+            if (!email.includes('@')) {
+                showAlert(alertEl, 'Please enter a valid email address', 'error');
+                return;
+            }
             
-            let successMsg = 'Account created! Please check your email to verify.';
-            if (aSquaredRequested) successMsg += '\n\nA-Squared request sent to admin.';
-            showAlert(alertEl, successMsg, 'success');
+            if (!password) {
+                showAlert(alertEl, 'Please create a password', 'error');
+                return;
+            }
             
-            setTimeout(() => {
-                document.querySelector('.tab-btn[data-tab="login"]').click();
-                document.getElementById('loginEmail').value = email;
-            }, 2000);
+            if (password.length < 6) {
+                showAlert(alertEl, 'Password must be at least 6 characters', 'error');
+                return;
+            }
             
-            btn.innerHTML = 'Create Account';
-            btn.disabled = false;
+            if (password !== confirmPassword) {
+                showAlert(alertEl, 'Passwords do not match', 'error');
+                return;
+            }
+            
+            if (!parish) {
+                showAlert(alertEl, 'Please select your parish', 'error');
+                return;
+            }
+            
+            // Show loading state
+            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+            registerBtn.disabled = true;
+            
+            const aSquaredType = aSquaredValue !== 'none' ? aSquaredValue : null;
+            const result = await window.register(fullName, email, password, parish, aSquaredType);
+            
+            if (result.success) {
+                showAlert(alertEl, 'Account created! Please check your email to verify.', 'success');
+                
+                // Clear form
+                document.getElementById('regFullName').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regConfirmPassword').value = '';
+                document.getElementById('regParish').value = '';
+                document.querySelector('input[name="aSquared"][value="none"]').checked = true;
+                document.getElementById('asquaredOptions').style.display = 'none';
+                
+                // Switch to login tab after 2 seconds
+                setTimeout(() => {
+                    document.querySelector('.tab-btn[data-tab="login"]').click();
+                    document.getElementById('loginEmail').value = email;
+                }, 2000);
+            } else {
+                showAlert(alertEl, result.error, 'error');
+            }
+            
+            registerBtn.innerHTML = 'Create Account';
+            registerBtn.disabled = false;
         });
+
+        // Forgot password
+        function showForgotPassword() {
+            const email = prompt('Enter your email address to reset your password:');
+            if (email && email.includes('@')) {
+                window.resetPassword(email);
+            } else if (email) {
+                alert('Please enter a valid email address');
+            }
+        }
+
+        // Enter key submission
+        document.getElementById('loginPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('loginBtn').click();
+        });
+        
+        document.getElementById('regConfirmPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('registerBtn').click();
+        });
+
+        // Check if already logged in
+        async function checkAlreadyLoggedIn() {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        checkAlreadyLoggedIn();
     </script>
 </body>
 </html>
