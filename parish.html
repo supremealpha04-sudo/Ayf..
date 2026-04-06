@@ -3,373 +3,276 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Parish Community | AYF Gwarimpa</title>
+    <title>Parish Chat | AYF Gwarimpa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
+            background: #0a0a0a;
             color: white;
-            min-height: 100vh;
-            padding-bottom: 80px;
+            height: 100vh;
+            overflow: hidden;
         }
-        
+        /* Header */
         .header {
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            background: #075E54;
+            padding: 0.8rem 1rem;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 1rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        .back-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+        .chat-info { flex: 1; }
+        .chat-info h3 { font-size: 1rem; }
+        .chat-info p { font-size: 0.7rem; opacity: 0.8; }
+        .online-dot { width: 8px; height: 8px; background: #25D366; border-radius: 50%; display: inline-block; margin-right: 0.3rem; }
         
-        .logo {
+        /* Chat Area */
+        .chat-container { display: flex; flex-direction: column; height: calc(100vh - 60px); }
+        .messages-area { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .message {
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
+            gap: 0.5rem;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease;
         }
-        
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .nav-links { display: flex; gap: 1rem; }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        .nav-links a:hover { background: rgba(102,126,234,0.2); }
-        
-        .parish-header {
-            text-align: center;
-            padding: 3rem 2rem;
-            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
-        }
-        
-        .parish-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
-        
-        .parish-selector {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            padding: 1.5rem;
-            flex-wrap: wrap;
-            background: rgba(255,255,255,0.03);
-        }
-        
-        .parish-btn {
-            padding: 0.8rem 1.5rem;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-        
-        .parish-btn.active, .parish-btn:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            transform: translateY(-2px);
-        }
-        
-        .content-area {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        .tabs {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 0.5rem;
-        }
-        
-        .tab-btn {
-            padding: 0.8rem 1.5rem;
-            background: none;
-            border: none;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-        
-        .tab-btn.active {
-            color: #667eea;
-            border-bottom: 2px solid #667eea;
-        }
-        
-        .feed-item {
-            background: rgba(255,255,255,0.08);
-            border-radius: 20px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            transition: all 0.3s;
-        }
-        
-        .feed-item:hover {
-            transform: translateX(5px);
-            background: rgba(255,255,255,0.12);
-        }
-        
-        .feed-header {
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            margin-bottom: 0.8rem;
-        }
-        
-        .feed-avatar {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+        .message.sent { align-self: flex-end; flex-direction: row-reverse; }
+        .message-avatar {
+            width: 35px; height: 35px;
+            background: #25D366;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.8rem;
+            flex-shrink: 0;
         }
-        
-        .member-item {
-            background: rgba(255,255,255,0.08);
-            border-radius: 16px;
-            padding: 1rem;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transition: all 0.3s;
+        .message-bubble {
+            background: #1f2c34;
+            padding: 0.6rem 1rem;
+            border-radius: 18px;
+            max-width: 100%;
         }
-        
-        .member-item:hover {
-            transform: translateX(5px);
-            background: rgba(255,255,255,0.12);
-        }
-        
-        .member-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-        
+        .message.sent .message-bubble { background: #005C4B; }
+        .message-sender { font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.2rem; }
         .leadership-tag {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            background: #48bb78;
-            border-radius: 50px;
-            display: inline-block;
-            margin-left: 0.5rem;
+            font-size: 0.6rem; padding: 0.1rem 0.3rem;
+            background: #48bb78; border-radius: 50px;
+            margin-left: 0.3rem;
         }
+        .message-time { font-size: 0.6rem; opacity: 0.5; margin-top: 0.2rem; text-align: right; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Input Area */
+        .input-area {
+            background: #1f2c34;
+            padding: 0.8rem;
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid #2a3942;
+        }
+        .input-area input {
+            flex: 1;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 25px;
+            background: #2a3942;
+            color: white;
+            font-family: inherit;
+        }
+        .send-btn {
+            width: 45px; height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: #25D366;
+            color: white;
+            cursor: pointer;
+        }
+        .attach-btn {
+            width: 45px; height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: #2a3942;
+            color: white;
+            cursor: pointer;
+        }
+        
+        /* Parish Selector Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #1f2c34;
+            border-radius: 20px;
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 350px;
+        }
+        .parish-option {
+            padding: 1rem;
+            margin: 0.5rem 0;
+            background: #2a3942;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .parish-option:hover { background: #3b4a54; }
         
         .footer-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: space-around;
-            padding: 0.8rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
+            display: none;
         }
-        
-        .footer-nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            color: #888;
-            text-decoration: none;
-            font-size: 0.7rem;
-            transition: all 0.3s;
-        }
-        
-        .footer-nav-item i { font-size: 1.3rem; }
-        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; transform: translateY(-3px); }
         
         @media (max-width: 768px) {
-            .parish-header h1 { font-size: 1.5rem; }
-            .nav-links { display: none; }
-            .content-area { padding: 1rem; }
-            .tabs { gap: 0.5rem; }
-            .tab-btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
+            .message { max-width: 90%; }
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="logo" onclick="window.location.href='index.html'">
-            <div class="logo-icon">⛪</div>
-            <div class="logo-text">
-                <h1>AYF Gwarimpa</h1>
-                <p>Arise & Shine</p>
+    <div class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'"><i class="fas fa-arrow-left"></i></button>
+        <div class="chat-info">
+            <h3 id="chatTitle">Select a Parish</h3>
+            <p><span class="online-dot"></span> <span id="memberCount">0</span> members online</p>
+        </div>
+        <button class="back-btn" onclick="showParishSelector()"><i class="fas fa-users"></i></button>
+    </div>
+
+    <div class="chat-container">
+        <div class="messages-area" id="messagesArea">
+            <div style="text-align:center; padding:2rem; opacity:0.5;">
+                <i class="fas fa-comments" style="font-size:3rem;"></i>
+                <p>Select a parish to start chatting</p>
             </div>
         </div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="plan.html">Plan</a>
-            <a href="parish.html">Parish</a>
-            <a href="profile.html">Profile</a>
+        <div class="input-area" id="inputArea" style="display:none;">
+            <button class="attach-btn" id="attachBtn"><i class="fas fa-paperclip"></i></button>
+            <input type="text" id="messageInput" placeholder="Type a message...">
+            <button class="send-btn" id="sendBtn"><i class="fas fa-paper-plane"></i></button>
         </div>
-    </header>
-
-    <div class="parish-header">
-        <h1 id="parishTitle">St. Mathus Anglican Church</h1>
-        <p>Connect, share, and grow together in faith</p>
     </div>
 
-    <div class="parish-selector">
-        <button class="parish-btn active" data-parish="St. Mathus Anglican Church">St. Mathus</button>
-        <button class="parish-btn" data-parish="St. Philip Anglican Church">St. Philip</button>
-        <button class="parish-btn" data-parish="St. Barnabas Jaiyuan">St. Barnabas</button>
-    </div>
-
-    <div class="content-area">
-        <div class="tabs">
-            <button class="tab-btn active" data-tab="feed">📱 Parish Feed</button>
-            <button class="tab-btn" data-tab="members">👥 Members</button>
+    <div class="modal" id="parishModal">
+        <div class="modal-content">
+            <h3 style="margin-bottom:1rem;">Select Parish</h3>
+            <div class="parish-option" onclick="selectParish('St. Mathus Anglican Church')">St. Mathus Anglican Church</div>
+            <div class="parish-option" onclick="selectParish('St. Philip Anglican Church')">St. Philip Anglican Church</div>
+            <div class="parish-option" onclick="selectParish('St. Barnabas Jaiyuan')">St. Barnabas Jaiyuan</div>
+            <button class="send-btn" style="margin-top:1rem; width:100%;" onclick="closeParishSelector()">Cancel</button>
         </div>
-
-        <div id="feedTab" class="tab-content active"></div>
-        <div id="membersTab" class="tab-content" style="display:none;"></div>
     </div>
 
-    <div class="footer-nav">
-        <a href="index.html" class="footer-nav-item"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="plan.html" class="footer-nav-item"><i class="fas fa-calendar-alt"></i><span>Plan</span></a>
-        <a href="parish.html" class="footer-nav-item active"><i class="fas fa-church"></i><span>Parish</span></a>
-        <a href="profile.html" class="footer-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
-    </div>
-
-    <script src="supabase/client.js"></script>
     <script>
-        let currentParish = "St. Mathus Anglican Church";
+        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        const parishFeeds = {
+        let currentUser = null;
+        let currentParish = null;
+        let currentProfile = null;
+        
+        // Sample messages data
+        const messagesData = {
             "St. Mathus Anglican Church": [
-                { title: "Sunday Service", content: "Join us this Sunday for our weekly service at 9am. Guest speaker: Rev. Michael Okonkwo.", date: "2026-01-12", author: "Parish Admin" },
-                { title: "Bible Study", content: "Wednesday Bible Study at 6pm. Topic: 'The Power of Prayer'.", date: "2026-01-10", author: "Pastor John" },
-                { title: "Youth Meeting", content: "Youth fellowship meeting every Friday at 4pm. Come with your friends!", date: "2026-01-09", author: "Youth Leader" }
+                { sender: "John Okonkwo", message: "Good morning everyone! Welcome to St. Mathus Parish chat.", time: "10:30 AM", tag: "President - St. Mathus", isSent: false },
+                { sender: "Mary Okafor", message: "Don't forget our Bible study today at 6pm!", time: "11:00 AM", tag: "Secretary - St. Mathus", isSent: false },
+                { sender: "You", message: "I'll be there!", time: "11:05 AM", tag: null, isSent: true }
             ],
             "St. Philip Anglican Church": [
-                { title: "Harvest Thanksgiving", content: "Join us for our annual harvest celebration on January 25th. Theme: 'Bountiful Blessings'.", date: "2026-01-25", author: "Church Council" },
-                { title: "Prayer Vigil", content: "Monthly prayer vigil on January 30th from 10pm to 5am.", date: "2026-01-30", author: "Prayer Ministry" },
-                { title: "Choir Practice", content: "Choir practice every Saturday at 2pm. New members welcome!", date: "2026-01-11", author: "Choir Master" }
+                { sender: "David Nnamdi", message: "Happy new week family! Stay blessed.", time: "9:00 AM", tag: "President - St. Philip", isSent: false },
+                { sender: "Sarah Obi", message: "Harvest thanksgiving planning meeting today at 3pm.", time: "10:00 AM", tag: "PRO - St. Philip", isSent: false }
             ],
             "St. Barnabas Jaiyuan": [
-                { title: "Leadership Training", content: "Leadership training for all department heads on January 20th at 10am.", date: "2026-01-20", author: "Pastor" },
-                { title: "Outreach Program", content: "Community outreach to orphanage on January 18th. Volunteers needed!", date: "2026-01-18", author: "Outreach Team" },
-                { title: "Baptism Service", content: "Baptism service for new members on January 26th at 8am.", date: "2026-01-26", author: "Clergy" }
+                { sender: "Emeka Okafor", message: "Leadership training this Saturday. All executives must attend.", time: "8:00 AM", tag: "President - St. Barnabas", isSent: false },
+                { sender: "Chidinma Eze", message: "Prayer meeting at 6pm today. Join us!", time: "9:30 AM", tag: "Secretary - St. Barnabas", isSent: false }
             ]
         };
         
-        const members = {
-            "St. Mathus Anglican Church": [
-                { name: "John Okonkwo", role: "President", tag: "President - St. Mathus", avatar: "JO" },
-                { name: "Mary Okafor", role: "Secretary", tag: "Secretary - St. Mathus", avatar: "MO" },
-                { name: "Peter Eze", role: "Member", tag: null, avatar: "PE" },
-                { name: "Grace Nwosu", role: "Treasurer", tag: "Treasurer - St. Mathus", avatar: "GN" }
-            ],
-            "St. Philip Anglican Church": [
-                { name: "David Nnamdi", role: "President", tag: "President - St. Philip", avatar: "DN" },
-                { name: "Sarah Obi", role: "PRO", tag: "PRO - St. Philip", avatar: "SO" },
-                { name: "Michael Ugwu", role: "Member", tag: null, avatar: "MU" }
-            ],
-            "St. Barnabas Jaiyuan": [
-                { name: "Emeka Okafor", role: "President", tag: "President - St. Barnabas", avatar: "EO" },
-                { name: "Chidinma Eze", role: "Secretary", tag: "Secretary - St. Barnabas", avatar: "CE" }
-            ]
-        };
-        
-        function renderParishContent() {
-            document.getElementById('parishTitle').innerHTML = currentParish;
-            renderFeed();
-            renderMembers();
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'auth.html';
+                return;
+            }
+            currentUser = session.user;
+            const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
+            currentProfile = profile;
+            // Auto-select user's parish
+            if (profile?.parish) {
+                selectParish(profile.parish);
+            } else {
+                showParishSelector();
+            }
         }
         
-        function renderFeed() {
-            const feed = parishFeeds[currentParish];
-            const container = document.getElementById('feedTab');
-            container.innerHTML = feed.map(item => `
-                <div class="feed-item">
-                    <div class="feed-header">
-                        <div class="feed-avatar"><i class="fas fa-user"></i></div>
-                        <div>
-                            <strong>${item.author}</strong>
-                            <br><small>${new Date(item.date).toLocaleDateString()}</small>
-                        </div>
-                    </div>
-                    <h3 style="margin-bottom:0.5rem;">${item.title}</h3>
-                    <p>${item.content}</p>
-                </div>
-            `).join('');
+        function showParishSelector() {
+            document.getElementById('parishModal').style.display = 'flex';
         }
         
-        function renderMembers() {
-            const membersList = members[currentParish];
-            const container = document.getElementById('membersTab');
-            container.innerHTML = membersList.map(m => `
-                <div class="member-item">
-                    <div class="member-avatar">${m.avatar}</div>
-                    <div>
-                        <strong>${m.name}</strong>
-                        ${m.tag ? `<span class="leadership-tag">${m.tag}</span>` : ''}
-                        <br><small>${m.role}</small>
+        function closeParishSelector() {
+            document.getElementById('parishModal').style.display = 'none';
+        }
+        
+        function selectParish(parish) {
+            currentParish = parish;
+            document.getElementById('chatTitle').innerHTML = parish;
+            document.getElementById('inputArea').style.display = 'flex';
+            closeParishSelector();
+            loadMessages();
+        }
+        
+        function loadMessages() {
+            const messages = messagesData[currentParish] || [];
+            const container = document.getElementById('messagesArea');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.isSent ? 'sent' : 'received'}">
+                    <div class="message-avatar">${msg.sender[0]}</div>
+                    <div class="message-bubble">
+                        ${!msg.isSent ? `<div class="message-sender">${msg.sender}${msg.tag ? `<span class="leadership-tag">${msg.tag}</span>` : ''}</div>` : ''}
+                        <div>${msg.message}</div>
+                        <div class="message-time">${msg.time}</div>
                     </div>
                 </div>
             `).join('');
+            container.scrollTop = container.scrollHeight;
         }
         
-        // Parish selection
-        document.querySelectorAll('.parish-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.parish-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentParish = btn.dataset.parish;
-                renderParishContent();
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if (!message || !currentParish) return;
+            
+            if (!messagesData[currentParish]) messagesData[currentParish] = [];
+            messagesData[currentParish].push({
+                sender: currentProfile?.full_name || 'You',
+                message: message,
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                tag: currentProfile?.leadership_tag,
+                isSent: true
             });
-        });
+            input.value = '';
+            loadMessages();
+        }
         
-        // Tab switching
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                const tab = btn.dataset.tab;
-                document.getElementById('feedTab').style.display = tab === 'feed' ? 'block' : 'none';
-                document.getElementById('membersTab').style.display = tab === 'members' ? 'block' : 'none';
-            });
+        document.getElementById('sendBtn').addEventListener('click', sendMessage);
+        document.getElementById('messageInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
         });
+        document.getElementById('attachBtn').addEventListener('click', () => alert('File sharing coming soon!'));
         
-        renderParishContent();
+        init();
     </script>
 </body>
 </html>
