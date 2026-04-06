@@ -18,20 +18,17 @@
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
             min-height: 100vh;
             color: white;
+            padding-bottom: 70px;
         }
 
-        /* Header */
         .header {
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10,10,10,0.95);
             backdrop-filter: blur(10px);
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            position: sticky;
-            top: 0;
-            z-index: 100;
         }
 
         .logo {
@@ -42,10 +39,10 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 10px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -61,14 +58,8 @@
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
-            transition: all 0.3s;
         }
 
-        .nav-links a:hover {
-            background: rgba(102,126,234,0.2);
-        }
-
-        /* Profile Container */
         .profile-container {
             max-width: 600px;
             margin: 2rem auto;
@@ -80,18 +71,6 @@
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 2rem;
-            animation: fadeInUp 0.6s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .avatar-section {
@@ -109,19 +88,10 @@
             justify-content: center;
             font-size: 3rem;
             margin: 0 auto 1rem;
-            border: 4px solid rgba(255,255,255,0.2);
-        }
-
-        .change-avatar {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            font-size: 0.9rem;
         }
 
         .info-field {
-            margin: 1.5rem 0;
+            margin: 1rem 0;
             padding: 1rem;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
@@ -147,7 +117,6 @@
             padding: 0.3rem 0.8rem;
             border-radius: 50px;
             font-size: 0.8rem;
-            font-weight: 600;
         }
 
         .stats-grid {
@@ -170,12 +139,6 @@
             color: #667eea;
         }
 
-        .stat-label {
-            font-size: 0.7rem;
-            opacity: 0.7;
-            margin-top: 0.3rem;
-        }
-
         .btn {
             width: 100%;
             padding: 1rem;
@@ -184,7 +147,6 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-family: inherit;
             margin-top: 1rem;
         }
 
@@ -198,158 +160,141 @@
             color: white;
         }
 
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #667eea;
+        .footer-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+        }
+
+        .footer-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            color: #888;
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+
+        .footer-nav-item i {
+            font-size: 1.3rem;
+        }
+
+        .footer-nav-item.active, .footer-nav-item:hover {
             color: #667eea;
         }
 
-        /* Registration Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-content {
-            background: #1a1a2e;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        input, select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 10px;
-            background: rgba(255,255,255,0.05);
-            color: white;
-            font-family: inherit;
-        }
-
-        .radio-group {
-            display: flex;
-            gap: 1rem;
-            margin-top: 0.5rem;
-        }
-
-        .radio-group label {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-        }
-
         @media (max-width: 768px) {
-            .profile-container {
-                padding: 1rem;
-                margin: 1rem;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+            .profile-container { padding: 1rem; margin: 1rem; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="header">
+    <header class="header">
         <div class="logo" onclick="window.location.href='index.html'">
-            <div class="logo-icon">✝️</div>
-            <h3>AYF Gwarimpa</h3>
+            <div class="logo-icon">👤</div>
+            <h3>My Profile</h3>
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
-            <a href="videos.html">Videos</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
-            <a href="profile.html" class="active">Profile</a>
+            <a href="profile.html">Profile</a>
         </div>
-    </div>
+    </header>
 
     <div class="profile-container" id="profileContainer"></div>
 
+    <div class="footer-nav">
+        <a href="index.html" class="footer-nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="plan.html" class="footer-nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Plan</span>
+        </a>
+        <a href="parish.html" class="footer-nav-item">
+            <i class="fas fa-church"></i>
+            <span>Parish</span>
+        </a>
+        <a href="profile.html" class="footer-nav-item active">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </div>
+
     <script src="supabase/client.js"></script>
     <script>
-        let currentUser = null;
-        let currentProfile = null;
-
-        async function loadProfile() {
+        // Check if user is logged in
+        async function checkAuth() {
             const { data: { session } } = await supabaseClient.auth.getSession();
-            const container = document.getElementById('profileContainer');
-            
             if (!session) {
-                container.innerHTML = `
-                    <div class="profile-card">
-                        <div class="avatar-section">
-                            <div class="avatar">👤</div>
-                        </div>
-                        <h2 style="text-align:center; margin-bottom:1rem;">Welcome to AYF</h2>
-                        <p style="text-align:center; opacity:0.7; margin-bottom:2rem;">Join our community of young leaders</p>
-                        <button onclick="showRegisterModal()" class="btn btn-primary">Create Account</button>
-                        <button onclick="showLoginModal()" class="btn btn-outline">Login</button>
-                    </div>
-                `;
+                window.location.href = 'auth.html';
                 return;
             }
+            return session;
+        }
+
+        async function loadProfile() {
+            const session = await checkAuth();
+            if (!session) return;
             
-            currentUser = session.user;
             const { data: profile } = await supabaseClient
                 .from('profiles')
                 .select('*')
                 .eq('id', session.user.id)
                 .single();
-            currentProfile = profile;
             
-            // Get user stats
-            const { data: userLikes } = await supabaseClient.from('likes').select('id').eq('user_id', session.user.id);
-            const { data: userComments } = await supabaseClient.from('comments').select('id').eq('user_id', session.user.id);
+            const container = document.getElementById('profileContainer');
+            
+            // If no profile exists, create one with default data
+            if (!profile) {
+                await supabaseClient.from('profiles').insert([{
+                    id: session.user.id,
+                    full_name: session.user.email.split('@')[0],
+                    email: session.user.email,
+                    parish: "St. Mathus Anglican Church",
+                    role: "user",
+                    is_a_squared: false
+                }]);
+                loadProfile();
+                return;
+            }
             
             container.innerHTML = `
                 <div class="profile-card">
                     <div class="avatar-section">
-                        <div class="avatar">${(profile?.full_name?.[0] || session.user.email?.[0] || 'U').toUpperCase()}</div>
-                        <button class="change-avatar" onclick="alert('Avatar upload coming soon!')"><i class="fas fa-camera"></i> Change</button>
+                        <div class="avatar">${(profile.full_name?.[0] || session.user.email[0]).toUpperCase()}</div>
+                        <button class="btn" style="width:auto; padding:0.5rem 1rem; background:rgba(255,255,255,0.1);" onclick="alert('Avatar upload coming soon!')">Change Avatar</button>
                     </div>
                     
                     <div class="info-field">
                         <div class="info-label">Full Name</div>
-                        <div class="info-value">${profile?.full_name || 'Not set'} <i class="fas fa-pen" style="cursor:pointer; font-size:0.8rem; opacity:0.5;" onclick="editField('full_name')"></i></div>
+                        <div class="info-value">${profile.full_name || session.user.email.split('@')[0]}</div>
                     </div>
                     
                     <div class="info-field">
-                        <div class="info-label">Email</div>
+                        <div class="info-label">Email Address</div>
                         <div class="info-value">${session.user.email}</div>
                     </div>
                     
                     <div class="info-field">
                         <div class="info-label">Parish</div>
-                        <div class="info-value">${profile?.parish || 'Not assigned'}</div>
+                        <div class="info-value">${profile.parish || "Not assigned"}</div>
                     </div>
                     
-                    ${profile?.leadership_tag ? `
+                    ${profile.leadership_tag ? `
                         <div class="info-field">
                             <div class="info-label">Leadership Status</div>
                             <div class="info-value">
@@ -360,171 +305,53 @@
                     
                     <div class="stats-grid">
                         <div class="stat-item">
-                            <div class="stat-number">${userLikes?.length || 0}</div>
+                            <div class="stat-number">${profile.likes_given || 0}</div>
                             <div class="stat-label">Likes Given</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">${userComments?.length || 0}</div>
+                            <div class="stat-number">${profile.comments_made || 0}</div>
                             <div class="stat-label">Comments</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-number">${profile?.is_a_squared ? '✓' : '○'}</div>
+                            <div class="stat-number">${profile.is_a_squared ? '✓' : '○'}</div>
                             <div class="stat-label">A-Squared</div>
                         </div>
                     </div>
                     
-                    ${!profile?.a_squared_requested && !profile?.is_a_squared && profile?.role !== 'admin' ? `
-                        <button onclick="requestASquared()" class="btn btn-primary">
+                    ${!profile.is_a_squared ? `
+                        <button class="btn btn-primary" onclick="requestASquared()">
                             <i class="fas fa-star"></i> Request A-Squared Membership
                         </button>
-                    ` : profile?.a_squared_requested && !profile?.is_a_squared ? `
-                        <div style="text-align:center; padding:1rem; background:rgba(237,137,54,0.2); border-radius:16px;">
-                            <i class="fas fa-clock"></i> A-Squared Request Pending Admin Approval
-                        </div>
                     ` : ''}
                     
-                    <button onclick="logout()" class="btn btn-danger">
+                    <button class="btn btn-danger" onclick="logout()">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </button>
                 </div>
             `;
         }
-        
-        function editField(field) {
-            const newValue = prompt(`Enter new ${field}:`);
-            if (newValue) {
-                supabaseClient.from('profiles').update({ [field]: newValue }).eq('id', currentUser.id).then(() => loadProfile());
-            }
-        }
-        
+
         async function requestASquared() {
-            const aSquaredType = prompt('Select A-Squared type:\n1 - Parish A-Squared (Local Executives)\n2 - Archdeaconry A-Squared (IC3A / ASGSK)');
-            const type = aSquaredType === '1' ? 'Parish A-Squared' : 'Archdeaconry A-Squared';
+            const session = await checkAuth();
+            if (!session) return;
             
-            await supabaseClient.from('profiles').update({ 
-                a_squared_requested: true,
-                a_squared_type: type
-            }).eq('id', currentUser.id);
+            const type = confirm("Request Parish A-Squared? Click OK for Parish, Cancel for Archdeaconry");
+            const aSquaredType = type ? "Parish A-Squared" : "Archdeaconry A-Squared";
             
-            alert('Request submitted to admin! You will be notified upon approval.');
+            await supabaseClient
+                .from('profiles')
+                .update({ a_squared_requested: true, a_squared_type: aSquaredType })
+                .eq('id', session.user.id);
+            
+            alert("Request submitted to admin! You will be notified upon approval.");
             loadProfile();
         }
-        
-        function showRegisterModal() {
-            const modalHtml = `
-                <div id="regModal" class="modal" style="display:flex;">
-                    <div class="modal-content">
-                        <h2 style="margin-bottom:1rem;">Join AYF</h2>
-                        <div class="form-group">
-                            <label>Full Name</label>
-                            <input type="text" id="regName" placeholder="Enter your full name">
-                        </div>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="regEmail" placeholder="your@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" id="regPassword" placeholder="Create a password">
-                        </div>
-                        <div class="form-group">
-                            <label>Select Parish</label>
-                            <select id="regParish">
-                                <option value="St. Mathus Anglican Church">St. Mathus Anglican Church</option>
-                                <option value="St. Philip Anglican Church">St. Philip Anglican Church</option>
-                                <option value="St. Barnabas Jaiyuan">St. Barnabas Jaiyuan</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>A-Squared Membership (Optional)</label>
-                            <div class="radio-group">
-                                <label><input type="radio" name="aSquared" value="none" checked> None</label>
-                                <label><input type="radio" name="aSquared" value="parish"> Parish A-Squared</label>
-                                <label><input type="radio" name="aSquared" value="archdeaconry"> Archdeaconry A-Squared</label>
-                            </div>
-                        </div>
-                        <button onclick="register()" class="btn btn-primary">Register</button>
-                        <button onclick="closeModal()" class="btn btn-outline" style="margin-top:0.5rem;">Cancel</button>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-        }
-        
-        function showLoginModal() {
-            const modalHtml = `
-                <div id="loginModal" class="modal" style="display:flex;">
-                    <div class="modal-content">
-                        <h2 style="margin-bottom:1rem;">Login</h2>
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" id="loginEmail" placeholder="your@email.com">
-                        </div>
-                        <div class="form-group">
-                            <label>Password</label>
-                            <input type="password" id="loginPassword" placeholder="Password">
-                        </div>
-                        <button onclick="login()" class="btn btn-primary">Login</button>
-                        <button onclick="closeModal()" class="btn btn-outline" style="margin-top:0.5rem;">Cancel</button>
-                    </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-        }
-        
-        async function register() {
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const parish = document.getElementById('regParish').value;
-            const aSquaredRadio = document.querySelector('input[name="aSquared"]:checked');
-            const aSquaredType = aSquaredRadio?.value;
-            
-            const { data, error } = await supabaseClient.auth.signUp({ email, password });
-            if (error) {
-                alert('Error: ' + error.message);
-                return;
-            }
-            
-            await supabaseClient.from('profiles').insert([{
-                id: data.user.id,
-                full_name: name,
-                email: email,
-                parish: parish,
-                role: 'user',
-                a_squared_requested: aSquaredType !== 'none',
-                a_squared_type: aSquaredType === 'parish' ? 'Parish A-Squared' : aSquaredType === 'archdeaconry' ? 'Archdeaconry A-Squared' : null,
-                is_a_squared: false
-            }]);
-            
-            alert('Registration successful! Please check your email to verify.');
-            closeModal();
-            loadProfile();
-        }
-        
-        async function login() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) {
-                alert('Login failed: ' + error.message);
-                return;
-            }
-            
-            closeModal();
-            loadProfile();
-        }
-        
+
         async function logout() {
             await supabaseClient.auth.signOut();
-            loadProfile();
+            window.location.href = 'auth.html';
         }
-        
-        function closeModal() {
-            document.querySelectorAll('.modal').forEach(m => m.remove());
-        }
-        
+
         loadProfile();
     </script>
 </body>
