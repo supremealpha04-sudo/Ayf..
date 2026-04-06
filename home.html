@@ -1,0 +1,918 @@
+
+html_content = '''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYF GWARIMPA - Home</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #0f1419;
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header - Telegram Style */
+        .header {
+            background: #17212b;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #242f3d;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .menu-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #8a9aa8;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #8a9aa8;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        /* Category Filter */
+        .category-filter {
+            background: #17212b;
+            padding: 10px 16px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            border-bottom: 1px solid #242f3d;
+            scrollbar-width: none;
+        }
+
+        .category-filter::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-chip {
+            padding: 8px 16px;
+            background: #242f3d;
+            border-radius: 20px;
+            font-size: 13px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .category-chip:hover {
+            background: #2b3a4a;
+        }
+
+        .category-chip.active {
+            background: #2b5278;
+            border-color: #3a6d99;
+        }
+
+        /* Feed Container */
+        .feed-container {
+            padding: 16px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Post Card - Telegram Style */
+        .post-card {
+            background: #17212b;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border: 1px solid #242f3d;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .post-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #2b5278;
+        }
+
+        .post-meta {
+            flex: 1;
+        }
+
+        .post-author {
+            font-weight: 600;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #8a9aa8;
+        }
+
+        .post-category-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .badge-event { background: #ff6b6b; }
+        .badge-notice { background: #4ecdc4; }
+        .badge-post { background: #45b7d1; }
+        .badge-minutes { background: #96ceb4; }
+        .badge-plan { background: #feca57; color: #000; }
+
+        .post-content {
+            padding: 0 16px 12px;
+        }
+
+        .post-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .post-text {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #b0c4de;
+            margin-bottom: 12px;
+        }
+
+        .post-media {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            margin-bottom: 12px;
+            border-radius: 8px;
+        }
+
+        .post-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .countdown-timer {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 10px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .countdown-timer i {
+            font-size: 18px;
+        }
+
+        .countdown-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .post-actions {
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-top: 1px solid #242f3d;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #8a9aa8;
+            font-size: 14px;
+            transition: all 0.2s;
+            margin-right: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+        }
+
+        .action-btn.liked {
+            color: #ff6b6b;
+        }
+
+        .action-btn i {
+            font-size: 18px;
+        }
+
+        .action-spacer {
+            flex: 1;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            background: #0f1419;
+            border-top: 1px solid #242f3d;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .comments-section.expanded {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .comment {
+            padding: 12px 16px;
+            border-bottom: 1px solid #242f3d;
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .comment-time {
+            font-size: 11px;
+            color: #8a9aa8;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #b0c4de;
+            margin-left: 40px;
+            line-height: 1.4;
+        }
+
+        .comment-input-area {
+            padding: 12px 16px;
+            display: flex;
+            gap: 10px;
+            background: #17212b;
+        }
+
+        .comment-input {
+            flex: 1;
+            background: #242f3d;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .comment-input:focus {
+            outline: none;
+            background: #2b3a4a;
+        }
+
+        .send-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #2b5278;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #17212b;
+            border-top: 1px solid #242f3d;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 20px;
+            cursor: pointer;
+            color: #8a9aa8;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #3a6d99;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+        }
+
+        /* Loading */
+        .loading-posts {
+            text-align: center;
+            padding: 40px;
+            color: #8a9aa8;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #242f3d;
+            border-top-color: #3a6d99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8a9aa8;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Share Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #17212b;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .share-option:hover {
+            background: #242f3d;
+        }
+
+        .share-option i {
+            font-size: 28px;
+        }
+
+        .share-option span {
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="menu-btn" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div>
+                <div class="header-title">AYF GWARIMPA</div>
+                <div class="header-subtitle" id="onlineCount">Loading...</div>
+            </div>
+        </div>
+        <div class="header-actions">
+            <div class="icon-btn" onclick="openSearch()">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="icon-btn" onclick="goToProfile()">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Category Filter -->
+    <div class="category-filter">
+        <div class="category-chip active" data-category="all">All</div>
+        <div class="category-chip" data-category="event">Events</div>
+        <div class="category-chip" data-category="notice">Notices</div>
+        <div class="category-chip" data-category="post">Posts</div>
+        <div class="category-chip" data-category="minutes">Minutes</div>
+        <div class="category-chip" data-category="plan">Plans</div>
+    </div>
+
+    <!-- Feed Container -->
+    <div class="feed-container" id="feedContainer">
+        <div class="loading-posts">
+            <div class="spinner"></div>
+            <p>Loading updates...</p>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item active">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="parish.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Parish</span>
+        </a>
+        <a href="plan.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Plan</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <!-- Share Modal -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Share Update</h3>
+            <div class="share-options">
+                <div class="share-option" onclick="shareVia('whatsapp')">
+                    <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                    <span>WhatsApp</span>
+                </div>
+                <div class="share-option" onclick="shareVia('copy')">
+                    <i class="fas fa-link" style="color: #3a6d99;"></i>
+                    <span>Copy Link</span>
+                </div>
+                <div class="share-option" onclick="shareVia('native')">
+                    <i class="fas fa-share-alt" style="color: #667eea;"></i>
+                    <span>More</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_KEY = 'your-anon-key';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+        let posts = [];
+        let currentCategory = 'all';
+
+        // Initialize
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const { data: user } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+            
+            currentUser = user;
+            loadPosts();
+            setupRealtime();
+        }
+
+        // Load Posts
+        async function loadPosts() {
+            let query = supabase
+                .from('posts')
+                .select(`
+                    *,
+                    author:users(id, full_name, profile_image, parish),
+                    likes:post_likes(count),
+                    comments:comments(count)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (currentCategory !== 'all') {
+                query = query.eq('category', currentCategory);
+            }
+
+            const { data, error } = await query;
+
+            if (error) {
+                console.error('Error loading posts:', error);
+                return;
+            }
+
+            posts = data || [];
+            renderPosts();
+        }
+
+        // Render Posts
+        function renderPosts() {
+            const container = document.getElementById('feedContainer');
+            
+            if (posts.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>No updates available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = posts.map(post => createPostHTML(post)).join('');
+        }
+
+        // Create Post HTML
+        function createPostHTML(post) {
+            const timeAgo = getTimeAgo(post.created_at);
+            const badgeClass = `badge-${post.category}`;
+            const hasMedia = post.media_url ? true : false;
+            const isVideo = post.media_type === 'video';
+            
+            let countdownHTML = '';
+            if (post.category === 'event' && post.event_date) {
+                countdownHTML = `
+                    <div class="countdown-timer">
+                        <i class="fas fa-clock"></i>
+                        <span class="countdown-text" data-date="${post.event_date}">
+                            ${getCountdown(post.event_date)}
+                        </span>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="post-card" data-post-id="${post.id}">
+                    <div class="post-header">
+                        <img src="${post.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar" alt="">
+                        <div class="post-meta">
+                            <div class="post-author">${post.author?.full_name || 'Unknown'}</div>
+                            <div class="post-time">${timeAgo} • ${post.author?.parish || ''}</div>
+                        </div>
+                        <span class="post-category-badge ${badgeClass}">${post.category}</span>
+                    </div>
+                    
+                    <div class="post-content">
+                        <div class="post-title">${post.title || ''}</div>
+                        <div class="post-text">${post.content || ''}</div>
+                        ${countdownHTML}
+                        ${hasMedia ? `
+                            ${isVideo ? 
+                                `<video class="post-video" controls poster="${post.thumbnail_url || ''}">
+                                    <source src="${post.media_url}" type="video/mp4">
+                                </video>` :
+                                `<img src="${post.media_url}" class="post-media" alt="">`
+                            }
+                        ` : ''}
+                    </div>
+
+                    <div class="post-actions">
+                        <div class="action-btn ${post.user_liked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
+                            <i class="${post.user_liked ? 'fas' : 'far'} fa-heart"></i>
+                            <span>${post.likes?.count || 0}</span>
+                        </div>
+                        <div class="action-btn" onclick="toggleComments('${post.id}')">
+                            <i class="far fa-comment"></i>
+                            <span>${post.comments?.count || 0}</span>
+                        </div>
+                        <div class="action-spacer"></div>
+                        <div class="action-btn" onclick="openShareModal('${post.id}')">
+                            <i class="fas fa-share"></i>
+                        </div>
+                        ${post.file_url ? `
+                            <div class="action-btn" onclick="downloadFile('${post.file_url}', '${post.file_name}')">
+                                <i class="fas fa-download"></i>
+                            </div>
+                        ` : ''}
+                    </div>
+
+                    <div class="comments-section" id="comments-${post.id}">
+                        <div id="comments-list-${post.id}"></div>
+                        <div class="comment-input-area">
+                            <input type="text" class="comment-input" id="comment-input-${post.id}" 
+                                   placeholder="Write a comment..." 
+                                   onkeypress="handleCommentKeypress(event, '${post.id}')">
+                            <button class="send-btn" onclick="postComment('${post.id}')">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Toggle Like
+        async function toggleLike(postId) {
+            const btn = document.querySelector(`[data-post-id="${postId}"] .action-btn:first-child`);
+            const isLiked = btn.classList.contains('liked');
+
+            if (isLiked) {
+                await supabase
+                    .from('post_likes')
+                    .delete()
+                    .eq('post_id', postId)
+                    .eq('user_id', currentUser.id);
+            } else {
+                await supabase
+                    .from('post_likes')
+                    .insert([{ post_id: postId, user_id: currentUser.id }]);
+            }
+
+            loadPosts();
+        }
+
+        // Toggle Comments
+        async function toggleComments(postId) {
+            const section = document.getElementById(`comments-${postId}`);
+            section.classList.toggle('expanded');
+            
+            if (section.classList.contains('expanded')) {
+                loadComments(postId);
+            }
+        }
+
+        // Load Comments
+        async function loadComments(postId) {
+            const { data: comments } = await supabase
+                .from('comments')
+                .select(`
+                    *,
+                    user:users(id, full_name, profile_image)
+                `)
+                .eq('post_id', postId)
+                .order('created_at', { ascending: true });
+
+            const container = document.getElementById(`comments-list-${postId}`);
+            container.innerHTML = (comments || []).map(comment => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <img src="${comment.user?.profile_image || 'https://via.placeholder.com/32'}" class="comment-avatar">
+                        <span class="comment-author">${comment.user?.full_name || 'Unknown'}</span>
+                        <span class="comment-time">${getTimeAgo(comment.created_at)}</span>
+                    </div>
+                    <div class="comment-text">${comment.content}</div>
+                </div>
+            `).join('');
+        }
+
+        // Post Comment
+        async function postComment(postId) {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const content = input.value.trim();
+            
+            if (!content) return;
+
+            await supabase
+                .from('comments')
+                .insert([{
+                    post_id: postId,
+                    user_id: currentUser.id,
+                    content
+                }]);
+
+            input.value = '';
+            loadComments(postId);
+            loadPosts();
+        }
+
+        function handleCommentKeypress(e, postId) {
+            if (e.key === 'Enter') postComment(postId);
+        }
+
+        // Category Filter
+        document.querySelectorAll('.category-chip').forEach(chip => {
+            chip.addEventListener('click', () => {
+                document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                currentCategory = chip.dataset.category;
+                loadPosts();
+            });
+        });
+
+        // Utilities
+        function getTimeAgo(date) {
+            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+            if (seconds < 60) return 'just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            return `${days}d ago`;
+        }
+
+        function getCountdown(eventDate) {
+            const diff = new Date(eventDate) - new Date();
+            if (diff < 0) return 'Event has passed';
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            
+            if (days > 0) return `${days} days ${hours}h remaining`;
+            return `${hours} hours remaining`;
+        }
+
+        // Share Modal
+        let currentSharePostId = null;
+
+        function openShareModal(postId) {
+            currentSharePostId = postId;
+            document.getElementById('shareModal').classList.add('active');
+        }
+
+        function shareVia(method) {
+            const post = posts.find(p => p.id === currentSharePostId);
+            if (!post) return;
+
+            const shareData = {
+                title: post.title,
+                text: post.content,
+                url: window.location.href
+            };
+
+            if (method === 'whatsapp') {
+                window.open(`https://wa.me/?text=${encodeURIComponent(post.title + ' - ' + window.location.href)}`);
+            } else if (method === 'copy') {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            } else if (method === 'native' && navigator.share) {
+                navigator.share(shareData);
+            }
+
+            document.getElementById('shareModal').classList.remove('active');
+        }
+
+        // Download File
+        function downloadFile(url, filename) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename || 'download';
+            link.click();
+        }
+
+        // Realtime Updates
+        function setupRealtime() {
+            supabase
+                .channel('posts')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
+                    loadPosts();
+                })
+                .subscribe();
+        }
+
+        // Navigation
+        function goToProfile() {
+            window.location.href = 'profile.html';
+        }
+
+        function openSearch() {
+            // Implement search functionality
+            alert('Search feature coming soon!');
+        }
+
+        function toggleSidebar() {
+            // Implement sidebar menu
+            alert('Menu feature coming soon!');
+        }
+
+        // Close modal on outside click
+        document.getElementById('shareModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>'''
+
