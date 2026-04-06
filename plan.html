@@ -6,13 +6,9 @@
     <title>Yearly Plans | AYF Strategy</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -20,7 +16,6 @@
             color: white;
             padding-bottom: 70px;
         }
-
         .header {
             background: rgba(10,10,10,0.95);
             backdrop-filter: blur(10px);
@@ -33,14 +28,12 @@
             top: 0;
             z-index: 100;
         }
-
         .logo {
             display: flex;
             align-items: center;
             gap: 1rem;
             cursor: pointer;
         }
-
         .logo-icon {
             width: 45px;
             height: 45px;
@@ -50,30 +43,20 @@
             align-items: center;
             justify-content: center;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-        }
-
+        .nav-links { display: flex; gap: 1rem; }
         .nav-links a {
             color: white;
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
         }
-
+        .nav-links a:hover { background: rgba(102,126,234,0.2); }
         .hero {
             text-align: center;
             padding: 3rem 2rem;
             background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
         }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
+        .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .year-selector {
             display: flex;
             justify-content: center;
@@ -81,7 +64,6 @@
             padding: 2rem;
             flex-wrap: wrap;
         }
-
         .year-btn {
             padding: 0.8rem 2rem;
             background: rgba(255,255,255,0.1);
@@ -91,11 +73,7 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
-        .year-btn.active, .year-btn:hover {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
+        .year-btn.active, .year-btn:hover { background: linear-gradient(135deg, #667eea, #764ba2); }
         .plans-grid {
             max-width: 1200px;
             margin: 0 auto;
@@ -104,7 +82,6 @@
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 2rem;
         }
-
         .plan-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -113,36 +90,10 @@
             transition: all 0.3s;
             cursor: pointer;
         }
-
-        .plan-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.15);
-        }
-
-        .plan-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-        }
-
-        .plan-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .plan-year {
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        .plan-stats {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-
+        .plan-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.15); }
+        .plan-icon { font-size: 3rem; margin-bottom: 1rem; }
+        .plan-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .plan-year { color: #667eea; margin-bottom: 0.5rem; }
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -156,7 +107,6 @@
             border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
-
         .footer-nav-item {
             display: flex;
             flex-direction: column;
@@ -167,15 +117,8 @@
             font-size: 0.7rem;
             transition: all 0.3s;
         }
-
-        .footer-nav-item i {
-            font-size: 1.3rem;
-        }
-
-        .footer-nav-item.active, .footer-nav-item:hover {
-            color: #667eea;
-        }
-
+        .footer-nav-item i { font-size: 1.3rem; }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
         .modal {
             display: none;
             position: fixed;
@@ -188,7 +131,6 @@
             justify-content: center;
             align-items: center;
         }
-
         .modal-content {
             width: 90%;
             max-width: 800px;
@@ -198,7 +140,17 @@
             max-height: 80vh;
             overflow-y: auto;
         }
-
+        .loading { text-align: center; padding: 2rem; }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
             .hero h1 { font-size: 1.5rem; }
             .plans-grid { grid-template-columns: 1fr; }
@@ -214,6 +166,7 @@
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
+            <a href="about.html">About</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
             <a href="profile.html">Profile</a>
@@ -226,24 +179,25 @@
     </div>
 
     <div class="year-selector" id="yearSelector"></div>
-    <div class="plans-grid" id="plansGrid"></div>
+    <div class="plans-grid" id="plansGrid">
+        <div class="loading"><div class="spinner"></div></div>
+    </div>
 
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="about.html" class="footer-nav-item">
+            <i class="fas fa-info-circle"></i><span>About</span>
         </a>
         <a href="plan.html" class="footer-nav-item active">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Plan</span>
+            <i class="fas fa-calendar-alt"></i><span>Plan</span>
         </a>
         <a href="parish.html" class="footer-nav-item">
-            <i class="fas fa-church"></i>
-            <span>Parish</span>
+            <i class="fas fa-church"></i><span>Parish</span>
         </a>
         <a href="profile.html" class="footer-nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
+            <i class="fas fa-user"></i><span>Profile</span>
         </a>
     </div>
 
@@ -259,72 +213,34 @@
 
     <script src="supabase/client.js"></script>
     <script>
-        const plansData = {
-            2026: [
-                {
-                    title: "Annual Strategic Plan 2026",
-                    description: "Theme: 'Rising Together' - Focus on youth empowerment, leadership training, and community outreach programs.",
-                    milestones: [
-                        "Q1: Leadership Training Workshop (January-March)",
-                        "Q2: Community Outreach Programs (April-June)",
-                        "Q3: Youth Conference & Seminars (July-September)",
-                        "Q4: End of Year Thanksgiving & Awards (October-December)"
-                    ],
-                    quota: "₦25,000 per parish (quarterly)",
-                    events: 12,
-                    programs: 8
-                },
-                {
-                    title: "Quota Distribution 2026",
-                    description: "Annual quota distribution across all three parishes for fellowship activities and programs.",
-                    parishes: [
-                        "St. Mathus Anglican Church: ₦100,000",
-                        "St. Philip Anglican Church: ₦100,000",
-                        "St. Barnabas Jaiyuan: ₦100,000"
-                    ],
-                    total: "₦300,000",
-                    dueDate: "Quarterly payments due end of each quarter"
-                },
-                {
-                    title: "A-Squared Leadership Calendar",
-                    description: "Executive meetings and training schedule for A-Squared members across the Archdeaconry.",
-                    meetings: [
-                        "Monthly Executive Meeting (First Saturday)",
-                        "Quarterly Leadership Retreat (March, June, September, December)",
-                        "Annual Planning Summit (November)"
-                    ]
-                }
-            ],
-            2025: [
-                {
-                    title: "Annual Strategic Plan 2025",
-                    description: "Theme: 'Building Strong Foundations' - Infrastructure development and membership growth.",
-                    milestones: [
-                        "Q1: Membership Drive (January-March)",
-                        "Q2: Skills Acquisition Program (April-June)",
-                        "Q3: Youth Week Celebration (July-September)",
-                        "Q4: Annual General Meeting (October-December)"
-                    ],
-                    quota: "₦20,000 per parish (quarterly)",
-                    events: 10,
-                    programs: 6
-                },
-                {
-                    title: "Quota Distribution 2025",
-                    description: "Annual quota distribution for fellowship activities.",
-                    parishes: [
-                        "St. Mathus Anglican Church: ₦80,000",
-                        "St. Philip Anglican Church: ₦80,000",
-                        "St. Barnabas Jaiyuan: ₦80,000"
-                    ],
-                    total: "₦240,000"
-                }
-            ]
-        };
+        let allPlans = [];
+
+        async function loadPlans() {
+            const { data, error } = await supabaseClient
+                .from('yearly_plans')
+                .select('*')
+                .order('year', { ascending: false });
+            
+            if (error) {
+                console.error('Error loading plans:', error);
+                document.getElementById('plansGrid').innerHTML = '<p style="text-align:center;">No plans available</p>';
+                return;
+            }
+            
+            allPlans = data || [];
+            renderYearSelector();
+        }
 
         function renderYearSelector() {
-            const years = Object.keys(plansData).sort().reverse();
+            const years = [...new Set(allPlans.map(p => p.year))].sort().reverse();
             const selector = document.getElementById('yearSelector');
+            
+            if (years.length === 0) {
+                selector.innerHTML = '<p>No plans uploaded yet</p>';
+                document.getElementById('plansGrid').innerHTML = '<p style="text-align:center;">No yearly plans available. Check back soon!</p>';
+                return;
+            }
+            
             selector.innerHTML = years.map(year => `
                 <button class="year-btn" data-year="${year}">${year}</button>
             `).join('');
@@ -333,77 +249,68 @@
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
-                    renderPlans(btn.dataset.year);
+                    renderPlans(parseInt(btn.dataset.year));
                 });
             });
             
-            if(years[0]) {
-                document.querySelector('.year-btn').classList.add('active');
-                renderPlans(years[0]);
-            }
+            document.querySelector('.year-btn').classList.add('active');
+            renderPlans(years[0]);
         }
 
         function renderPlans(year) {
-            const plans = plansData[year];
+            const plans = allPlans.filter(p => p.year === year);
             const grid = document.getElementById('plansGrid');
             
-            grid.innerHTML = plans.map((plan, index) => `
-                <div class="plan-card" onclick="showPlanDetails(${year}, ${index})">
+            if (plans.length === 0) {
+                grid.innerHTML = '<p style="text-align:center;">No plans for this year</p>';
+                return;
+            }
+            
+            grid.innerHTML = plans.map(plan => `
+                <div class="plan-card" onclick="showPlanDetails(${plan.id})">
                     <div class="plan-icon">📄</div>
-                    <div class="plan-title">${plan.title}</div>
-                    <div class="plan-year">Year ${year}</div>
-                    <p style="margin: 0.5rem 0; opacity:0.8;">${plan.description.substring(0, 100)}...</p>
-                    <div class="plan-stats">
-                        ${plan.events ? `<span><i class="fas fa-calendar"></i> ${plan.events} Events</span>` : ''}
-                        ${plan.programs ? `<span><i class="fas fa-chalkboard"></i> ${plan.programs} Programs</span>` : ''}
-                    </div>
+                    <div class="plan-title">${escapeHtml(plan.title)}</div>
+                    <div class="plan-year">Year ${plan.year}</div>
+                    <p style="margin: 0.5rem 0; opacity:0.8;">${escapeHtml(plan.description?.substring(0, 100) || 'Click to view details')}...</p>
                 </div>
             `).join('');
         }
 
-        function showPlanDetails(year, index) {
-            const plan = plansData[year][index];
+        async function showPlanDetails(planId) {
+            const plan = allPlans.find(p => p.id === planId);
+            if (!plan) return;
+            
             const modal = document.getElementById('planModal');
             const modalTitle = document.getElementById('modalTitle');
             const modalContent = document.getElementById('modalContent');
             
             modalTitle.textContent = plan.title;
             
-            let contentHtml = `<p style="margin-bottom:1rem;">${plan.description}</p>`;
-            
-            if(plan.milestones) {
-                contentHtml += `<h3 style="margin:1rem 0 0.5rem;">📌 Milestones</h3><ul style="margin-left:1.5rem;">`;
-                plan.milestones.forEach(m => contentHtml += `<li style="margin:0.5rem 0;">${m}</li>`);
-                contentHtml += `</ul>`;
-            }
-            
-            if(plan.parishes) {
-                contentHtml += `<h3 style="margin:1rem 0 0.5rem;">⛪ Parish Distribution</h3><ul style="margin-left:1.5rem;">`;
-                plan.parishes.forEach(p => contentHtml += `<li style="margin:0.5rem 0;">${p}</li>`);
-                contentHtml += `</ul>`;
-                contentHtml += `<p style="margin-top:1rem;"><strong>Total:</strong> ${plan.total}</p>`;
-                if(plan.dueDate) contentHtml += `<p><strong>Due Date:</strong> ${plan.dueDate}</p>`;
-            }
-            
-            if(plan.meetings) {
-                contentHtml += `<h3 style="margin:1rem 0 0.5rem;">📅 Meetings & Events</h3><ul style="margin-left:1.5rem;">`;
-                plan.meetings.forEach(m => contentHtml += `<li style="margin:0.5rem 0;">${m}</li>`);
-                contentHtml += `</ul>`;
-            }
-            
-            if(plan.quota) {
-                contentHtml += `<p style="margin-top:1rem;"><strong>💰 Quota:</strong> ${plan.quota}</p>`;
-            }
+            modalContent.innerHTML = `
+                <p style="margin-bottom:1rem;">${escapeHtml(plan.description || 'No description available')}</p>
+                <p><strong>Year:</strong> ${plan.year}</p>
+                ${plan.file_url ? `
+                    <button class="btn btn-primary" onclick="window.open('${plan.file_url}', '_blank')" style="margin-top:1rem;">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                ` : ''}
+            `;
             
             modal.style.display = 'flex';
-            modalContent.innerHTML = contentHtml;
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
         function closeModal() {
             document.getElementById('planModal').style.display = 'none';
         }
 
-        renderYearSelector();
+        loadPlans();
     </script>
 </body>
 </html>
