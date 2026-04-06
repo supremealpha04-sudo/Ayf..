@@ -3,24 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>AYF Gwarimpa | Anglican Youth Fellowship</title>
+    <title>AYF Gwarimpa | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: #0a0a0a;
             color: #ffffff;
             overflow-x: hidden;
+            padding-bottom: 70px;
         }
-
-        /* Animated Background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -30,75 +24,37 @@
             z-index: -2;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         }
-
-        .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(102,126,234,0.1) 0%, transparent 50%);
-            animation: rotate 20s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Particles */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            overflow: hidden;
-        }
-
         .particle {
             position: absolute;
             background: rgba(102,126,234,0.3);
             border-radius: 50%;
             animation: float 15s infinite;
         }
-
         @keyframes float {
             0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
             10% { opacity: 0.5; }
             90% { opacity: 0.5; }
             100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
-
-        /* Header */
         .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
             padding: 1rem 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .logo {
             display: flex;
             align-items: center;
             gap: 1rem;
             cursor: pointer;
         }
-
         .logo-icon {
             width: 45px;
             height: 45px;
@@ -108,133 +64,33 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            animation: pulse 2s ease-in-out infinite;
         }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .logo-text h1 {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .logo-text p {
-            font-size: 0.7rem;
-            opacity: 0.7;
-        }
-
-        /* Desktop Navigation */
-        .nav-links-desktop {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .nav-links-desktop a {
+        .logo-text h1 { font-size: 1.3rem; font-weight: 700; }
+        .logo-text p { font-size: 0.7rem; opacity: 0.7; }
+        .nav-links { display: flex; gap: 1rem; }
+        .nav-links a {
             color: white;
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
             transition: all 0.3s;
-            font-weight: 500;
         }
-
-        .nav-links-desktop a:hover,
-        .nav-links-desktop a.active {
-            background: rgba(102,126,234,0.2);
-            color: #667eea;
-        }
-
-        /* Notification Badge */
-        .notification-badge {
-            position: relative;
-        }
-
-        .badge-count {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #f56565;
-            color: white;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 50%;
-        }
-
-        /* Mobile Menu */
-        .menu-btn {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            right: 0;
-            background: rgba(10, 10, 10, 0.98);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 999;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .mobile-nav.open {
-            display: flex;
-        }
-
-        .mobile-nav a {
-            color: white;
-            text-decoration: none;
-            padding: 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .mobile-nav a:hover,
-        .mobile-nav a.active {
-            background: rgba(102,126,234,0.2);
-        }
-
-        /* Hero Section */
+        .nav-links a:hover { background: rgba(102,126,234,0.2); }
         .hero {
-            min-height: 100vh;
+            min-height: 60vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 6rem 2rem 4rem;
-            position: relative;
+            padding: 4rem 2rem;
         }
-
-        .hero-content {
-            max-width: 800px;
-            animation: fadeInUp 1s ease;
-        }
-
+        .hero-content { max-width: 800px; animation: fadeInUp 1s ease; }
         @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-
         .hero h1 {
-            font-size: 3.5rem;
+            font-size: 3rem;
             font-weight: 800;
             margin-bottom: 1rem;
             background: linear-gradient(135deg, #fff, #667eea, #764ba2);
@@ -242,21 +98,7 @@
             background-clip: text;
             color: transparent;
         }
-
-        .hero p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        .hero p { font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem; line-height: 1.6; }
         .btn {
             padding: 0.8rem 2rem;
             border: none;
@@ -265,75 +107,22 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
-            font-family: inherit;
         }
-
         .btn-primary {
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
         }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
-        }
-
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
         .btn-outline {
             background: transparent;
             border: 2px solid #667eea;
             color: #667eea;
         }
-
-        .btn-outline:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        /* Stats Section */
-        .stats-section {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .stat-card {
-            text-align: center;
-            padding: 1.5rem;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            transition: all 0.3s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.08);
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        .stat-label {
-            margin-top: 0.5rem;
-            opacity: 0.8;
-        }
-
-        /* Feed Section */
         .feed-section {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 3rem 2rem;
+            padding: 2rem;
         }
-
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -342,18 +131,8 @@
             gap: 1rem;
             margin-bottom: 2rem;
         }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-        }
-
-        .category-filters {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
+        .section-title { font-size: 1.8rem; font-weight: 700; }
+        .category-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .filter-chip {
             padding: 0.5rem 1rem;
             background: rgba(255,255,255,0.1);
@@ -363,35 +142,22 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-
-        .filter-chip:hover,
-        .filter-chip.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        /* Feed Grid */
+        .filter-chip:hover, .filter-chip.active { background: linear-gradient(135deg, #667eea, #764ba2); }
         .feed-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
             gap: 1.5rem;
         }
-
         .post-card {
             background: rgba(255,255,255,0.05);
             backdrop-filter: blur(10px);
             border-radius: 20px;
             overflow: hidden;
             transition: all 0.3s;
-            border: 1px solid rgba(255,255,255,0.1);
             cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-
-        .post-card:hover {
-            transform: translateY(-5px);
-            background: rgba(255,255,255,0.08);
-            border-color: #667eea;
-        }
-
+        .post-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.08); border-color: #667eea; }
         .post-header {
             padding: 1rem;
             display: flex;
@@ -399,7 +165,6 @@
             gap: 0.8rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
-
         .post-avatar {
             width: 45px;
             height: 45px;
@@ -408,44 +173,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            cursor: pointer;
         }
-
-        .post-author {
-            flex: 1;
-        }
-
-        .post-author-name {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
+        .post-author-name { font-weight: 600; cursor: pointer; }
         .leadership-tag {
             font-size: 0.7rem;
             padding: 0.2rem 0.6rem;
             background: #48bb78;
             border-radius: 50px;
             display: inline-block;
+            margin-left: 0.5rem;
         }
-
-        .post-content {
-            padding: 1rem;
-        }
-
-        .post-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .post-text {
-            opacity: 0.8;
-            line-height: 1.5;
-        }
-
+        .post-content { padding: 1rem; }
+        .post-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .post-text { opacity: 0.8; line-height: 1.5; }
         .post-media {
             width: 100%;
             max-height: 200px;
@@ -453,7 +194,6 @@
             margin-top: 0.5rem;
             border-radius: 12px;
         }
-
         .post-stats {
             display: flex;
             gap: 1rem;
@@ -462,20 +202,13 @@
             font-size: 0.85rem;
             color: #888;
         }
-
-        .post-stats span {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-
+        .post-stats span { display: flex; align-items: center; gap: 0.3rem; }
         .post-actions {
             display: flex;
             gap: 1rem;
             padding: 0.5rem 1rem 1rem;
             border-top: 1px solid rgba(255,255,255,0.1);
         }
-
         .action-btn {
             flex: 1;
             padding: 0.5rem;
@@ -490,17 +223,8 @@
             justify-content: center;
             gap: 0.5rem;
         }
-
-        .action-btn:hover {
-            background: rgba(102,126,234,0.2);
-            color: #667eea;
-        }
-
-        .action-btn.liked {
-            color: #ff4757;
-        }
-
-        /* Modal */
+        .action-btn:hover { background: rgba(102,126,234,0.2); color: #667eea; }
+        .action-btn.liked { color: #ff4757; }
         .modal {
             display: none;
             position: fixed;
@@ -514,7 +238,6 @@
             align-items: center;
             overflow-y: auto;
         }
-
         .modal-content {
             max-width: 800px;
             width: 90%;
@@ -523,7 +246,6 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-
         .modal-header {
             padding: 1rem;
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -534,7 +256,6 @@
             top: 0;
             background: #1a1a2e;
         }
-
         .close-modal {
             background: none;
             border: none;
@@ -542,11 +263,7 @@
             font-size: 1.5rem;
             cursor: pointer;
         }
-
-        .comments-section {
-            padding: 1rem;
-        }
-
+        .comments-section { padding: 1rem; }
         .comment {
             margin-bottom: 1rem;
             padding: 0.8rem;
@@ -554,11 +271,7 @@
             border-radius: 12px;
             border-left: 3px solid #667eea;
         }
-
-        .comment.reply {
-            margin-left: 2rem;
-        }
-
+        .comment.reply { margin-left: 2rem; }
         .comment-header {
             display: flex;
             align-items: center;
@@ -566,16 +279,8 @@
             margin-bottom: 0.5rem;
             flex-wrap: wrap;
         }
-
-        .comment-author {
-            font-weight: 600;
-        }
-
-        .comment-time {
-            font-size: 0.7rem;
-            color: #888;
-        }
-
+        .comment-author { font-weight: 600; cursor: pointer; }
+        .comment-time { font-size: 0.7rem; color: #888; }
         .reply-btn {
             background: none;
             border: none;
@@ -584,13 +289,11 @@
             font-size: 0.8rem;
             margin-top: 0.5rem;
         }
-
         .comment-input {
             display: flex;
             gap: 0.5rem;
             margin-top: 1rem;
         }
-
         .comment-input input {
             flex: 1;
             padding: 0.8rem;
@@ -599,22 +302,19 @@
             background: rgba(255,255,255,0.1);
             color: white;
         }
-
-        /* Footer Navigation */
         .footer-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10,10,10,0.95);
             backdrop-filter: blur(10px);
-            display: none;
+            display: flex;
             justify-content: space-around;
             padding: 0.8rem;
             border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
-
         .footer-nav-item {
             display: flex;
             flex-direction: column;
@@ -625,22 +325,9 @@
             font-size: 0.7rem;
             transition: all 0.3s;
         }
-
-        .footer-nav-item i {
-            font-size: 1.3rem;
-        }
-
-        .footer-nav-item.active,
-        .footer-nav-item:hover {
-            color: #667eea;
-        }
-
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-
+        .footer-nav-item i { font-size: 1.3rem; }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        .loading { text-align: center; padding: 2rem; }
         .spinner {
             width: 40px;
             height: 40px;
@@ -650,131 +337,45 @@
             animation: spin 1s linear infinite;
             margin: 0 auto;
         }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Toast */
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        /* Responsive */
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
-            .nav-links-desktop {
-                display: none;
-            }
-            
-            .menu-btn {
-                display: block;
-            }
-            
-            .footer-nav {
-                display: flex;
-            }
-            
-            .hero h1 {
-                font-size: 2rem;
-            }
-            
-            .hero p {
-                font-size: 1rem;
-            }
-            
-            .feed-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .section-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            
-            body {
-                padding-bottom: 70px;
-            }
-            
-            .comment.reply {
-                margin-left: 1rem;
-            }
+            .hero h1 { font-size: 2rem; }
+            .feed-grid { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+            .section-header { flex-direction: column; align-items: flex-start; }
+            .comment.reply { margin-left: 1rem; }
         }
     </style>
 </head>
 <body>
-    <div class="bg-animation"></div>
-    <div class="particles" id="particles"></div>
+    <div class="bg-animation" id="bgAnimation"></div>
 
-    <!-- Header -->
     <header class="header">
-        <div class="nav-container">
-            <div class="logo" onclick="window.location.href='index.html'">
-                <div class="logo-icon">✝️</div>
-                <div class="logo-text">
-                    <h1>AYF Gwarimpa</h1>
-                    <p>Arise & Shine</p>
-                </div>
+        <div class="logo" onclick="window.location.href='index.html'">
+            <div class="logo-icon">✝️</div>
+            <div class="logo-text">
+                <h1>AYF Gwarimpa</h1>
+                <p>Arise & Shine</p>
             </div>
-            
-            <div class="nav-links-desktop">
-                <a href="index.html" class="active">Home</a>
-                <a href="videos.html">Videos</a>
-                <a href="plan.html">Plan</a>
-                <a href="parish.html">Parish</a>
-                <a href="profile.html">Profile</a>
-                <a href="admin/dashboard.html" id="adminLink" style="display:none;">Admin</a>
-            </div>
-            
-            <button class="menu-btn" id="menuBtn">
-                <i class="fas fa-bars"></i>
-            </button>
         </div>
-        
-        <!-- Mobile Navigation -->
-        <div class="mobile-nav" id="mobileNav">
-            <a href="index.html" class="active">🏠 Home</a>
-            <a href="videos.html">🎥 Videos</a>
-            <a href="plan.html">📅 Plan</a>
-            <a href="parish.html">⛪ Parish</a>
-            <a href="profile.html">👤 Profile</a>
-            <a href="admin/dashboard.html" id="adminLinkMobile" style="display:none;">⚡ Admin</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="about.html">About</a>
+            <a href="plan.html">Plan</a>
+            <a href="parish.html">Parish</a>
+            <a href="profile.html">Profile</a>
+            <a href="admin/dashboard.html" id="adminLink" style="display:none;">Admin</a>
         </div>
     </header>
 
-    <!-- Hero Section -->
     <section class="hero">
         <div class="hero-content">
             <h1>Welcome to AYF Gwarimpa Archdeaconry</h1>
-            <p>A vibrant community of young people dedicated to spiritual growth, leadership development, and community impact. Join us as we arise and shine for Christ!</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" id="joinBtn"><i class="fas fa-user-plus"></i> Join Fellowship</button>
-                <button class="btn btn-outline" id="exploreBtn"><i class="fas fa-calendar-alt"></i> Explore Events</button>
-            </div>
+            <p>A vibrant community of young people dedicated to spiritual growth, leadership development, and community impact.</p>
+            <button class="btn btn-primary" id="joinBtn">Join Fellowship</button>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <div class="stats-section">
-        <div class="stat-card">
-            <div class="stat-number" id="memberCount">500+</div>
-            <div class="stat-label">Active Members</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">3</div>
-            <div class="stat-label">Parishes</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="eventCount">50+</div>
-            <div class="stat-label">Events Yearly</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="aSquaredCount">20+</div>
-            <div class="stat-label">A-Squared Leaders</div>
-        </div>
-    </div>
-
-    <!-- Feed Section -->
     <section class="feed-section">
         <div class="section-header">
             <h2 class="section-title">Latest Updates</h2>
@@ -791,27 +392,24 @@
         </div>
     </section>
 
-    <!-- Footer Navigation -->
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item active">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
+            <i class="fas fa-home"></i><span>Home</span>
         </a>
-        <a href="parish.html" class="footer-nav-item">
-            <i class="fas fa-church"></i>
-            <span>Parish</span>
-        </a>
-        <a href="profile.html" class="footer-nav-item">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
+        <a href="about.html" class="footer-nav-item">
+            <i class="fas fa-info-circle"></i><span>About</span>
         </a>
         <a href="plan.html" class="footer-nav-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Plan</span>
+            <i class="fas fa-calendar-alt"></i><span>Plan</span>
+        </a>
+        <a href="parish.html" class="footer-nav-item">
+            <i class="fas fa-church"></i><span>Parish</span>
+        </a>
+        <a href="profile.html" class="footer-nav-item">
+            <i class="fas fa-user"></i><span>Profile</span>
         </a>
     </div>
 
-    <!-- Post Detail Modal -->
     <div class="modal" id="postModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -822,90 +420,73 @@
         </div>
     </div>
 
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Profile</h3>
+                <button class="close-modal" onclick="closeProfileModal()">&times;</button>
+            </div>
+            <div id="profileModalBody"></div>
+        </div>
+    </div>
+
     <script src="supabase/client.js"></script>
     <script>
-        // Global state
         let currentUser = null;
         let currentProfile = null;
         let currentCategory = 'all';
         let posts = [];
-        let currentPost = null;
-        let repliesState = {};
+        let userLikes = new Set();
 
         // Create particles
-        function createParticles() {
-            const container = document.getElementById('particles');
-            for (let i = 0; i < 50; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                const size = Math.random() * 5 + 2;
-                particle.style.width = size + 'px';
-                particle.style.height = size + 'px';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 20 + 's';
-                particle.style.animationDuration = Math.random() * 15 + 10 + 's';
-                container.appendChild(particle);
-            }
+        for(let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.width = Math.random() * 5 + 2 + 'px';
+            particle.style.height = particle.style.width;
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particle.style.animationDuration = Math.random() * 15 + 10 + 's';
+            document.getElementById('bgAnimation').appendChild(particle);
         }
 
-        // Initialize
         async function init() {
-            createParticles();
-            await checkAuth();
+            const isLoggedIn = await window.checkAuth(false);
+            if (isLoggedIn) {
+                currentUser = window.appState.currentUser;
+                currentProfile = window.appState.currentProfile;
+                if (currentProfile?.role === 'admin') {
+                    document.getElementById('adminLink').style.display = 'block';
+                }
+            }
             await loadPosts();
-            await loadStats();
-            setupEventListeners();
+            await loadUserLikes();
             setupRealtime();
         }
 
-        // Check authentication
-        async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) {
-                currentUser = session.user;
-                const { data: profile } = await supabaseClient
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single();
-                currentProfile = profile;
-                window.appState.currentProfile = profile;
-                
-                if (profile?.role === 'admin') {
-                    document.getElementById('adminLink').style.display = 'block';
-                    document.getElementById('adminLinkMobile').style.display = 'block';
-                }
-            }
-        }
-
-        // Load stats
-        async function loadStats() {
-            const { data: profiles } = await supabaseClient.from('profiles').select('id');
-            const { data: aSquared } = await supabaseClient.from('profiles').select('id').eq('is_a_squared', true);
-            const { data: events } = await supabaseClient.from('posts').select('id').eq('type', 'event');
-            
-            document.getElementById('memberCount').innerHTML = profiles?.length || '500+';
-            document.getElementById('aSquaredCount').innerHTML = aSquared?.length || '20+';
-            document.getElementById('eventCount').innerHTML = events?.length || '50+';
-        }
-
-        // Load posts
         async function loadPosts() {
             const { data, error } = await supabaseClient
                 .from('posts')
-                .select('*')
+                .select('*, profiles(full_name, leadership_tag, avatar_url)')
                 .order('created_at', { ascending: false });
             
             if (error) {
                 console.error('Error loading posts:', error);
                 return;
             }
-            
-            posts = data;
+            posts = data || [];
             renderPosts();
         }
 
-        // Render posts
+        async function loadUserLikes() {
+            if (!currentUser) return;
+            const { data } = await supabaseClient
+                .from('likes')
+                .select('post_id')
+                .eq('user_id', currentUser.id);
+            userLikes = new Set(data?.map(l => l.post_id) || []);
+        }
+
         function renderPosts() {
             const filtered = currentCategory === 'all' 
                 ? posts 
@@ -921,21 +502,21 @@
             grid.innerHTML = filtered.map(post => `
                 <div class="post-card" onclick="showPostDetail(${post.id})">
                     <div class="post-header">
-                        <div class="post-avatar">
-                            <i class="fas fa-user"></i>
+                        <div class="post-avatar" onclick="event.stopPropagation(); showUserProfile('${post.author_id}')">
+                            ${post.profiles?.full_name?.[0] || 'A'}
                         </div>
-                        <div class="post-author">
-                            <div class="post-author-name">
-                                AYF Admin
-                                <span class="leadership-tag">Admin</span>
+                        <div>
+                            <div class="post-author-name" onclick="event.stopPropagation(); showUserProfile('${post.author_id}')">
+                                ${post.profiles?.full_name || 'AYF Admin'}
+                                ${post.profiles?.leadership_tag ? `<span class="leadership-tag">${post.profiles.leadership_tag}</span>` : ''}
                             </div>
                             <small>${new Date(post.created_at).toLocaleDateString()}</small>
                         </div>
                     </div>
                     <div class="post-content">
                         <div class="post-title">${escapeHtml(post.title)}</div>
-                        <div class="post-text">${escapeHtml(post.content.substring(0, 150))}${post.content.length > 150 ? '...' : ''}</div>
-                        ${post.media_url ? `<img src="${post.media_url}" class="post-media" alt="post media">` : ''}
+                        <div class="post-text">${escapeHtml(post.content?.substring(0, 150) || '')}${post.content?.length > 150 ? '...' : ''}</div>
+                        ${post.media_url ? `<img src="${post.media_url}" class="post-media" onerror="this.style.display='none'">` : ''}
                     </div>
                     <div class="post-stats">
                         <span><i class="fas fa-eye"></i> ${post.view_count || 0}</span>
@@ -943,11 +524,11 @@
                         <span><i class="fas fa-comment"></i> ${post.comment_count || 0}</span>
                     </div>
                     <div class="post-actions">
-                        <button class="action-btn like-btn" data-post-id="${post.id}" onclick="event.stopPropagation(); toggleLike(${post.id})">
-                            <i class="far fa-heart"></i> Like
+                        <button class="action-btn like-btn ${userLikes.has(post.id) ? 'liked' : ''}" data-post-id="${post.id}" onclick="event.stopPropagation(); toggleLike(${post.id})">
+                            <i class="fas fa-heart"></i> ${userLikes.has(post.id) ? 'Liked' : 'Like'}
                         </button>
                         <button class="action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})">
-                            <i class="far fa-comment"></i> Comment
+                            <i class="fas fa-comment"></i> Comment
                         </button>
                         <button class="action-btn" onclick="event.stopPropagation(); sharePost(${post.id})">
                             <i class="fas fa-share"></i> Share
@@ -955,96 +536,46 @@
                     </div>
                 </div>
             `).join('');
-            
-            updateLikeButtons();
         }
 
-        // Escape HTML
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        // Toggle like
         async function toggleLike(postId) {
             if (!currentUser) {
-                showToast('Please login to like posts', 'error');
+                window.showToast('Please login to like posts', 'error');
+                setTimeout(() => window.location.href = 'auth.html', 1500);
                 return;
             }
             
-            const { data: existing } = await supabaseClient
-                .from('likes')
-                .select('*')
-                .eq('post_id', postId)
-                .eq('user_id', currentUser.id)
-                .single();
-            
-            if (existing) {
-                await supabaseClient.from('likes').delete().eq('id', existing.id);
+            if (userLikes.has(postId)) {
+                await supabaseClient.from('likes').delete().eq('post_id', postId).eq('user_id', currentUser.id);
                 await supabaseClient.rpc('decrement_post_likes', { post_id: postId });
-                showToast('Unliked', 'info');
+                userLikes.delete(postId);
             } else {
-                await supabaseClient.from('likes').insert([{
-                    post_id: postId,
-                    user_id: currentUser.id
-                }]);
+                await supabaseClient.from('likes').insert([{ post_id: postId, user_id: currentUser.id }]);
                 await supabaseClient.rpc('increment_post_likes', { post_id: postId });
-                showToast('Liked!', 'success');
+                userLikes.add(postId);
             }
-            
             await loadPosts();
         }
 
-        // Update like buttons
-        async function updateLikeButtons() {
-            if (!currentUser) return;
-            
-            const { data: userLikes } = await supabaseClient
-                .from('likes')
-                .select('post_id')
-                .eq('user_id', currentUser.id);
-            
-            const likedPostIds = new Set(userLikes?.map(l => l.post_id) || []);
-            
-            document.querySelectorAll('.like-btn').forEach(btn => {
-                const postId = parseInt(btn.dataset.postId);
-                if (likedPostIds.has(postId)) {
-                    btn.innerHTML = '<i class="fas fa-heart"></i> Liked';
-                    btn.classList.add('liked');
-                } else {
-                    btn.innerHTML = '<i class="far fa-heart"></i> Like';
-                    btn.classList.remove('liked');
-                }
-            });
-        }
-
-        // Show post detail with threaded comments
         async function showPostDetail(postId) {
             const post = posts.find(p => p.id === postId);
             if (!post) return;
-            currentPost = post;
             
-            // Increment view count
             await supabaseClient.rpc('increment_post_views', { post_id: postId });
             
-            // Load comments with replies
             const { data: comments } = await supabaseClient
                 .from('comments')
-                .select('*, profiles(full_name, leadership_tag)')
+                .select('*, profiles(full_name, leadership_tag, avatar_url)')
                 .eq('post_id', postId)
                 .order('created_at', { ascending: true });
             
-            // Build comment tree
             const commentMap = new Map();
             const rootComments = [];
-            
             comments?.forEach(comment => {
                 comment.replies = [];
                 commentMap.set(comment.id, comment);
-                if (!comment.parent_id) {
-                    rootComments.push(comment);
-                } else {
+                if (!comment.parent_id) rootComments.push(comment);
+                else {
                     const parent = commentMap.get(comment.parent_id);
                     if (parent) parent.replies.push(comment);
                 }
@@ -1056,6 +587,16 @@
             modalBody.innerHTML = `
                 <div style="padding:1rem;">
                     <h2>${escapeHtml(post.title)}</h2>
+                    <div class="post-header" style="padding: 0.5rem 0;">
+                        <div class="post-avatar" onclick="showUserProfile('${post.author_id}')">${post.profiles?.full_name?.[0] || 'A'}</div>
+                        <div>
+                            <div class="post-author-name" onclick="showUserProfile('${post.author_id}')">
+                                ${post.profiles?.full_name || 'AYF Admin'}
+                                ${post.profiles?.leadership_tag ? `<span class="leadership-tag">${post.profiles.leadership_tag}</span>` : ''}
+                            </div>
+                            <small>${new Date(post.created_at).toLocaleString()}</small>
+                        </div>
+                    </div>
                     <p style="opacity:0.8; margin:1rem 0; line-height:1.6;">${escapeHtml(post.content)}</p>
                     ${post.media_url ? `<img src="${post.media_url}" style="width:100%; border-radius:12px; margin:1rem 0;">` : ''}
                     
@@ -1068,7 +609,7 @@
                     <div class="comments-section">
                         <h4>Comments (${rootComments.length})</h4>
                         <div id="commentsList">
-                            ${rootComments.map(comment => renderCommentWithReplies(comment)).join('') || '<p style="text-align:center; padding:1rem;">No comments yet. Be the first!</p>'}
+                            ${rootComments.map(comment => renderComment(comment)).join('') || '<p style="text-align:center; padding:1rem;">No comments yet. Be the first!</p>'}
                         </div>
                         
                         ${currentUser ? `
@@ -1076,7 +617,7 @@
                                 <input type="text" id="newComment" placeholder="Write a comment...">
                                 <button class="btn btn-primary" onclick="addComment(${postId}, null)" style="padding:0.8rem 1.5rem;">Post</button>
                             </div>
-                        ` : '<p style="margin-top:1rem; text-align:center;"><a href="profile.html" style="color:#667eea;">Login</a> to comment</p>'}
+                        ` : '<p style="margin-top:1rem; text-align:center;"><a href="auth.html" style="color:#667eea;">Login</a> to comment</p>'}
                     </div>
                 </div>
             `;
@@ -1084,17 +625,16 @@
             modal.style.display = 'flex';
         }
 
-        // Render comment with replies
-        function renderCommentWithReplies(comment, depth = 0) {
+        function renderComment(comment, isReply = false) {
             const leadershipTag = comment.profiles?.leadership_tag ? 
-                `<span class="leadership-tag" style="font-size:0.6rem;">${comment.profiles.leadership_tag}</span>` : '';
-            
-            const repliesHtml = comment.replies?.map(reply => renderCommentWithReplies(reply, depth + 1)).join('') || '';
+                `<span class="leadership-tag">${comment.profiles.leadership_tag}</span>` : '';
             
             return `
-                <div class="comment" data-comment-id="${comment.id}" style="${depth > 0 ? 'margin-left: 2rem;' : ''}">
+                <div class="comment ${isReply ? 'reply' : ''}" data-comment-id="${comment.id}">
                     <div class="comment-header">
-                        <span class="comment-author"><strong>${comment.profiles?.full_name || 'User'}</strong> ${leadershipTag}</span>
+                        <span class="comment-author" onclick="showUserProfile('${comment.user_id}')">
+                            <strong>${comment.profiles?.full_name || 'User'}</strong> ${leadershipTag}
+                        </span>
                         <span class="comment-time">${new Date(comment.created_at).toLocaleString()}</span>
                     </div>
                     <p>${escapeHtml(comment.content)}</p>
@@ -1106,33 +646,29 @@
                         </div>
                     </div>
                     <div class="replies-container">
-                        ${repliesHtml}
+                        ${comment.replies?.map(r => renderComment(r, true)).join('') || ''}
                     </div>
                 </div>
             `;
         }
 
-        // Show reply input
         function showReplyInput(commentId, postId) {
             const inputDiv = document.getElementById(`reply-input-${commentId}`);
-            if (inputDiv) {
-                inputDiv.style.display = inputDiv.style.display === 'none' ? 'block' : 'none';
-            }
+            if (inputDiv) inputDiv.style.display = inputDiv.style.display === 'none' ? 'block' : 'none';
         }
 
-        // Add comment or reply
         async function addComment(postId, parentId = null) {
-            let content;
-            if (parentId) {
-                const input = document.getElementById(`replyText-${parentId}`);
-                content = input?.value;
-            } else {
-                const input = document.getElementById('newComment');
-                content = input?.value;
+            if (!currentUser) {
+                window.showToast('Please login to comment', 'error');
+                setTimeout(() => window.location.href = 'auth.html', 1500);
+                return;
             }
             
+            const input = parentId ? document.getElementById(`replyText-${parentId}`) : document.getElementById('newComment');
+            const content = input?.value;
+            
             if (!content?.trim()) {
-                showToast('Please enter a comment', 'error');
+                window.showToast('Please enter a comment', 'error');
                 return;
             }
             
@@ -1145,99 +681,159 @@
             
             if (!error) {
                 if (parentId) {
-                    document.getElementById(`replyText-${parentId}`).value = '';
+                    input.value = '';
                     document.getElementById(`reply-input-${parentId}`).style.display = 'none';
                 } else {
-                    document.getElementById('newComment').value = '';
+                    input.value = '';
                 }
                 await supabaseClient.rpc('increment_post_comments', { post_id: postId });
                 await loadPosts();
                 showPostDetail(postId);
-                showToast('Comment posted!', 'success');
-            } else {
-                showToast('Error posting comment', 'error');
+                window.showToast('Comment posted!', 'success');
             }
         }
 
-        // Share post
+        async function showUserProfile(userId) {
+            const { data: profile } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', userId)
+                .single();
+            
+            if (!profile) return;
+            
+            const { count: followers } = await supabaseClient
+                .from('follows')
+                .select('*', { count: 'exact', head: true })
+                .eq('following_id', userId);
+            
+            const { count: following } = await supabaseClient
+                .from('follows')
+                .select('*', { count: 'exact', head: true })
+                .eq('follower_id', userId);
+            
+            const isFollowing = currentUser ? await supabaseClient
+                .from('follows')
+                .select('*')
+                .eq('follower_id', currentUser.id)
+                .eq('following_id', userId)
+                .single() : null;
+            
+            const modal = document.getElementById('profileModal');
+            const modalBody = document.getElementById('profileModalBody');
+            
+            modalBody.innerHTML = `
+                <div style="padding:1rem; text-align:center;">
+                    <div class="post-avatar" style="width:80px; height:80px; font-size:2rem; margin:0 auto 1rem;">
+                        ${profile.full_name?.[0] || profile.email?.[0] || 'U'}
+                    </div>
+                    <h2>${profile.full_name || 'Member'}</h2>
+                    ${profile.leadership_tag ? `<span class="leadership-tag" style="font-size:0.9rem;">${profile.leadership_tag}</span>` : ''}
+                    <p style="margin-top:0.5rem; opacity:0.7;">${profile.parish || 'No parish'}</p>
+                    ${profile.bio ? `<p style="margin:1rem 0;">${escapeHtml(profile.bio)}</p>` : ''}
+                    
+                    <div style="display: flex; justify-content: space-around; margin: 1.5rem 0;">
+                        <div><strong>${profile.posts_count || 0}</strong><br><small>Posts</small></div>
+                        <div><strong>${followers || 0}</strong><br><small>Followers</small></div>
+                        <div><strong>${following || 0}</strong><br><small>Following</small></div>
+                    </div>
+                    
+                    ${currentUser && currentUser.id !== userId ? `
+                        <button class="btn ${isFollowing?.data ? 'btn-outline' : 'btn-primary'}" 
+                                onclick="toggleFollow('${userId}', this)">
+                            <i class="fas ${isFollowing?.data ? 'fa-user-minus' : 'fa-user-plus'}"></i>
+                            ${isFollowing?.data ? 'Unfollow' : 'Follow'}
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        async function toggleFollow(userId, btn) {
+            if (!currentUser) {
+                window.showToast('Please login to follow users', 'error');
+                return;
+            }
+            
+            const { data: existing } = await supabaseClient
+                .from('follows')
+                .select('*')
+                .eq('follower_id', currentUser.id)
+                .eq('following_id', userId)
+                .single();
+            
+            if (existing) {
+                await supabaseClient.from('follows').delete().eq('id', existing.id);
+                btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
+                btn.className = 'btn btn-primary';
+            } else {
+                await supabaseClient.from('follows').insert([{
+                    follower_id: currentUser.id,
+                    following_id: userId
+                }]);
+                btn.innerHTML = '<i class="fas fa-user-minus"></i> Unfollow';
+                btn.className = 'btn btn-outline';
+            }
+        }
+
         function sharePost(postId) {
             const url = `${window.location.origin}/post.html?id=${postId}`;
             navigator.clipboard.writeText(url);
-            showToast('Link copied to clipboard!', 'success');
+            window.showToast('Link copied to clipboard!', 'success');
         }
 
-        // Close modal
         function closeModal() {
             document.getElementById('postModal').style.display = 'none';
         }
 
-        // Show toast
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                bottom: 80px;
-                right: 20px;
-                padding: 12px 20px;
-                background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
-                color: white;
-                border-radius: 10px;
-                z-index: 10000;
-                animation: slideIn 0.3s ease;
-                font-family: 'Inter', sans-serif;
-            `;
-            toast.innerHTML = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
         }
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Mobile menu toggle
-            document.getElementById('menuBtn').addEventListener('click', () => {
-                document.getElementById('mobileNav').classList.toggle('open');
-            });
-            
-            // Category filters
-            document.querySelectorAll('.filter-chip').forEach(chip => {
-                chip.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-                    chip.classList.add('active');
-                    currentCategory = chip.dataset.category;
-                    renderPosts();
-                });
-            });
-            
-            // Join button
-            document.getElementById('joinBtn').addEventListener('click', () => {
-                window.location.href = 'profile.html';
-            });
-            
-            document.getElementById('exploreBtn').addEventListener('click', () => {
-                document.getElementById('categoryFilters').scrollIntoView({ behavior: 'smooth' });
-            });
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
 
-        // Setup realtime
         function setupRealtime() {
-            const subscription = supabaseClient
+            supabaseClient
                 .channel('public:posts')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-                    loadPosts();
-                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => loadPosts())
+                .subscribe();
+            
+            supabaseClient
+                .channel('public:comments')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => loadPosts())
                 .subscribe();
         }
 
-        // Make functions global
+        document.querySelectorAll('.filter-chip').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentCategory = btn.dataset.category;
+                renderPosts();
+            });
+        });
+
+        document.getElementById('joinBtn').addEventListener('click', () => {
+            window.location.href = 'auth.html';
+        });
+
         window.showPostDetail = showPostDetail;
         window.toggleLike = toggleLike;
         window.addComment = addComment;
         window.sharePost = sharePost;
         window.closeModal = closeModal;
         window.showReplyInput = showReplyInput;
-        window.showToast = showToast;
-        
-        // Start app
+        window.showUserProfile = showUserProfile;
+        window.closeProfileModal = closeProfileModal;
+        window.toggleFollow = toggleFollow;
+
         init();
     </script>
 </body>
