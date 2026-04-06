@@ -77,7 +77,7 @@
         }
         .nav-links a:hover { background: rgba(102,126,234,0.2); }
         .hero {
-            min-height: 60vh;
+            min-height: 50vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -108,21 +108,102 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
+        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
-        .btn-outline {
-            background: transparent;
-            border: 2px solid #667eea;
-            color: #667eea;
-        }
-        .feed-section {
-            max-width: 1200px;
-            margin: 0 auto;
+        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; }
+        
+        /* Horizontal Stats Bar */
+        .stats-bar {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
             padding: 2rem;
+            margin: 1rem 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
+        .stats-grid-horizontal {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .stat-item-horizontal {
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+        .stat-number-horizontal {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .stat-label-horizontal { font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem; }
+        
+        /* A-Squared Exclusive Section */
+        .asquared-exclusive {
+            background: linear-gradient(135deg, rgba(102,126,234,0.2), rgba(118,75,162,0.2));
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem;
+            border: 2px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+        .asquared-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 0.3rem 1rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .asquared-title { font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .group-tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+        .group-tab {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .group-tab.active, .group-tab:hover { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .group-content { display: none; margin-top: 1rem; }
+        .group-content.active { display: block; animation: fadeIn 0.3s ease; }
+        .executive-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .executive-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        /* Feed Section */
+        .feed-section { max-width: 1200px; margin: 0 auto; padding: 2rem; }
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -225,6 +306,54 @@
         }
         .action-btn:hover { background: rgba(102,126,234,0.2); color: #667eea; }
         .action-btn.liked { color: #ff4757; }
+        
+        /* Floating Help Button */
+        .help-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 55px;
+            height: 55px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: all 0.3s;
+        }
+        .help-btn:hover { transform: scale(1.1); }
+        .help-menu {
+            position: fixed;
+            bottom: 150px;
+            right: 20px;
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 1rem;
+            display: none;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 998;
+            border: 1px solid rgba(255,255,255,0.1);
+            min-width: 200px;
+        }
+        .help-menu.show { display: flex; animation: slideUp 0.3s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .help-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .help-menu a:hover { background: rgba(102,126,234,0.2); }
+        
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -263,45 +392,8 @@
             font-size: 1.5rem;
             cursor: pointer;
         }
-        .comments-section { padding: 1rem; }
-        .comment {
-            margin-bottom: 1rem;
-            padding: 0.8rem;
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            border-left: 3px solid #667eea;
-        }
-        .comment.reply { margin-left: 2rem; }
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
-            flex-wrap: wrap;
-        }
-        .comment-author { font-weight: 600; cursor: pointer; }
-        .comment-time { font-size: 0.7rem; color: #888; }
-        .reply-btn {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        .comment-input {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-        .comment-input input {
-            flex: 1;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-        }
+        
+        /* Footer Navigation */
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -327,6 +419,7 @@
         }
         .footer-nav-item i { font-size: 1.3rem; }
         .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        
         .loading { text-align: center; padding: 2rem; }
         .spinner {
             width: 40px;
@@ -342,8 +435,9 @@
             .hero h1 { font-size: 2rem; }
             .feed-grid { grid-template-columns: 1fr; }
             .nav-links { display: none; }
-            .section-header { flex-direction: column; align-items: flex-start; }
-            .comment.reply { margin-left: 1rem; }
+            .stats-bar { margin: 1rem; padding: 1rem; }
+            .stat-number-horizontal { font-size: 1.5rem; }
+            .asquared-exclusive { margin: 1rem; }
         }
     </style>
 </head>
@@ -376,6 +470,56 @@
         </div>
     </section>
 
+    <!-- Horizontal Stats Bar -->
+    <div class="stats-bar" id="statsBar">
+        <div class="stats-grid-horizontal">
+            <div class="stat-item-horizontal">
+                <div class="stat-number-horizontal" id="statMembers">0</div>
+                <div class="stat-label-horizontal"><i class="fas fa-users"></i> Members</div>
+            </div>
+            <div class="stat-item-horizontal">
+                <div class="stat-number-horizontal" id="statParishes">3</div>
+                <div class="stat-label-horizontal"><i class="fas fa-church"></i> Parishes</div>
+            </div>
+            <div class="stat-item-horizontal">
+                <div class="stat-number-horizontal" id="statEvents">0</div>
+                <div class="stat-label-horizontal"><i class="fas fa-calendar"></i> Events</div>
+            </div>
+            <div class="stat-item-horizontal">
+                <div class="stat-number-horizontal" id="statLeaders">0</div>
+                <div class="stat-label-horizontal"><i class="fas fa-crown"></i> A-Squared</div>
+            </div>
+            <div class="stat-item-horizontal">
+                <div class="stat-number-horizontal" id="statPosts">0</div>
+                <div class="stat-label-horizontal"><i class="fas fa-newspaper"></i> Posts</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- A-Squared Exclusive Section (Only visible to A-Squared members) -->
+    <div class="asquared-exclusive" id="asquaredSection" style="display: none;">
+        <div class="asquared-badge"><i class="fas fa-crown"></i> A-Squared Exclusive</div>
+        <div class="asquared-title">
+            <i class="fas fa-users"></i> Executive Leadership Hub
+        </div>
+        <div class="group-tabs">
+            <button class="group-tab active" data-group="parish">🏘️ Parish Executives</button>
+            <button class="group-tab" data-group="archdeaconry">🌟 Archdeaconry Executives (IC3A/ASGSK)</button>
+            <button class="group-tab" data-group="announcements">📢 Executive Announcements</button>
+        </div>
+        
+        <div class="group-content active" id="group-parish">
+            <div id="parishExecutivesList"></div>
+        </div>
+        <div class="group-content" id="group-archdeaconry">
+            <div id="archdeaconryExecutivesList"></div>
+        </div>
+        <div class="group-content" id="group-announcements">
+            <div id="executiveAnnouncements"></div>
+        </div>
+    </div>
+
+    <!-- Feed Section -->
     <section class="feed-section">
         <div class="section-header">
             <h2 class="section-title">Latest Updates</h2>
@@ -392,6 +536,19 @@
         </div>
     </section>
 
+    <!-- Floating Help Button -->
+    <div class="help-btn" id="helpBtn">
+        <i class="fas fa-question" style="font-size: 1.5rem;"></i>
+    </div>
+    <div class="help-menu" id="helpMenu">
+        <a href="#" onclick="showSupport()"><i class="fas fa-headset"></i> Support</a>
+        <a href="#" onclick="showFAQ()"><i class="fas fa-question-circle"></i> FAQ</a>
+        <a href="#" onclick="showContact()"><i class="fas fa-envelope"></i> Contact Us</a>
+        <a href="privacy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="terms.html"><i class="fas fa-file-contract"></i> Terms of Service</a>
+    </div>
+
+    <!-- Footer Navigation -->
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item active">
             <i class="fas fa-home"></i><span>Home</span>
@@ -430,6 +587,16 @@
         </div>
     </div>
 
+    <div class="modal" id="supportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="supportTitle">Support</h3>
+                <button class="close-modal" onclick="closeSupportModal()">&times;</button>
+            </div>
+            <div id="supportModalBody" style="padding: 1rem;"></div>
+        </div>
+    </div>
+
     <script src="supabase/client.js"></script>
     <script>
         let currentUser = null;
@@ -458,10 +625,91 @@
                 if (currentProfile?.role === 'admin') {
                     document.getElementById('adminLink').style.display = 'block';
                 }
+                // Show A-Squared section if user is A-Squared member
+                if (currentProfile?.is_a_squared) {
+                    document.getElementById('asquaredSection').style.display = 'block';
+                    loadExecutives();
+                    loadExecutiveAnnouncements();
+                }
             }
+            await loadStats();
             await loadPosts();
             await loadUserLikes();
             setupRealtime();
+            setupHelpMenu();
+        }
+
+        async function loadStats() {
+            const { data: profiles } = await supabaseClient.from('profiles').select('*');
+            const { data: posts } = await supabaseClient.from('posts').select('*');
+            const { data: events } = await supabaseClient.from('posts').select('*').eq('type', 'event');
+            const { data: aSquared } = await supabaseClient.from('profiles').select('*').eq('is_a_squared', true);
+            
+            document.getElementById('statMembers').innerHTML = profiles?.length || 0;
+            document.getElementById('statEvents').innerHTML = events?.length || 0;
+            document.getElementById('statLeaders').innerHTML = aSquared?.length || 0;
+            document.getElementById('statPosts').innerHTML = posts?.length || 0;
+        }
+
+        async function loadExecutives() {
+            // Parish Executives
+            const { data: parishExecs } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('is_a_squared', true)
+                .eq('a_squared_type', 'Parish A-Squared');
+            
+            const parishContainer = document.getElementById('parishExecutivesList');
+            parishContainer.innerHTML = parishExecs?.map(exec => `
+                <div class="executive-card" onclick="showUserProfile('${exec.id}')">
+                    <div class="executive-avatar">${exec.full_name?.[0] || 'E'}</div>
+                    <div>
+                        <strong>${exec.full_name || exec.email}</strong>
+                        <div><span class="leadership-tag">${exec.leadership_tag || 'Parish Executive'}</span></div>
+                        <small>${exec.parish}</small>
+                    </div>
+                </div>
+            `).join('') || '<p>No parish executives found.</p>';
+            
+            // Archdeaconry Executives (IC3A/ASGSK)
+            const { data: archExecs } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('is_a_squared', true)
+                .eq('a_squared_type', 'Archdeaconry A-Squared');
+            
+            const archContainer = document.getElementById('archdeaconryExecutivesList');
+            archContainer.innerHTML = archExecs?.map(exec => `
+                <div class="executive-card" onclick="showUserProfile('${exec.id}')">
+                    <div class="executive-avatar">${exec.full_name?.[0] || 'E'}</div>
+                    <div>
+                        <strong>${exec.full_name || exec.email}</strong>
+                        <div><span class="leadership-tag" style="background:#ffd700; color:#000;">${exec.leadership_tag || 'Archdeaconry Executive'}</span></div>
+                        <small>${exec.parish}</small>
+                    </div>
+                </div>
+            `).join('') || '<p>No archdeaconry executives found.</p>';
+        }
+
+        async function loadExecutiveAnnouncements() {
+            const { data: announcements } = await supabaseClient
+                .from('posts')
+                .select('*')
+                .eq('type', 'notice')
+                .order('created_at', { ascending: false })
+                .limit(5);
+            
+            const container = document.getElementById('executiveAnnouncements');
+            container.innerHTML = announcements?.map(ann => `
+                <div class="executive-card" onclick="showPostDetail(${ann.id})">
+                    <div class="executive-avatar"><i class="fas fa-bullhorn"></i></div>
+                    <div>
+                        <strong>${ann.title}</strong>
+                        <div style="font-size:0.8rem; opacity:0.8;">${ann.content.substring(0, 100)}...</div>
+                        <small>${new Date(ann.created_at).toLocaleDateString()}</small>
+                    </div>
+                </div>
+            `).join('') || '<p>No executive announcements.</p>';
         }
 
         async function loadPosts() {
@@ -569,18 +817,6 @@
                 .eq('post_id', postId)
                 .order('created_at', { ascending: true });
             
-            const commentMap = new Map();
-            const rootComments = [];
-            comments?.forEach(comment => {
-                comment.replies = [];
-                commentMap.set(comment.id, comment);
-                if (!comment.parent_id) rootComments.push(comment);
-                else {
-                    const parent = commentMap.get(comment.parent_id);
-                    if (parent) parent.replies.push(comment);
-                }
-            });
-            
             const modal = document.getElementById('postModal');
             const modalBody = document.getElementById('modalBody');
             
@@ -607,9 +843,9 @@
                     </div>
                     
                     <div class="comments-section">
-                        <h4>Comments (${rootComments.length})</h4>
+                        <h4>Comments (${comments?.length || 0})</h4>
                         <div id="commentsList">
-                            ${rootComments.map(comment => renderComment(comment)).join('') || '<p style="text-align:center; padding:1rem;">No comments yet. Be the first!</p>'}
+                            ${comments?.map(comment => renderComment(comment)).join('') || '<p style="text-align:center; padding:1rem;">No comments yet.</p>'}
                         </div>
                         
                         ${currentUser ? `
@@ -630,18 +866,18 @@
                 `<span class="leadership-tag">${comment.profiles.leadership_tag}</span>` : '';
             
             return `
-                <div class="comment ${isReply ? 'reply' : ''}" data-comment-id="${comment.id}">
-                    <div class="comment-header">
-                        <span class="comment-author" onclick="showUserProfile('${comment.user_id}')">
-                            <strong>${comment.profiles?.full_name || 'User'}</strong> ${leadershipTag}
+                <div class="comment ${isReply ? 'reply' : ''}" style="margin-bottom:1rem; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:12px; border-left:3px solid #667eea;">
+                    <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; flex-wrap:wrap;">
+                        <span class="comment-author" style="font-weight:600; cursor:pointer;" onclick="showUserProfile('${comment.user_id}')">
+                            ${comment.profiles?.full_name || 'User'} ${leadershipTag}
                         </span>
-                        <span class="comment-time">${new Date(comment.created_at).toLocaleString()}</span>
+                        <span style="font-size:0.7rem; color:#888;">${new Date(comment.created_at).toLocaleString()}</span>
                     </div>
                     <p>${escapeHtml(comment.content)}</p>
-                    ${currentUser ? `<button class="reply-btn" onclick="showReplyInput(${comment.id}, ${comment.post_id})"><i class="fas fa-reply"></i> Reply</button>` : ''}
+                    ${currentUser ? `<button class="reply-btn" style="background:none; border:none; color:#667eea; cursor:pointer; font-size:0.8rem; margin-top:0.5rem;" onclick="showReplyInput(${comment.id}, ${comment.post_id})"><i class="fas fa-reply"></i> Reply</button>` : ''}
                     <div id="reply-input-${comment.id}" style="display:none; margin-top:0.5rem;">
-                        <div class="comment-input" style="margin-top:0.5rem;">
-                            <input type="text" id="replyText-${comment.id}" placeholder="Write a reply...">
+                        <div style="display:flex; gap:0.5rem; margin-top:0.5rem;">
+                            <input type="text" id="replyText-${comment.id}" placeholder="Write a reply..." style="flex:1; padding:0.8rem; border:none; border-radius:10px; background:rgba(255,255,255,0.1); color:white;">
                             <button class="btn btn-primary" onclick="addComment(${comment.post_id}, ${comment.id})" style="padding:0.5rem 1rem;">Reply</button>
                         </div>
                     </div>
@@ -660,7 +896,6 @@
         async function addComment(postId, parentId = null) {
             if (!currentUser) {
                 window.showToast('Please login to comment', 'error');
-                setTimeout(() => window.location.href = 'auth.html', 1500);
                 return;
             }
             
@@ -702,23 +937,6 @@
             
             if (!profile) return;
             
-            const { count: followers } = await supabaseClient
-                .from('follows')
-                .select('*', { count: 'exact', head: true })
-                .eq('following_id', userId);
-            
-            const { count: following } = await supabaseClient
-                .from('follows')
-                .select('*', { count: 'exact', head: true })
-                .eq('follower_id', userId);
-            
-            const isFollowing = currentUser ? await supabaseClient
-                .from('follows')
-                .select('*')
-                .eq('follower_id', currentUser.id)
-                .eq('following_id', userId)
-                .single() : null;
-            
             const modal = document.getElementById('profileModal');
             const modalBody = document.getElementById('profileModalBody');
             
@@ -731,51 +949,10 @@
                     ${profile.leadership_tag ? `<span class="leadership-tag" style="font-size:0.9rem;">${profile.leadership_tag}</span>` : ''}
                     <p style="margin-top:0.5rem; opacity:0.7;">${profile.parish || 'No parish'}</p>
                     ${profile.bio ? `<p style="margin:1rem 0;">${escapeHtml(profile.bio)}</p>` : ''}
-                    
-                    <div style="display: flex; justify-content: space-around; margin: 1.5rem 0;">
-                        <div><strong>${profile.posts_count || 0}</strong><br><small>Posts</small></div>
-                        <div><strong>${followers || 0}</strong><br><small>Followers</small></div>
-                        <div><strong>${following || 0}</strong><br><small>Following</small></div>
-                    </div>
-                    
-                    ${currentUser && currentUser.id !== userId ? `
-                        <button class="btn ${isFollowing?.data ? 'btn-outline' : 'btn-primary'}" 
-                                onclick="toggleFollow('${userId}', this)">
-                            <i class="fas ${isFollowing?.data ? 'fa-user-minus' : 'fa-user-plus'}"></i>
-                            ${isFollowing?.data ? 'Unfollow' : 'Follow'}
-                        </button>
-                    ` : ''}
                 </div>
             `;
             
             modal.style.display = 'flex';
-        }
-
-        async function toggleFollow(userId, btn) {
-            if (!currentUser) {
-                window.showToast('Please login to follow users', 'error');
-                return;
-            }
-            
-            const { data: existing } = await supabaseClient
-                .from('follows')
-                .select('*')
-                .eq('follower_id', currentUser.id)
-                .eq('following_id', userId)
-                .single();
-            
-            if (existing) {
-                await supabaseClient.from('follows').delete().eq('id', existing.id);
-                btn.innerHTML = '<i class="fas fa-user-plus"></i> Follow';
-                btn.className = 'btn btn-primary';
-            } else {
-                await supabaseClient.from('follows').insert([{
-                    follower_id: currentUser.id,
-                    following_id: userId
-                }]);
-                btn.innerHTML = '<i class="fas fa-user-minus"></i> Unfollow';
-                btn.className = 'btn btn-outline';
-            }
         }
 
         function sharePost(postId) {
@@ -784,12 +961,68 @@
             window.showToast('Link copied to clipboard!', 'success');
         }
 
-        function closeModal() {
-            document.getElementById('postModal').style.display = 'none';
+        function closeModal() { document.getElementById('postModal').style.display = 'none'; }
+        function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
+        function closeSupportModal() { document.getElementById('supportModal').style.display = 'none'; }
+
+        function setupHelpMenu() {
+            const helpBtn = document.getElementById('helpBtn');
+            const helpMenu = document.getElementById('helpMenu');
+            helpBtn.addEventListener('click', () => {
+                helpMenu.classList.toggle('show');
+            });
+            document.addEventListener('click', (e) => {
+                if (!helpBtn.contains(e.target) && !helpMenu.contains(e.target)) {
+                    helpMenu.classList.remove('show');
+                }
+            });
         }
 
-        function closeProfileModal() {
-            document.getElementById('profileModal').style.display = 'none';
+        function showSupport() {
+            const modal = document.getElementById('supportModal');
+            document.getElementById('supportTitle').innerHTML = 'Support Center';
+            document.getElementById('supportModalBody').innerHTML = `
+                <h3>How can we help you?</h3>
+                <p>Contact our support team:</p>
+                <p><i class="fas fa-envelope"></i> support@ayfgwarimpa.org</p>
+                <p><i class="fas fa-phone"></i> +234 123 456 7890</p>
+                <hr style="margin: 1rem 0; border-color: rgba(255,255,255,0.1);">
+                <h4>Office Hours:</h4>
+                <p>Monday - Friday: 9am - 5pm</p>
+                <p>Saturday: 10am - 2pm</p>
+                <p>Sunday: Closed</p>
+            `;
+            modal.style.display = 'flex';
+            document.getElementById('helpMenu').classList.remove('show');
+        }
+
+        function showFAQ() {
+            const modal = document.getElementById('supportModal');
+            document.getElementById('supportTitle').innerHTML = 'Frequently Asked Questions';
+            document.getElementById('supportModalBody').innerHTML = `
+                <h3>FAQ</h3>
+                <p><strong>How do I become an A-Squared member?</strong><br>Go to your profile and click "Request A-Squared Membership". Admin will review your request.</p>
+                <p><strong>How do I change my parish?</strong><br>Contact your parish admin to update your parish assignment.</p>
+                <p><strong>How do I reset my password?</strong><br>Click "Forgot Password" on the login page.</p>
+                <p><strong>How do I report inappropriate content?</strong><br>Contact support at support@ayfgwarimpa.org</p>
+            `;
+            modal.style.display = 'flex';
+            document.getElementById('helpMenu').classList.remove('show');
+        }
+
+        function showContact() {
+            const modal = document.getElementById('supportModal');
+            document.getElementById('supportTitle').innerHTML = 'Contact Us';
+            document.getElementById('supportModalBody').innerHTML = `
+                <h3>Get in touch</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Anglican Youth Fellowship, Gwarimpa Archdeaconry, Abuja</p>
+                <p><i class="fas fa-envelope"></i> info@ayfgwarimpa.org</p>
+                <p><i class="fab fa-whatsapp"></i> +234 123 456 7890</p>
+                <p><i class="fab fa-instagram"></i> @ayfgwarimpa</p>
+                <p><i class="fab fa-facebook"></i> AYF Gwarimpa</p>
+            `;
+            modal.style.display = 'flex';
+            document.getElementById('helpMenu').classList.remove('show');
         }
 
         function escapeHtml(text) {
@@ -804,11 +1037,6 @@
                 .channel('public:posts')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => loadPosts())
                 .subscribe();
-            
-            supabaseClient
-                .channel('public:comments')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'comments' }, () => loadPosts())
-                .subscribe();
         }
 
         document.querySelectorAll('.filter-chip').forEach(btn => {
@@ -817,6 +1045,15 @@
                 btn.classList.add('active');
                 currentCategory = btn.dataset.category;
                 renderPosts();
+            });
+        });
+
+        document.querySelectorAll('.group-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.group-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                document.querySelectorAll('.group-content').forEach(g => g.classList.remove('active'));
+                document.getElementById(`group-${btn.dataset.group}`).classList.add('active');
             });
         });
 
@@ -832,7 +1069,10 @@
         window.showReplyInput = showReplyInput;
         window.showUserProfile = showUserProfile;
         window.closeProfileModal = closeProfileModal;
-        window.toggleFollow = toggleFollow;
+        window.closeSupportModal = closeSupportModal;
+        window.showSupport = showSupport;
+        window.showFAQ = showFAQ;
+        window.showContact = showContact;
 
         init();
     </script>
