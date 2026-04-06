@@ -1,4 +1,4 @@
-// Supabase Configuration
+// Supabase Configuration - REPLACE WITH YOUR ACTUAL CREDENTIALS
 const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
 
@@ -16,68 +16,255 @@ window.appState = {
     notifications: []
 };
 
-// Helper function to show toast notifications
+// Toast notification function
 window.showToast = function(message, type = 'info') {
+    // Remove existing toast
+    const existingToast = document.querySelector('.custom-toast');
+    if (existingToast) existingToast.remove();
+    
     const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.innerHTML = message;
+    toast.className = 'custom-toast';
+    const bgColor = type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea';
     toast.style.cssText = `
         position: fixed;
         bottom: 80px;
         right: 20px;
         padding: 12px 20px;
-        background: ${type === 'success' ? '#48bb78' : type === 'error' ? '#f56565' : '#667eea'};
+        background: ${bgColor};
         color: white;
         border-radius: 10px;
         z-index: 10000;
         animation: slideIn 0.3s ease;
         font-family: 'Inter', sans-serif;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
     `;
+    toast.innerHTML = `<i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i> ${message}`;
     document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 3000);
+    
+    // Add animation style if not exists
+    if (!document.querySelector('#toast-style')) {
+        const style = document.createElement('style');
+        style.id = 'toast-style';
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
 };
 
 // Check if user is authenticated
 window.checkAuth = async function(redirectOnFail = true) {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    if (session) {
-        window.appState.currentUser = session.user;
-        const { data: profile } = await supabaseClient
-            .from('profiles')
-            .select('*')
-            .eq('id', session.user.id)
-            .single();
-        window.appState.currentProfile = profile;
-        window.appState.isASquared = profile?.is_a_squared || false;
-        window.appState.leadershipTag = profile?.leadership_tag;
-        window.appState.parish = profile?.parish;
-        window.appState.currentRole = profile?.role === 'admin' ? 'admin' : 
-                                     profile?.is_a_squared ? 'a-squared' : 
-                                     profile?.parish ? 'parish' : 'user';
-        return true;
+    try {
+        const { data: { session }, error } = await supabaseClient.auth.getSession();
+        if (error) throw error;
+        
+        if (session) {
+            window.appState.currentUser = session.user;
+            
+            // Fetch profile
+            const { data: profile, error: profileError } = await supabaseClient
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+            
+            if (profileError && profileError.code !== 'PGRST116') {
+                console.error('Profile fetch error:', profileError);
+            }
+            
+            if (profile) {
+                window.appState.currentProfile = profile;
+                window.appState.isASquared = profile.is_a_squared || false;
+                window.appState.leadershipTag = profile.leadership_tag;
+                window.appState.parish = profile.parish;
+                window.appState.currentRole = profile.role === 'admin' ? 'admin' : 
+                                             profile.is_a_squared ? 'a-squared' : 
+                                             profile.parish ? 'parish' : 'user';
+            }
+            return true;
+        }
+        
+        window.appState.currentUser = null;
+        window.appState.currentProfile = null;
+        window.appState.currentRole = 'public';
+        
+        if (redirectOnFail && !window.location.pathname.includes('auth.html') && !window.location.pathname.includes('index.html')) {
+            window.location.href = 'auth.html';
+        }
+        return false;
+    } catch (error) {
+        console.error('Auth check error:', error);
+        return false;
     }
-    if (redirectOnFail && !window.location.pathname.includes('auth.html')) {
-        window.location.href = 'auth.html';
-    }
-    return false;
 };
 
 // Get current user
 window.getCurrentUser = () => window.appState.currentUser;
 window.getCurrentProfile = () => window.appState.currentProfile;
 
-// Logout
+// Logout function
 window.logout = async function() {
-    await supabaseClient.auth.signOut();
-    window.location.href = 'auth.html';
+    try {
+        await supabaseClient.auth.signOut();
+        window.showToast('Logged out successfully', 'success');
+        setTimeout(() => {
+            window.location.href = 'auth.html';
+        }, 1000);
+    } catch (error) {
+        window.showToast('Error logging out: ' + error.message, 'error');
+    }
 };
 
-// Create the style for toast animations
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
+// Login function
+window.login = async function(email, password) {
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: password
+        });
+        
+        if (error) throw error;
+        
+        if (!data.user.email_confirmed_at) {
+            throw new Error('Please verify your email before logging in. Check your inbox!');
+        }
+        
+        window.showToast('Login successful! Redirecting...', 'success');
+        return { success: true, user: data.user };
+    } catch (error) {
+        window.showToast(error.message, 'error');
+        return { success: false, error: error.message };
     }
-`;
-document.head.appendChild(style);
+};
+
+// Register function
+window.register = async function(fullName, email, password, parish, aSquaredType = null) {
+    try {
+        // Sign up with Supabase
+        const { data, error } = await supabaseClient.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: fullName,
+                    parish: parish
+                }
+            }
+        });
+        
+        if (error) throw error;
+        
+        // Create profile in profiles table
+        const aSquaredRequested = aSquaredType !== null && aSquaredType !== 'none';
+        const finalASquaredType = aSquaredType === 'parish' ? 'Parish A-Squared' : 
+                                  aSquaredType === 'archdeaconry' ? 'Archdeaconry A-Squared' : null;
+        
+        const { error: profileError } = await supabaseClient
+            .from('profiles')
+            .insert([{
+                id: data.user.id,
+                full_name: fullName,
+                email: email,
+                parish: parish,
+                role: 'user',
+                is_a_squared: false,
+                a_squared_requested: aSquaredRequested,
+                a_squared_type: finalASquaredType,
+                leadership_tag: null
+            }]);
+        
+        if (profileError) {
+            console.error('Profile creation error:', profileError);
+        }
+        
+        let message = 'Account created successfully! Please check your email to verify your account.';
+        if (aSquaredRequested) {
+            message += ' Your A-Squared membership request has been sent to the admin.';
+        }
+        
+        window.showToast(message, 'success');
+        return { success: true, user: data.user };
+    } catch (error) {
+        window.showToast(error.message, 'error');
+        return { success: false, error: error.message };
+    }
+};
+
+// Forgot password
+window.resetPassword = async function(email) {
+    try {
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+            redirectTo: window.location.origin + '/reset-password.html'
+        });
+        
+        if (error) throw error;
+        
+        window.showToast('Password reset email sent! Check your inbox.', 'success');
+        return { success: true };
+    } catch (error) {
+        window.showToast(error.message, 'error');
+        return { success: false, error: error.message };
+    }
+};
+
+// Update profile
+window.updateProfile = async function(updates) {
+    if (!window.appState.currentUser) {
+        window.showToast('Please login first', 'error');
+        return false;
+    }
+    
+    try {
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update(updates)
+            .eq('id', window.appState.currentUser.id);
+        
+        if (error) throw error;
+        
+        window.showToast('Profile updated successfully', 'success');
+        await window.checkAuth(false);
+        return true;
+    } catch (error) {
+        window.showToast(error.message, 'error');
+        return false;
+    }
+};
+
+// Request A-Squared membership
+window.requestASquared = async function(type) {
+    if (!window.appState.currentUser) {
+        window.showToast('Please login first', 'error');
+        return false;
+    }
+    
+    try {
+        const { error } = await supabaseClient
+            .from('profiles')
+            .update({
+                a_squared_requested: true,
+                a_squared_type: type === 'parish' ? 'Parish A-Squared' : 'Archdeaconry A-Squared'
+            })
+            .eq('id', window.appState.currentUser.id);
+        
+        if (error) throw error;
+        
+        window.showToast('A-Squared request submitted to admin!', 'success');
+        return true;
+    } catch (error) {
+        window.showToast(error.message, 'error');
+        return false;
+    }
+};
