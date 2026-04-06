@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>My Profile | AYF Account</title>
+    <title>Parish Community | AYF Chat</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -15,8 +15,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-            min-height: 100vh;
+            background: #0a0a0a;
             color: white;
             padding-bottom: 70px;
         }
@@ -29,6 +28,9 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
@@ -60,104 +62,183 @@
             border-radius: 8px;
         }
 
-        .profile-container {
-            max-width: 600px;
-            margin: 2rem auto;
+        .parish-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
             padding: 2rem;
-        }
-
-        .profile-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 30px;
-            padding: 2rem;
-        }
-
-        .avatar-section {
             text-align: center;
-            margin-bottom: 2rem;
         }
 
-        .avatar {
-            width: 120px;
-            height: 120px;
+        .parish-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .parish-selector {
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            position: sticky;
+            top: 70px;
+            z-index: 99;
+        }
+
+        .parish-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .parish-btn.active, .parish-btn:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .content-area {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        /* Feed */
+        .feed-item {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feed-header {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feed-avatar {
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto 1rem;
         }
 
-        .info-field {
-            margin: 1rem 0;
-            padding: 1rem;
+        /* Chat Messages */
+        .chat-container {
             background: rgba(255,255,255,0.05);
-            border-radius: 16px;
+            border-radius: 20px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
         }
 
-        .info-label {
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .message.sent {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 0.8rem;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+        }
+
+        .message.sent .message-bubble {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .message-sender {
+            font-size: 0.7rem;
             opacity: 0.7;
             margin-bottom: 0.3rem;
         }
 
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .leadership-badge {
+        .leadership-tag {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.3rem;
             background: #48bb78;
-            padding: 0.3rem 0.8rem;
             border-radius: 50px;
-            font-size: 0.8rem;
+            margin-left: 0.3rem;
         }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-
-        .stat-item {
-            text-align: center;
+        .chat-input {
             padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 1rem;
+        .chat-input input {
+            flex: 1;
+            padding: 0.8rem;
             border: none;
-            border-radius: 50px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin-top: 1rem;
+            border-radius: 25px;
+            background: rgba(255,255,255,0.1);
+            color: white;
         }
 
-        .btn-primary {
+        .send-btn {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
             background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-        }
-
-        .btn-danger {
-            background: #f56565;
-            color: white;
+            cursor: pointer;
         }
 
         .footer-nav {
@@ -194,16 +275,18 @@
         }
 
         @media (max-width: 768px) {
-            .profile-container { padding: 1rem; margin: 1rem; }
+            .parish-header h1 { font-size: 1.5rem; }
+            .message-bubble { max-width: 85%; }
             .nav-links { display: none; }
+            .content-area { padding: 1rem; }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="logo" onclick="window.location.href='index.html'">
-            <div class="logo-icon">👤</div>
-            <h3>My Profile</h3>
+            <div class="logo-icon">⛪</div>
+            <h3>Parish Hub</h3>
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
@@ -213,7 +296,36 @@
         </div>
     </header>
 
-    <div class="profile-container" id="profileContainer"></div>
+    <div class="parish-header">
+        <h1 id="parishTitle">St. Mathus Anglican Church</h1>
+        <p>Connect, share, and grow together in faith</p>
+    </div>
+
+    <div class="parish-selector">
+        <button class="parish-btn active" data-parish="St. Mathus Anglican Church">St. Mathus</button>
+        <button class="parish-btn" data-parish="St. Philip Anglican Church">St. Philip</button>
+        <button class="parish-btn" data-parish="St. Barnabas Jaiyuan">St. Barnabas</button>
+    </div>
+
+    <div class="content-area">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="feed">📱 Parish Feed</button>
+            <button class="tab-btn" data-tab="chat">💬 Community Chat</button>
+            <button class="tab-btn" data-tab="members">👥 Members</button>
+        </div>
+
+        <div id="feedTab" class="tab-content active"></div>
+        <div id="chatTab" class="tab-content" style="display:none;">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input">
+                    <input type="text" id="messageInput" placeholder="Type a message...">
+                    <button class="send-btn" onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+        <div id="membersTab" class="tab-content" style="display:none;"></div>
+    </div>
 
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item">
@@ -224,11 +336,11 @@
             <i class="fas fa-calendar-alt"></i>
             <span>Plan</span>
         </a>
-        <a href="parish.html" class="footer-nav-item">
+        <a href="parish.html" class="footer-nav-item active">
             <i class="fas fa-church"></i>
             <span>Parish</span>
         </a>
-        <a href="profile.html" class="footer-nav-item active">
+        <a href="profile.html" class="footer-nav-item">
             <i class="fas fa-user"></i>
             <span>Profile</span>
         </a>
@@ -236,123 +348,161 @@
 
     <script src="supabase/client.js"></script>
     <script>
-        // Check if user is logged in
-        async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            return session;
+        let currentParish = "St. Mathus Anglican Church";
+        let currentTab = "feed";
+
+        const parishFeeds = {
+            "St. Mathus Anglican Church": [
+                { title: "Sunday Service", content: "Join us this Sunday for our weekly service at 9am. Guest speaker: Rev. Michael Okonkwo.", date: "2026-01-12", author: "Parish Admin" },
+                { title: "Bible Study", content: "Wednesday Bible Study at 6pm. Topic: 'The Power of Prayer'.", date: "2026-01-10", author: "Pastor John" },
+                { title: "Youth Meeting", content: "Youth fellowship meeting every Friday at 4pm. Come with your friends!", date: "2026-01-09", author: "Youth Leader" }
+            ],
+            "St. Philip Anglican Church": [
+                { title: "Harvest Thanksgiving", content: "Join us for our annual harvest celebration on January 25th. Theme: 'Bountiful Blessings'.", date: "2026-01-25", author: "Church Council" },
+                { title: "Prayer Vigil", content: "Monthly prayer vigil on January 30th from 10pm to 5am.", date: "2026-01-30", author: "Prayer Ministry" },
+                { title: "Choir Practice", content: "Choir practice every Saturday at 2pm. New members welcome!", date: "2026-01-11", author: "Choir Master" }
+            ],
+            "St. Barnabas Jaiyuan": [
+                { title: "Leadership Training", content: "Leadership training for all department heads on January 20th at 10am.", date: "2026-01-20", author: "Pastor" },
+                { title: "Outreach Program", content: "Community outreach to orphanage on January 18th. Volunteers needed!", date: "2026-01-18", author: "Outreach Team" },
+                { title: "Baptism Service", content: "Baptism service for new members on January 26th at 8am.", date: "2026-01-26", author: "Clergy" }
+            ]
+        };
+
+        const members = {
+            "St. Mathus Anglican Church": [
+                { name: "John Okonkwo", role: "President", tag: "President - St. Mathus", avatar: "JO" },
+                { name: "Mary Okafor", role: "Secretary", tag: "Secretary - St. Mathus", avatar: "MO" },
+                { name: "Peter Eze", role: "Member", tag: null, avatar: "PE" },
+                { name: "Grace Nwosu", role: "Treasurer", tag: "Treasurer - St. Mathus", avatar: "GN" }
+            ],
+            "St. Philip Anglican Church": [
+                { name: "David Nnamdi", role: "President", tag: "President - St. Philip", avatar: "DN" },
+                { name: "Sarah Obi", role: "PRO", tag: "PRO - St. Philip", avatar: "SO" },
+                { name: "Michael Ugwu", role: "Member", tag: null, avatar: "MU" }
+            ],
+            "St. Barnabas Jaiyuan": [
+                { name: "Emeka Okafor", role: "President", tag: "President - St. Barnabas", avatar: "EO" },
+                { name: "Chidinma Eze", role: "Secretary", tag: "Secretary - St. Barnabas", avatar: "CE" }
+            ]
+        };
+
+        const chatMessages = {
+            "St. Mathus Anglican Church": [
+                { sender: "John Okonkwo", message: "Welcome to our parish community! Feel free to share prayer requests.", time: "10:30 AM", tag: "President - St. Mathus" },
+                { sender: "Mary Okafor", message: "Don't forget our Bible study tomorrow at 6pm!", time: "11:00 AM", tag: "Secretary - St. Mathus" },
+                { sender: "Peter Eze", message: "Praying for everyone's week ahead.", time: "11:15 AM", tag: null }
+            ],
+            "St. Philip Anglican Church": [
+                { sender: "David Nnamdi", message: "Happy new week family! Let's stay strong in faith.", time: "9:00 AM", tag: "President - St. Philip" },
+                { sender: "Sarah Obi", message: "Harvest thanksgiving preparation meeting today at 3pm.", time: "10:00 AM", tag: "PRO - St. Philip" }
+            ],
+            "St. Barnabas Jaiyuan": [
+                { sender: "Emeka Okafor", message: "Leadership training this Saturday. All department heads must attend.", time: "8:00 AM", tag: "President - St. Barnabas" },
+                { sender: "Chidinma Eze", message: "Prayer meeting at 6pm today. Join us!", time: "9:30 AM", tag: "Secretary - St. Barnabas" }
+            ]
+        };
+
+        function renderParishContent() {
+            document.getElementById('parishTitle').innerHTML = currentParish;
+            renderFeed();
+            renderMembers();
+            renderChat();
         }
 
-        async function loadProfile() {
-            const session = await checkAuth();
-            if (!session) return;
-            
-            const { data: profile } = await supabaseClient
-                .from('profiles')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-            
-            const container = document.getElementById('profileContainer');
-            
-            // If no profile exists, create one with default data
-            if (!profile) {
-                await supabaseClient.from('profiles').insert([{
-                    id: session.user.id,
-                    full_name: session.user.email.split('@')[0],
-                    email: session.user.email,
-                    parish: "St. Mathus Anglican Church",
-                    role: "user",
-                    is_a_squared: false
-                }]);
-                loadProfile();
-                return;
-            }
-            
-            container.innerHTML = `
-                <div class="profile-card">
-                    <div class="avatar-section">
-                        <div class="avatar">${(profile.full_name?.[0] || session.user.email[0]).toUpperCase()}</div>
-                        <button class="btn" style="width:auto; padding:0.5rem 1rem; background:rgba(255,255,255,0.1);" onclick="alert('Avatar upload coming soon!')">Change Avatar</button>
+        function renderFeed() {
+            const feed = parishFeeds[currentParish];
+            const container = document.getElementById('feedTab');
+            container.innerHTML = feed.map(item => `
+                <div class="feed-item">
+                    <div class="feed-header">
+                        <div class="feed-avatar"><i class="fas fa-user"></i></div>
+                        <div><strong>${item.author}</strong><br><small>${new Date(item.date).toLocaleDateString()}</small></div>
                     </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label">Full Name</div>
-                        <div class="info-value">${profile.full_name || session.user.email.split('@')[0]}</div>
-                    </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label">Email Address</div>
-                        <div class="info-value">${session.user.email}</div>
-                    </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label">Parish</div>
-                        <div class="info-value">${profile.parish || "Not assigned"}</div>
-                    </div>
-                    
-                    ${profile.leadership_tag ? `
-                        <div class="info-field">
-                            <div class="info-label">Leadership Status</div>
-                            <div class="info-value">
-                                <span class="leadership-badge"><i class="fas fa-crown"></i> ${profile.leadership_tag}</span>
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.likes_given || 0}</div>
-                            <div class="stat-label">Likes Given</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.comments_made || 0}</div>
-                            <div class="stat-label">Comments</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.is_a_squared ? '✓' : '○'}</div>
-                            <div class="stat-label">A-Squared</div>
-                        </div>
-                    </div>
-                    
-                    ${!profile.is_a_squared ? `
-                        <button class="btn btn-primary" onclick="requestASquared()">
-                            <i class="fas fa-star"></i> Request A-Squared Membership
-                        </button>
-                    ` : ''}
-                    
-                    <button class="btn btn-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+                    <h3 style="margin-bottom:0.5rem;">${item.title}</h3>
+                    <p>${item.content}</p>
                 </div>
-            `;
+            `).join('');
         }
 
-        async function requestASquared() {
-            const session = await checkAuth();
-            if (!session) return;
-            
-            const type = confirm("Request Parish A-Squared? Click OK for Parish, Cancel for Archdeaconry");
-            const aSquaredType = type ? "Parish A-Squared" : "Archdeaconry A-Squared";
-            
-            await supabaseClient
-                .from('profiles')
-                .update({ a_squared_requested: true, a_squared_type: aSquaredType })
-                .eq('id', session.user.id);
-            
-            alert("Request submitted to admin! You will be notified upon approval.");
-            loadProfile();
+        function renderMembers() {
+            const membersList = members[currentParish];
+            const container = document.getElementById('membersTab');
+            container.innerHTML = membersList.map(m => `
+                <div class="feed-item">
+                    <div class="feed-header">
+                        <div class="feed-avatar">${m.avatar}</div>
+                        <div>
+                            <strong>${m.name}</strong>
+                            ${m.tag ? `<span class="leadership-tag">${m.tag}</span>` : ''}
+                            <br><small>${m.role}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'auth.html';
+        function renderChat() {
+            const messages = chatMessages[currentParish];
+            const container = document.getElementById('chatMessages');
+            container.innerHTML = messages.map(msg => `
+                <div class="message">
+                    <div class="message-avatar">${msg.sender[0]}</div>
+                    <div class="message-bubble">
+                        <div class="message-sender">
+                            ${msg.sender}
+                            ${msg.tag ? `<span class="leadership-tag">${msg.tag}</span>` : ''}
+                        </div>
+                        <div>${msg.message}</div>
+                        <div style="font-size:0.6rem; opacity:0.5; margin-top:0.3rem;">${msg.time}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        loadProfile();
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            if(message) {
+                const container = document.getElementById('chatMessages');
+                container.innerHTML += `
+                    <div class="message sent">
+                        <div class="message-avatar">You</div>
+                        <div class="message-bubble">
+                            <div>${message}</div>
+                            <div style="font-size:0.6rem; opacity:0.5; margin-top:0.3rem;">Just now</div>
+                        </div>
+                    </div>
+                `;
+                input.value = '';
+                container.scrollTop = container.scrollHeight;
+            }
+        }
+
+        // Parish selection
+        document.querySelectorAll('.parish-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.parish-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentParish = btn.dataset.parish;
+                renderParishContent();
+            });
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentTab = btn.dataset.tab;
+                
+                document.getElementById('feedTab').style.display = currentTab === 'feed' ? 'block' : 'none';
+                document.getElementById('chatTab').style.display = currentTab === 'chat' ? 'block' : 'none';
+                document.getElementById('membersTab').style.display = currentTab === 'members' ? 'block' : 'none';
+            });
+        });
+
+        renderParishContent();
     </script>
 </body>
 </html>
