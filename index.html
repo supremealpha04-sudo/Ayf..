@@ -14,7 +14,45 @@
             color: #ffffff;
             overflow-x: hidden;
             padding-bottom: 70px;
+            transition: background 0.3s ease, color 0.3s ease;
         }
+        
+        /* Dark Mode (Default) */
+        body.dark {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --card-bg: rgba(255,255,255,0.05);
+            --border: rgba(255,255,255,0.1);
+        }
+        
+        /* Light Mode */
+        body.light {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #666666;
+            --card-bg: rgba(0,0,0,0.03);
+            --border: rgba(0,0,0,0.1);
+        }
+        
+        body.light .header,
+        body.light .footer-nav,
+        body.light .stats-bar,
+        body.light .post-card,
+        body.light .asquared-exclusive {
+            background: var(--bg-secondary);
+            border-color: var(--border);
+        }
+        
+        body.light .hero h1 {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
         .bg-animation {
             position: fixed;
             top: 0;
@@ -24,6 +62,10 @@
             z-index: -2;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         }
+        body.light .bg-animation {
+            background: linear-gradient(135deg, #e0e0e0, #f0f0f0, #ffffff);
+        }
+        
         .particle {
             position: absolute;
             background: rgba(102,126,234,0.3);
@@ -36,6 +78,8 @@
             90% { opacity: 0.5; }
             100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
         }
+        
+        /* Header */
         .header {
             background: rgba(10, 10, 10, 0.95);
             backdrop-filter: blur(10px);
@@ -49,6 +93,11 @@
             z-index: 100;
             border-bottom: 1px solid rgba(255,255,255,0.1);
         }
+        body.light .header {
+            background: rgba(255,255,255,0.95);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+        
         .logo {
             display: flex;
             align-items: center;
@@ -67,15 +116,154 @@
         }
         .logo-text h1 { font-size: 1.3rem; font-weight: 700; }
         .logo-text p { font-size: 0.7rem; opacity: 0.7; }
-        .nav-links { display: flex; gap: 1rem; }
-        .nav-links a {
+        
+        /* Horizontal Navigation */
+        .nav-horizontal {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        /* Dropdown Menu */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropbtn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        body.light .dropbtn {
+            color: #1a1a2e;
+        }
+        .dropbtn:hover {
+            color: #667eea;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: rgba(20, 20, 40, 0.98);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 101;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        body.light .dropdown-content {
+            background: rgba(255,255,255,0.98);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            border-radius: 8px;
+            margin: 4px 8px;
+        }
+        body.light .dropdown-content a {
+            color: #1a1a2e;
+        }
+        .dropdown-content a:hover {
+            background: rgba(102,126,234,0.2);
+            color: #667eea;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+            background: rgba(102,126,234,0.3);
+        }
+        
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        body.light .mobile-menu-btn {
+            color: #1a1a2e;
+        }
+        
+        /* Mobile Navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background: rgba(10,10,10,0.98);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            flex-direction: column;
+            gap: 0.5rem;
+            z-index: 999;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        body.light .mobile-nav {
+            background: rgba(255,255,255,0.98);
+        }
+        .mobile-nav.open { display: flex; }
+        .mobile-nav a, .mobile-nav .mobile-dropdown-btn {
             color: white;
             text-decoration: none;
-            padding: 0.5rem 1rem;
+            padding: 0.8rem;
             border-radius: 8px;
-            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-size: 1rem;
+            cursor: pointer;
         }
-        .nav-links a:hover { background: rgba(102,126,234,0.2); }
+        body.light .mobile-nav a, body.light .mobile-nav .mobile-dropdown-btn {
+            color: #1a1a2e;
+        }
+        .mobile-submenu {
+            padding-left: 2rem;
+            display: none;
+        }
+        .mobile-submenu.show { display: block; }
+        
         .hero {
             min-height: 50vh;
             display: flex;
@@ -110,7 +298,6 @@
         }
         .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
         .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(102,126,234,0.3); }
-        .btn-outline { background: transparent; border: 2px solid #667eea; color: #667eea; }
         
         /* Horizontal Stats Bar */
         .stats-bar {
@@ -141,7 +328,6 @@
             background-clip: text;
             color: transparent;
         }
-        .stat-label-horizontal { font-size: 0.9rem; opacity: 0.8; margin-top: 0.3rem; }
         
         /* A-Squared Exclusive Section */
         .asquared-exclusive {
@@ -190,6 +376,7 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            cursor: pointer;
         }
         .executive-avatar {
             width: 50px;
@@ -307,52 +494,6 @@
         .action-btn:hover { background: rgba(102,126,234,0.2); color: #667eea; }
         .action-btn.liked { color: #ff4757; }
         
-        /* Floating Help Button */
-        .help-btn {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 55px;
-            height: 55px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 999;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            transition: all 0.3s;
-        }
-        .help-btn:hover { transform: scale(1.1); }
-        .help-menu {
-            position: fixed;
-            bottom: 150px;
-            right: 20px;
-            background: #1a1a2e;
-            border-radius: 16px;
-            padding: 1rem;
-            display: none;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 998;
-            border: 1px solid rgba(255,255,255,0.1);
-            min-width: 200px;
-        }
-        .help-menu.show { display: flex; animation: slideUp 0.3s ease; }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .help-menu a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        .help-menu a:hover { background: rgba(102,126,234,0.2); }
-        
         /* Modal */
         .modal {
             display: none;
@@ -431,17 +572,19 @@
             margin: 0 auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+        
         @media (max-width: 768px) {
             .hero h1 { font-size: 2rem; }
             .feed-grid { grid-template-columns: 1fr; }
-            .nav-links { display: none; }
+            .nav-horizontal { display: none; }
+            .mobile-menu-btn { display: block; }
             .stats-bar { margin: 1rem; padding: 1rem; }
             .stat-number-horizontal { font-size: 1.5rem; }
             .asquared-exclusive { margin: 1rem; }
         }
     </style>
 </head>
-<body>
+<body class="dark">
     <div class="bg-animation" id="bgAnimation"></div>
 
     <header class="header">
@@ -452,15 +595,64 @@
                 <p>Arise & Shine</p>
             </div>
         </div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="about.html">About</a>
-            <a href="plan.html">Plan</a>
-            <a href="parish.html">Parish</a>
-            <a href="profile.html">Profile</a>
-            <a href="admin/dashboard.html" id="adminLink" style="display:none;">Admin</a>
+        
+        <!-- Horizontal Navigation with Dropdowns -->
+        <div class="nav-horizontal">
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-home"></i> Home</button>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-info-circle"></i> About <i class="fas fa-chevron-down"></i></button>
+                <div class="dropdown-content">
+                    <a href="#" onclick="showAboutPage()"><i class="fas fa-info-circle"></i> About AYF</a>
+                    <a href="#" onclick="showPrivacyPolicy()"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+                    <a href="#" onclick="showTerms()"><i class="fas fa-file-contract"></i> Terms of Service</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-calendar-alt"></i> Plan</button>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-church"></i> Parish</button>
+            </div>
+            <div class="dropdown">
+                <button class="dropbtn"><i class="fas fa-user"></i> Profile</button>
+            </div>
+            <div class="dropdown" id="excoDropdown" style="display: none;">
+                <button class="dropbtn"><i class="fas fa-crown"></i> A-Squared Exco <i class="fas fa-chevron-down"></i></button>
+                <div class="dropdown-content" id="excoDropdownContent">
+                    <a href="#" onclick="showParishExecutives()"><i class="fas fa-users"></i> Parish Executives</a>
+                    <a href="#" onclick="showArchdeaconryExecutives()"><i class="fas fa-star"></i> IC3A / ASGSK Executives</a>
+                    <a href="#" onclick="showExecutiveAnnouncements()"><i class="fas fa-bullhorn"></i> Executive Announcements</a>
+                </div>
+            </div>
+        </div>
+        
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+            <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
         </div>
     </header>
+    
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <a href="index.html"><i class="fas fa-home"></i> Home</a>
+        <button class="mobile-dropdown-btn" onclick="toggleMobileSubmenu('aboutSubmenu')"><i class="fas fa-info-circle"></i> About <i class="fas fa-chevron-down"></i></button>
+        <div id="aboutSubmenu" class="mobile-submenu">
+            <a href="#" onclick="showAboutPage()">About AYF</a>
+            <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a>
+            <a href="#" onclick="showTerms()">Terms of Service</a>
+        </div>
+        <a href="plan.html"><i class="fas fa-calendar-alt"></i> Plan</a>
+        <a href="parish.html"><i class="fas fa-church"></i> Parish</a>
+        <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
+        <button class="mobile-dropdown-btn" id="mobileExcoBtn" style="display: none;" onclick="toggleMobileSubmenu('excoSubmenu')"><i class="fas fa-crown"></i> A-Squared Exco <i class="fas fa-chevron-down"></i></button>
+        <div id="excoSubmenu" class="mobile-submenu">
+            <a href="#" onclick="showParishExecutives()">Parish Executives</a>
+            <a href="#" onclick="showArchdeaconryExecutives()">IC3A / ASGSK Executives</a>
+            <a href="#" onclick="showExecutiveAnnouncements()">Executive Announcements</a>
+        </div>
+    </div>
 
     <section class="hero">
         <div class="hero-content">
@@ -504,7 +696,7 @@
         </div>
         <div class="group-tabs">
             <button class="group-tab active" data-group="parish">🏘️ Parish Executives</button>
-            <button class="group-tab" data-group="archdeaconry">🌟 Archdeaconry Executives (IC3A/ASGSK)</button>
+            <button class="group-tab" data-group="archdeaconry">🌟 IC3A / ASGSK Executives</button>
             <button class="group-tab" data-group="announcements">📢 Executive Announcements</button>
         </div>
         
@@ -536,25 +728,10 @@
         </div>
     </section>
 
-    <!-- Floating Help Button -->
-    <div class="help-btn" id="helpBtn">
-        <i class="fas fa-question" style="font-size: 1.5rem;"></i>
-    </div>
-    <div class="help-menu" id="helpMenu">
-        <a href="#" onclick="showSupport()"><i class="fas fa-headset"></i> Support</a>
-        <a href="#" onclick="showFAQ()"><i class="fas fa-question-circle"></i> FAQ</a>
-        <a href="#" onclick="showContact()"><i class="fas fa-envelope"></i> Contact Us</a>
-        <a href="privacy.html"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
-        <a href="terms.html"><i class="fas fa-file-contract"></i> Terms of Service</a>
-    </div>
-
     <!-- Footer Navigation -->
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item active">
             <i class="fas fa-home"></i><span>Home</span>
-        </a>
-        <a href="about.html" class="footer-nav-item">
-            <i class="fas fa-info-circle"></i><span>About</span>
         </a>
         <a href="plan.html" class="footer-nav-item">
             <i class="fas fa-calendar-alt"></i><span>Plan</span>
@@ -567,6 +744,7 @@
         </a>
     </div>
 
+    <!-- Modals -->
     <div class="modal" id="postModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -587,13 +765,13 @@
         </div>
     </div>
 
-    <div class="modal" id="supportModal">
+    <div class="modal" id="infoModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="supportTitle">Support</h3>
-                <button class="close-modal" onclick="closeSupportModal()">&times;</button>
+                <h3 id="infoModalTitle">Information</h3>
+                <button class="close-modal" onclick="closeInfoModal()">&times;</button>
             </div>
-            <div id="supportModalBody" style="padding: 1rem;"></div>
+            <div id="infoModalBody" style="padding: 1rem;"></div>
         </div>
     </div>
 
@@ -617,7 +795,26 @@
             document.getElementById('bgAnimation').appendChild(particle);
         }
 
+        // Theme Toggle
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.body.classList.remove('dark', 'light');
+            document.body.classList.add(savedTheme);
+            const themeToggle = document.getElementById('themeToggle');
+            themeToggle.innerHTML = savedTheme === 'dark' ? '☀️' : '🌙';
+        }
+        
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            document.body.classList.remove('dark', 'light');
+            document.body.classList.add(newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.getElementById('themeToggle').innerHTML = newTheme === 'dark' ? '☀️' : '🌙';
+        });
+
         async function init() {
+            initTheme();
             const isLoggedIn = await window.checkAuth(false);
             if (isLoggedIn) {
                 currentUser = window.appState.currentUser;
@@ -625,9 +822,11 @@
                 if (currentProfile?.role === 'admin') {
                     document.getElementById('adminLink').style.display = 'block';
                 }
-                // Show A-Squared section if user is A-Squared member
+                // Show A-Squared section and Exco dropdown if user is A-Squared member
                 if (currentProfile?.is_a_squared) {
                     document.getElementById('asquaredSection').style.display = 'block';
+                    document.getElementById('excoDropdown').style.display = 'block';
+                    document.getElementById('mobileExcoBtn').style.display = 'flex';
                     loadExecutives();
                     loadExecutiveAnnouncements();
                 }
@@ -636,7 +835,7 @@
             await loadPosts();
             await loadUserLikes();
             setupRealtime();
-            setupHelpMenu();
+            setupMobileMenu();
         }
 
         async function loadStats() {
@@ -849,8 +1048,8 @@
                         </div>
                         
                         ${currentUser ? `
-                            <div class="comment-input">
-                                <input type="text" id="newComment" placeholder="Write a comment...">
+                            <div class="comment-input" style="display:flex; gap:0.5rem; margin-top:1rem;">
+                                <input type="text" id="newComment" placeholder="Write a comment..." style="flex:1; padding:0.8rem; border:none; border-radius:10px; background:rgba(255,255,255,0.1); color:white;">
                                 <button class="btn btn-primary" onclick="addComment(${postId}, null)" style="padding:0.8rem 1.5rem;">Post</button>
                             </div>
                         ` : '<p style="margin-top:1rem; text-align:center;"><a href="auth.html" style="color:#667eea;">Login</a> to comment</p>'}
@@ -866,7 +1065,7 @@
                 `<span class="leadership-tag">${comment.profiles.leadership_tag}</span>` : '';
             
             return `
-                <div class="comment ${isReply ? 'reply' : ''}" style="margin-bottom:1rem; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:12px; border-left:3px solid #667eea;">
+                <div class="comment ${isReply ? 'reply' : ''}" style="margin-bottom:1rem; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:12px; border-left:3px solid #667eea; ${isReply ? 'margin-left:2rem;' : ''}">
                     <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem; flex-wrap:wrap;">
                         <span class="comment-author" style="font-weight:600; cursor:pointer;" onclick="showUserProfile('${comment.user_id}')">
                             ${comment.profiles?.full_name || 'User'} ${leadershipTag}
@@ -961,68 +1160,98 @@
             window.showToast('Link copied to clipboard!', 'success');
         }
 
+        // Info Modal Functions
+        function showAboutPage() {
+            const modal = document.getElementById('infoModal');
+            document.getElementById('infoModalTitle').innerHTML = 'About AYF Gwarimpa';
+            document.getElementById('infoModalBody').innerHTML = `
+                <h3>Anglican Youth Fellowship - Gwarimpa Archdeaconry</h3>
+                <p style="margin:1rem 0;">The Anglican Youth Fellowship (AYF) is a vibrant community of young people within the Anglican Communion dedicated to spiritual growth, leadership development, and community service.</p>
+                <h4>Our Mission</h4>
+                <p>To raise a generation of young people who are spiritually mature, morally upright, and socially responsible.</p>
+                <h4>Our Vision</h4>
+                <p>To be a dynamic youth fellowship that nurtures leaders, promotes unity, and impacts communities through faith-driven initiatives.</p>
+                <h4>Core Values</h4>
+                <ul style="margin-left:1.5rem;">
+                    <li>Faith in God</li>
+                    <li>Excellence in Service</li>
+                    <li>Unity in Diversity</li>
+                    <li>Integrity and Honesty</li>
+                    <li>Community Impact</li>
+                </ul>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function showPrivacyPolicy() {
+            const modal = document.getElementById('infoModal');
+            document.getElementById('infoModalTitle').innerHTML = 'Privacy Policy';
+            document.getElementById('infoModalBody').innerHTML = `
+                <h3>Privacy Policy</h3>
+                <p style="margin:1rem 0;">Last updated: January 2026</p>
+                <h4>Information We Collect</h4>
+                <p>We collect information you provide directly to us, including name, email, parish affiliation, and leadership status.</p>
+                <h4>How We Use Your Information</h4>
+                <p>We use your information to provide fellowship services, connect you with your parish community, and send notifications about activities.</p>
+                <h4>Data Security</h4>
+                <p>We implement appropriate measures to protect your personal information.</p>
+                <h4>Contact</h4>
+                <p>For privacy questions: privacy@ayfgwarimpa.org</p>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function showTerms() {
+            const modal = document.getElementById('infoModal');
+            document.getElementById('infoModalTitle').innerHTML = 'Terms of Service';
+            document.getElementById('infoModalBody').innerHTML = `
+                <h3>Terms of Service</h3>
+                <p style="margin:1rem 0;">Last updated: January 2026</p>
+                <h4>Acceptance of Terms</h4>
+                <p>By using this platform, you agree to these terms.</p>
+                <h4>User Conduct</h4>
+                <p>You agree not to post offensive content, impersonate others, or share inappropriate material.</p>
+                <h4>A-Squared Membership</h4>
+                <p>A-Squared membership requires admin approval and can be revoked for violations.</p>
+                <h4>Termination</h4>
+                <p>We may terminate accounts that violate these terms.</p>
+            `;
+            modal.style.display = 'flex';
+        }
+
+        function showParishExecutives() {
+            document.getElementById('asquaredSection').style.display = 'block';
+            document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('.group-tab[data-group="parish"]').click();
+        }
+
+        function showArchdeaconryExecutives() {
+            document.getElementById('asquaredSection').style.display = 'block';
+            document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('.group-tab[data-group="archdeaconry"]').click();
+        }
+
+        function showExecutiveAnnouncements() {
+            document.getElementById('asquaredSection').style.display = 'block';
+            document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector('.group-tab[data-group="announcements"]').click();
+        }
+
         function closeModal() { document.getElementById('postModal').style.display = 'none'; }
         function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
-        function closeSupportModal() { document.getElementById('supportModal').style.display = 'none'; }
+        function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; }
 
-        function setupHelpMenu() {
-            const helpBtn = document.getElementById('helpBtn');
-            const helpMenu = document.getElementById('helpMenu');
-            helpBtn.addEventListener('click', () => {
-                helpMenu.classList.toggle('show');
-            });
-            document.addEventListener('click', (e) => {
-                if (!helpBtn.contains(e.target) && !helpMenu.contains(e.target)) {
-                    helpMenu.classList.remove('show');
-                }
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            const mobileNav = document.getElementById('mobileNav');
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileNav.classList.toggle('open');
             });
         }
 
-        function showSupport() {
-            const modal = document.getElementById('supportModal');
-            document.getElementById('supportTitle').innerHTML = 'Support Center';
-            document.getElementById('supportModalBody').innerHTML = `
-                <h3>How can we help you?</h3>
-                <p>Contact our support team:</p>
-                <p><i class="fas fa-envelope"></i> support@ayfgwarimpa.org</p>
-                <p><i class="fas fa-phone"></i> +234 123 456 7890</p>
-                <hr style="margin: 1rem 0; border-color: rgba(255,255,255,0.1);">
-                <h4>Office Hours:</h4>
-                <p>Monday - Friday: 9am - 5pm</p>
-                <p>Saturday: 10am - 2pm</p>
-                <p>Sunday: Closed</p>
-            `;
-            modal.style.display = 'flex';
-            document.getElementById('helpMenu').classList.remove('show');
-        }
-
-        function showFAQ() {
-            const modal = document.getElementById('supportModal');
-            document.getElementById('supportTitle').innerHTML = 'Frequently Asked Questions';
-            document.getElementById('supportModalBody').innerHTML = `
-                <h3>FAQ</h3>
-                <p><strong>How do I become an A-Squared member?</strong><br>Go to your profile and click "Request A-Squared Membership". Admin will review your request.</p>
-                <p><strong>How do I change my parish?</strong><br>Contact your parish admin to update your parish assignment.</p>
-                <p><strong>How do I reset my password?</strong><br>Click "Forgot Password" on the login page.</p>
-                <p><strong>How do I report inappropriate content?</strong><br>Contact support at support@ayfgwarimpa.org</p>
-            `;
-            modal.style.display = 'flex';
-            document.getElementById('helpMenu').classList.remove('show');
-        }
-
-        function showContact() {
-            const modal = document.getElementById('supportModal');
-            document.getElementById('supportTitle').innerHTML = 'Contact Us';
-            document.getElementById('supportModalBody').innerHTML = `
-                <h3>Get in touch</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Anglican Youth Fellowship, Gwarimpa Archdeaconry, Abuja</p>
-                <p><i class="fas fa-envelope"></i> info@ayfgwarimpa.org</p>
-                <p><i class="fab fa-whatsapp"></i> +234 123 456 7890</p>
-                <p><i class="fab fa-instagram"></i> @ayfgwarimpa</p>
-                <p><i class="fab fa-facebook"></i> AYF Gwarimpa</p>
-            `;
-            modal.style.display = 'flex';
-            document.getElementById('helpMenu').classList.remove('show');
+        function toggleMobileSubmenu(submenuId) {
+            const submenu = document.getElementById(submenuId);
+            submenu.classList.toggle('show');
         }
 
         function escapeHtml(text) {
@@ -1039,6 +1268,7 @@
                 .subscribe();
         }
 
+        // Event Listeners
         document.querySelectorAll('.filter-chip').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
@@ -1061,6 +1291,7 @@
             window.location.href = 'auth.html';
         });
 
+        // Make functions global
         window.showPostDetail = showPostDetail;
         window.toggleLike = toggleLike;
         window.addComment = addComment;
@@ -1069,10 +1300,14 @@
         window.showReplyInput = showReplyInput;
         window.showUserProfile = showUserProfile;
         window.closeProfileModal = closeProfileModal;
-        window.closeSupportModal = closeSupportModal;
-        window.showSupport = showSupport;
-        window.showFAQ = showFAQ;
-        window.showContact = showContact;
+        window.closeInfoModal = closeInfoModal;
+        window.showAboutPage = showAboutPage;
+        window.showPrivacyPolicy = showPrivacyPolicy;
+        window.showTerms = showTerms;
+        window.showParishExecutives = showParishExecutives;
+        window.showArchdeaconryExecutives = showArchdeaconryExecutives;
+        window.showExecutiveAnnouncements = showExecutiveAnnouncements;
+        window.toggleMobileSubmenu = toggleMobileSubmenu;
 
         init();
     </script>
