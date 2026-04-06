@@ -7,12 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
@@ -20,7 +15,6 @@
             color: white;
             padding-bottom: 70px;
         }
-
         .header {
             background: rgba(10,10,10,0.95);
             backdrop-filter: blur(10px);
@@ -29,15 +23,16 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
-
         .logo {
             display: flex;
             align-items: center;
             gap: 1rem;
             cursor: pointer;
         }
-
         .logo-icon {
             width: 45px;
             height: 45px;
@@ -47,37 +42,25 @@
             align-items: center;
             justify-content: center;
         }
-
-        .nav-links {
-            display: flex;
-            gap: 1rem;
-        }
-
+        .nav-links { display: flex; gap: 1rem; }
         .nav-links a {
             color: white;
             text-decoration: none;
             padding: 0.5rem 1rem;
             border-radius: 8px;
         }
-
         .profile-container {
             max-width: 600px;
             margin: 2rem auto;
             padding: 2rem;
         }
-
         .profile-card {
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
             border-radius: 30px;
             padding: 2rem;
         }
-
-        .avatar-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
+        .avatar-section { text-align: center; margin-bottom: 2rem; }
         .avatar {
             width: 120px;
             height: 120px;
@@ -89,56 +72,33 @@
             font-size: 3rem;
             margin: 0 auto 1rem;
         }
-
         .info-field {
             margin: 1rem 0;
             padding: 1rem;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
         }
-
-        .info-label {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-bottom: 0.3rem;
-        }
-
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
+        .info-label { font-size: 0.8rem; opacity: 0.7; margin-bottom: 0.3rem; }
+        .info-value { font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
         .leadership-badge {
             background: #48bb78;
             padding: 0.3rem 0.8rem;
             border-radius: 50px;
             font-size: 0.8rem;
         }
-
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 1rem;
             margin: 1.5rem 0;
         }
-
         .stat-item {
             text-align: center;
             padding: 1rem;
             background: rgba(255,255,255,0.05);
             border-radius: 16px;
         }
-
-        .stat-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: #667eea; }
         .btn {
             width: 100%;
             padding: 1rem;
@@ -149,17 +109,8 @@
             transition: all 0.3s;
             margin-top: 1rem;
         }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-danger {
-            background: #f56565;
-            color: white;
-        }
-
+        .btn-primary { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .btn-danger { background: #f56565; color: white; }
         .footer-nav {
             position: fixed;
             bottom: 0;
@@ -173,7 +124,6 @@
             border-top: 1px solid rgba(255,255,255,0.1);
             z-index: 1000;
         }
-
         .footer-nav-item {
             display: flex;
             flex-direction: column;
@@ -184,15 +134,19 @@
             font-size: 0.7rem;
             transition: all 0.3s;
         }
-
-        .footer-nav-item i {
-            font-size: 1.3rem;
+        .footer-nav-item i { font-size: 1.3rem; }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        .loading { text-align: center; padding: 2rem; }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
         }
-
-        .footer-nav-item.active, .footer-nav-item:hover {
-            color: #667eea;
-        }
-
+        @keyframes spin { to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
             .profile-container { padding: 1rem; margin: 1rem; }
             .nav-links { display: none; }
@@ -207,86 +161,79 @@
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
+            <a href="about.html">About</a>
             <a href="plan.html">Plan</a>
             <a href="parish.html">Parish</a>
             <a href="profile.html">Profile</a>
         </div>
     </header>
 
-    <div class="profile-container" id="profileContainer"></div>
+    <div class="profile-container" id="profileContainer">
+        <div class="loading"><div class="spinner"></div></div>
+    </div>
 
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
+            <i class="fas fa-home"></i><span>Home</span>
+        </a>
+        <a href="about.html" class="footer-nav-item">
+            <i class="fas fa-info-circle"></i><span>About</span>
         </a>
         <a href="plan.html" class="footer-nav-item">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Plan</span>
+            <i class="fas fa-calendar-alt"></i><span>Plan</span>
         </a>
         <a href="parish.html" class="footer-nav-item">
-            <i class="fas fa-church"></i>
-            <span>Parish</span>
+            <i class="fas fa-church"></i><span>Parish</span>
         </a>
         <a href="profile.html" class="footer-nav-item active">
-            <i class="fas fa-user"></i>
-            <span>Profile</span>
+            <i class="fas fa-user"></i><span>Profile</span>
         </a>
     </div>
 
     <script src="supabase/client.js"></script>
     <script>
-        // Check if user is logged in
-        async function checkAuth() {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (!session) {
-                window.location.href = 'auth.html';
-                return;
-            }
-            return session;
-        }
-
         async function loadProfile() {
-            const session = await checkAuth();
-            if (!session) return;
+            const isLoggedIn = await window.checkAuth(true);
+            if (!isLoggedIn) return;
             
             const { data: profile } = await supabaseClient
                 .from('profiles')
                 .select('*')
-                .eq('id', session.user.id)
+                .eq('id', window.appState.currentUser.id)
                 .single();
             
-            const container = document.getElementById('profileContainer');
+            const { count: postsCount } = await supabaseClient
+                .from('posts')
+                .select('*', { count: 'exact', head: true })
+                .eq('author_id', window.appState.currentUser.id);
             
-            // If no profile exists, create one with default data
-            if (!profile) {
-                await supabaseClient.from('profiles').insert([{
-                    id: session.user.id,
-                    full_name: session.user.email.split('@')[0],
-                    email: session.user.email,
-                    parish: "St. Mathus Anglican Church",
-                    role: "user",
-                    is_a_squared: false
-                }]);
-                loadProfile();
-                return;
-            }
+            const { count: commentsCount } = await supabaseClient
+                .from('comments')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', window.appState.currentUser.id);
+            
+            const { count: likesReceived } = await supabaseClient
+                .from('likes')
+                .select('*, posts!inner(author_id)', { count: 'exact', head: true })
+                .eq('posts.author_id', window.appState.currentUser.id);
+            
+            const container = document.getElementById('profileContainer');
             
             container.innerHTML = `
                 <div class="profile-card">
                     <div class="avatar-section">
-                        <div class="avatar">${(profile.full_name?.[0] || session.user.email[0]).toUpperCase()}</div>
+                        <div class="avatar">${(profile.full_name?.[0] || window.appState.currentUser.email[0]).toUpperCase()}</div>
                         <button class="btn" style="width:auto; padding:0.5rem 1rem; background:rgba(255,255,255,0.1);" onclick="alert('Avatar upload coming soon!')">Change Avatar</button>
                     </div>
                     
                     <div class="info-field">
                         <div class="info-label">Full Name</div>
-                        <div class="info-value">${profile.full_name || session.user.email.split('@')[0]}</div>
+                        <div class="info-value">${profile.full_name || window.appState.currentUser.email.split('@')[0]}</div>
                     </div>
                     
                     <div class="info-field">
                         <div class="info-label">Email Address</div>
-                        <div class="info-value">${session.user.email}</div>
+                        <div class="info-value">${window.appState.currentUser.email}</div>
                     </div>
                     
                     <div class="info-field">
@@ -297,59 +244,40 @@
                     ${profile.leadership_tag ? `
                         <div class="info-field">
                             <div class="info-label">Leadership Status</div>
-                            <div class="info-value">
-                                <span class="leadership-badge"><i class="fas fa-crown"></i> ${profile.leadership_tag}</span>
-                            </div>
+                            <div class="info-value"><span class="leadership-badge"><i class="fas fa-crown"></i> ${profile.leadership_tag}</span></div>
                         </div>
                     ` : ''}
                     
                     <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.likes_given || 0}</div>
-                            <div class="stat-label">Likes Given</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.comments_made || 0}</div>
-                            <div class="stat-label">Comments</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.is_a_squared ? '✓' : '○'}</div>
-                            <div class="stat-label">A-Squared</div>
-                        </div>
+                        <div class="stat-item"><div class="stat-number">${postsCount || 0}</div><div class="stat-label">Posts</div></div>
+                        <div class="stat-item"><div class="stat-number">${commentsCount || 0}</div><div class="stat-label">Comments</div></div>
+                        <div class="stat-item"><div class="stat-number">${likesReceived || 0}</div><div class="stat-label">Likes Received</div></div>
                     </div>
                     
-                    ${!profile.is_a_squared ? `
-                        <button class="btn btn-primary" onclick="requestASquared()">
-                            <i class="fas fa-star"></i> Request A-Squared Membership
-                        </button>
+                    ${!profile.is_a_squared && !profile.a_squared_requested ? `
+                        <button class="btn btn-primary" onclick="requestASquared()"><i class="fas fa-star"></i> Request A-Squared Membership</button>
+                    ` : profile.a_squared_requested && !profile.is_a_squared ? `
+                        <div style="text-align:center; padding:1rem; background:rgba(237,137,54,0.2); border-radius:16px;">
+                            <i class="fas fa-clock"></i> A-Squared Request Pending Admin Approval
+                        </div>
                     ` : ''}
                     
-                    <button class="btn btn-danger" onclick="logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
+                    <button class="btn btn-danger" onclick="window.logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             `;
         }
 
         async function requestASquared() {
-            const session = await checkAuth();
-            if (!session) return;
-            
             const type = confirm("Request Parish A-Squared? Click OK for Parish, Cancel for Archdeaconry");
             const aSquaredType = type ? "Parish A-Squared" : "Archdeaconry A-Squared";
             
             await supabaseClient
                 .from('profiles')
                 .update({ a_squared_requested: true, a_squared_type: aSquaredType })
-                .eq('id', session.user.id);
+                .eq('id', window.appState.currentUser.id);
             
-            alert("Request submitted to admin! You will be notified upon approval.");
+            window.showToast("Request submitted to admin! You will be notified upon approval.", "success");
             loadProfile();
-        }
-
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = 'auth.html';
         }
 
         loadProfile();
