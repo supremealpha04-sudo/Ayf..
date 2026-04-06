@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -320,14 +319,14 @@
         </div>
 
         <div class="auth-tabs">
-            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" onclick="switchTab('register')">Register</div>
+            <div class="auth-tab active" onclick="switchTab(\'login\')">Login</div>
+            <div class="auth-tab" onclick="switchTab(\'register\')">Register</div>
         </div>
 
         <!-- Login Form -->
         <form id="loginForm" class="auth-form active">
             <div class="alert" id="loginAlert"></div>
-            
+
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" id="loginEmail" required placeholder="Enter your email">
@@ -376,10 +375,10 @@
                 <select id="parish" required>
                     <option value="">Select your parish</option>
                     <option value="St. Matthews">St. Matthews</option>
-                    <option value="St. Pauls">St. Paul's</option>
-                    <option value="St. Johns">St. John's</option>
+                    <option value="St. Pauls">St. Paul\'s</option>
+                    <option value="St. Johns">St. John\'s</option>
                     <option value="All Saints">All Saints</option>
-                    <option value="St. Peters">St. Peter's</option>
+                    <option value="St. Peters">St. Peter\'s</option>
                     <option value="Holy Trinity">Holy Trinity</option>
                 </select>
             </div>
@@ -429,48 +428,48 @@
             <i class="fas fa-clock pending-icon"></i>
             <h2>Approval Pending</h2>
             <p>Your Exco/Archediceanry role request has been sent to the admin for approval. You will be notified once approved.</p>
-            <button class="btn-primary" onclick="switchTab('login')" style="margin-top: 20px;">
+            <button class="btn-primary" onclick="switchTab(\'login\')" style="margin-top: 20px;">
                 Go to Login
             </button>
         </div>
     </div>
 
     <script>
-        // Supabase Configuration - REPLACE WITH YOUR CREDENTIALS
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        
+        // Supabase Configuration
+        const SUPABASE_URL = \'https://jvfdcuvinlimurlttiqy.supabase.co\';
+        const SUPABASE_KEY = \'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg\';
+
         let supabase;
         try {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch (e) {
-            console.error('Supabase init failed:', e);
+            console.error(\'Supabase init failed:\', e);
         }
 
         // Tab Switching
         function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.getElementById('loading').classList.remove('active');
-            document.getElementById('pendingApproval').classList.remove('active');
+            document.querySelectorAll(\'.auth-tab\').forEach(t => t.classList.remove(\'active\'));
+            document.querySelectorAll(\'.auth-form\').forEach(f => f.classList.remove(\'active\'));
+            document.getElementById(\'loading\').classList.remove(\'active\');
+            document.getElementById(\'pendingApproval\').classList.remove(\'active\');
 
-            if (tab === 'login') {
-                document.querySelector('.auth-tab:first-child').classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
+            if (tab === \'login\') {
+                document.querySelector(\'.auth-tab:first-child\').classList.add(\'active\');
+                document.getElementById(\'loginForm\').classList.add(\'active\');
             } else {
-                document.querySelector('.auth-tab:last-child').classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
+                document.querySelector(\'.auth-tab:last-child\').classList.add(\'active\');
+                document.getElementById(\'registerForm\').classList.add(\'active\');
             }
         }
 
         // Image Preview
-        document.getElementById('profileImage').addEventListener('change', function(e) {
+        document.getElementById(\'profileImage\').addEventListener(\'change\', function(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('previewImage').src = e.target.result;
-                    document.getElementById('uploadLabel').classList.add('has-image');
+                    document.getElementById(\'previewImage\').src = e.target.result;
+                    document.getElementById(\'uploadLabel\').classList.add(\'has-image\');
                 };
                 reader.readAsDataURL(file);
             }
@@ -481,28 +480,28 @@
             const alert = document.getElementById(id);
             alert.textContent = message;
             alert.className = `alert ${type}`;
-            alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 5000);
+            alert.style.display = \'block\';
+            setTimeout(() => alert.style.display = \'none\', 5000);
         }
 
         // Register
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        document.getElementById(\'registerForm\').addEventListener(\'submit\', async (e) => {
             e.preventDefault();
-            
-            const btn = document.getElementById('registerBtn');
-            const loading = document.getElementById('loading');
-            
+
+            const btn = document.getElementById(\'registerBtn\');
+            const loading = document.getElementById(\'loading\');
+
             btn.disabled = true;
-            loading.classList.add('active');
+            loading.classList.add(\'active\');
 
             try {
-                const email = document.getElementById('regEmail').value;
-                const password = document.getElementById('regPassword').value;
-                const fullName = document.getElementById('fullName').value;
-                const parish = document.getElementById('parish').value;
-                const gender = document.getElementById('gender').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-                const profileImage = document.getElementById('profileImage').files[0];
+                const email = document.getElementById(\'regEmail\').value;
+                const password = document.getElementById(\'regPassword\').value;
+                const fullName = document.getElementById(\'fullName\').value;
+                const parish = document.getElementById(\'parish\').value;
+                const gender = document.getElementById(\'gender\').value;
+                const role = document.querySelector(\'input[name="role"]:checked\').value;
+                const profileImage = document.getElementById(\'profileImage\').files[0];
 
                 // Create auth user
                 const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -515,16 +514,16 @@
                 // Upload image if exists
                 let imageUrl = null;
                 if (profileImage) {
-                    const fileExt = profileImage.name.split('.').pop();
+                    const fileExt = profileImage.name.split(\'.\').pop();
                     const fileName = `${authData.user.id}-${Date.now()}.${fileExt}`;
-                    
+
                     const { data: uploadData, error: uploadError } = await supabase.storage
-                        .from('profiles')
+                        .from(\'profiles\')
                         .upload(fileName, profileImage);
-                    
+
                     if (!uploadError) {
                         const { data: urlData } = supabase.storage
-                            .from('profiles')
+                            .from(\'profiles\')
                             .getPublicUrl(fileName);
                         imageUrl = urlData.publicUrl;
                     }
@@ -532,7 +531,7 @@
 
                 // Create user profile
                 const { error: profileError } = await supabase
-                    .from('users')
+                    .from(\'users\')
                     .insert([{
                         id: authData.user.id,
                         email,
@@ -541,52 +540,52 @@
                         gender,
                         role,
                         profile_image: imageUrl,
-                        is_approved: role === 'member',
-                        approval_status: role === 'member' ? 'approved' : 'pending',
+                        is_approved: role === \'member\',
+                        approval_status: role === \'member\' ? \'approved\' : \'pending\',
                         created_at: new Date().toISOString()
                     }]);
 
                 if (profileError) throw profileError;
 
                 // Create role request if not member
-                if (role !== 'member') {
+                if (role !== \'member\') {
                     await supabase
-                        .from('role_requests')
+                        .from(\'role_requests\')
                         .insert([{
                             user_id: authData.user.id,
                             requested_role: role,
-                            status: 'pending',
+                            status: \'pending\',
                             created_at: new Date().toISOString()
                         }]);
-                    
-                    document.getElementById('registerForm').style.display = 'none';
-                    document.getElementById('pendingApproval').classList.add('active');
+
+                    document.getElementById(\'registerForm\').style.display = \'none\';
+                    document.getElementById(\'pendingApproval\').classList.add(\'active\');
                 } else {
-                    showAlert('registerAlert', 'Account created successfully! Please login.', 'success');
-                    setTimeout(() => switchTab('login'), 2000);
+                    showAlert(\'registerAlert\', \'Account created successfully! Please login.\', \'success\');
+                    setTimeout(() => switchTab(\'login\'), 2000);
                 }
 
             } catch (error) {
-                showAlert('registerAlert', error.message, 'error');
+                showAlert(\'registerAlert\', error.message, \'error\');
             } finally {
                 btn.disabled = false;
-                loading.classList.remove('active');
+                loading.classList.remove(\'active\');
             }
         });
 
         // Login
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        document.getElementById(\'loginForm\').addEventListener(\'submit\', async (e) => {
             e.preventDefault();
-            
-            const btn = document.querySelector('#loginForm .btn-primary');
-            const loading = document.getElementById('loading');
-            
+
+            const btn = document.querySelector(\'#loginForm .btn-primary\');
+            const loading = document.getElementById(\'loading\');
+
             btn.disabled = true;
-            loading.classList.add('active');
+            loading.classList.add(\'active\');
 
             try {
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
+                const email = document.getElementById(\'loginEmail\').value;
+                const password = document.getElementById(\'loginPassword\').value;
 
                 const { data, error } = await supabase.auth.signInWithPassword({
                     email,
@@ -597,25 +596,25 @@
 
                 // Check approval status
                 const { data: userData, error: userError } = await supabase
-                    .from('users')
-                    .select('approval_status, role')
-                    .eq('id', data.user.id)
+                    .from(\'users\')
+                    .select(\'approval_status, role\')
+                    .eq(\'id\', data.user.id)
                     .single();
 
                 if (userError) throw userError;
 
-                if (userData.approval_status === 'pending' && userData.role !== 'member') {
+                if (userData.approval_status === \'pending\' && userData.role !== \'member\') {
                     await supabase.auth.signOut();
-                    showAlert('loginAlert', 'Your Exco/Archediceanry role is pending approval. Please wait for admin confirmation.', 'error');
+                    showAlert(\'loginAlert\', \'Your Exco/Archediceanry role is pending approval. Please wait for admin confirmation.\', \'error\');
                 } else {
-                    window.location.href = 'home.html';
+                    window.location.href = \'home.html\';
                 }
 
             } catch (error) {
-                showAlert('loginAlert', error.message, 'error');
+                showAlert(\'loginAlert\', error.message, \'error\');
             } finally {
                 btn.disabled = false;
-                loading.classList.remove('active');
+                loading.classList.remove(\'active\');
             }
         });
 
@@ -623,12 +622,11 @@
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                window.location.href = 'home.html';
+                window.location.href = \'home.html\';
             }
         }
-        
+
         checkSession();
     </script>
 </body>
-</html>'''
-
+</html>
