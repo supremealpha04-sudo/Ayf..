@@ -3,230 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>My Profile | AYF Gwarimpa</title>
+    <title>Profile | AYF Gwarimpa</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
+            background: #0a0a0a;
             color: white;
-            min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
         }
-        
         /* Header */
         .header {
-            background: rgba(10,10,10,0.95);
+            background: rgba(0,0,0,0.95);
             backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
+            padding: 0.8rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid #222;
         }
+        .logo { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; }
+        .logo-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 1rem; font-size: 0.9rem; }
         
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-        }
-        
-        .logo-icon {
-            width: 45px;
-            height: 45px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-        
-        .logo-text h1 { font-size: 1.3rem; font-weight: 700; }
-        .logo-text p { font-size: 0.7rem; opacity: 0.7; }
-        
-        .nav-links { display: flex; gap: 1rem; }
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-        .nav-links a:hover { background: rgba(102,126,234,0.2); }
-        
-        /* Profile Container */
-        .profile-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 2rem;
-        }
-        
-        .profile-card {
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            padding: 2rem;
-            border: 1px solid rgba(255,255,255,0.1);
-            animation: fadeInUp 0.6s ease;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .avatar-section {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .avatar {
-            width: 120px;
-            height: 120px;
+        /* Instagram-style Profile */
+        .profile-container { max-width: 600px; margin: 0 auto; padding: 1rem; }
+        .profile-header { display: flex; gap: 2rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; }
+        .profile-avatar {
+            width: 100px; height: 100px;
             background: linear-gradient(135deg, #667eea, #764ba2);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 3rem;
-            margin: 0 auto 1rem;
-            border: 3px solid rgba(255,255,255,0.2);
+            font-size: 2.5rem;
         }
-        
-        .info-field {
-            margin: 1rem 0;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            transition: all 0.3s;
-        }
-        
-        .info-field:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateX(5px);
-        }
-        
-        .info-label {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-bottom: 0.3rem;
-        }
-        
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-        
-        .leadership-badge {
+        .profile-stats { display: flex; gap: 2rem; flex: 1; justify-content: center; }
+        .stat { text-align: center; }
+        .stat-number { font-size: 1.5rem; font-weight: 700; }
+        .stat-label { font-size: 0.8rem; color: #888; }
+        .profile-bio { margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #222; }
+        .profile-name { font-size: 1.3rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .profile-bio-text { color: #aaa; font-size: 0.9rem; margin-top: 0.5rem; }
+        .leadership-tag {
+            display: inline-block;
             background: #48bb78;
-            padding: 0.3rem 0.8rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-top: 0.5rem;
         }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1rem;
-            margin: 1.5rem 0;
-        }
-        
-        .stat-item {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(255,255,255,0.05);
-            border-radius: 16px;
-            transition: all 0.3s;
-        }
-        
-        .stat-item:hover {
-            background: rgba(255,255,255,0.1);
-            transform: translateY(-3px);
-        }
-        
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #667eea;
-        }
-        
-        .btn {
-            width: 100%;
-            padding: 1rem;
+        .edit-profile-btn {
+            background: #333;
             border: none;
-            border-radius: 50px;
-            font-weight: 600;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
+            width: 100%;
             margin-top: 1rem;
             font-family: inherit;
         }
+        .edit-profile-btn:hover { background: #444; }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        /* Posts Grid */
+        .posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.2rem; margin-top: 1rem; }
+        .post-item {
+            aspect-ratio: 1;
+            background: #1a1a2e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
         }
+        .post-item img { width: 100%; height: 100%; object-fit: cover; }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102,126,234,0.3);
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
         }
-        
-        .btn-danger {
-            background: #f56565;
-            color: white;
+        .modal-content {
+            max-width: 500px;
+            width: 90%;
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 1.5rem;
         }
+        .close-modal { float: right; font-size: 1.5rem; cursor: pointer; background: none; border: none; color: white; }
         
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            background: #e53e3e;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(255,255,255,0.1);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        /* Footer Navigation */
+        /* Footer Nav */
         .footer-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(10,10,10,0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: space-around;
             padding: 0.8rem;
-            border-top: 1px solid rgba(255,255,255,0.1);
+            border-top: 1px solid #222;
             z-index: 1000;
         }
-        
         .footer-nav-item {
             display: flex;
             flex-direction: column;
@@ -237,26 +129,33 @@
             font-size: 0.7rem;
             transition: all 0.3s;
         }
-        
         .footer-nav-item i { font-size: 1.3rem; }
-        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; transform: translateY(-3px); }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        
+        .loading { text-align: center; padding: 2rem; }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
         
         @media (max-width: 768px) {
-            .profile-container { padding: 1rem; margin: 1rem; }
-            .nav-links { display: none; }
-            .stats-grid { gap: 0.5rem; }
+            .profile-header { gap: 1rem; }
+            .profile-avatar { width: 70px; height: 70px; font-size: 1.8rem; }
             .stat-number { font-size: 1.2rem; }
+            .nav-links { display: none; }
         }
     </style>
 </head>
 <body>
     <header class="header">
         <div class="logo" onclick="window.location.href='index.html'">
-            <div class="logo-icon">👤</div>
-            <div class="logo-text">
-                <h1>AYF Gwarimpa</h1>
-                <p>Arise & Shine</p>
-            </div>
+            <div class="logo-icon">📱</div>
+            <h3>AYF Gwarimpa</h3>
         </div>
         <div class="nav-links">
             <a href="index.html">Home</a>
@@ -277,105 +176,97 @@
         <a href="profile.html" class="footer-nav-item active"><i class="fas fa-user"></i><span>Profile</span></a>
     </div>
 
-    <script src="supabase/client.js"></script>
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeEditModal()">&times;</button>
+            <h3>Edit Profile</h3>
+            <input type="text" id="editName" placeholder="Full Name" style="width:100%; padding:0.8rem; margin:1rem 0; border-radius:8px; border:none;">
+            <input type="text" id="editBio" placeholder="Bio" style="width:100%; padding:0.8rem; margin:1rem 0; border-radius:8px; border:none;">
+            <button class="edit-profile-btn" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+
     <script>
+        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        let currentProfile = null;
+        
         async function loadProfile() {
-            const isLoggedIn = await window.checkAuth(true);
-            if (!isLoggedIn) return;
-            
-            const container = document.getElementById('profileContainer');
-            const user = window.getCurrentUser();
-            const profile = window.getCurrentProfile();
-            
-            if (!profile) {
-                container.innerHTML = `
-                    <div class="profile-card" style="text-align:center;">
-                        <div class="avatar-section">
-                            <div class="avatar">${user?.email?.[0]?.toUpperCase() || 'U'}</div>
-                        </div>
-                        <h2>Welcome!</h2>
-                        <p>Your profile is being set up...</p>
-                        <button class="btn btn-primary" onclick="window.location.href='index.html'">Go to Home</button>
-                    </div>
-                `;
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'auth.html';
                 return;
             }
+            currentUser = session.user;
             
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+            currentProfile = profile;
+            
+            // Get user posts
+            const { data: posts } = await supabase
+                .from('posts')
+                .select('*')
+                .eq('author_id', session.user.id)
+                .order('created_at', { ascending: false });
+            
+            const container = document.getElementById('profileContainer');
             container.innerHTML = `
-                <div class="profile-card">
-                    <div class="avatar-section">
-                        <div class="avatar">${(profile.full_name?.[0] || user?.email?.[0] || 'U').toUpperCase()}</div>
+                <div class="profile-header">
+                    <div class="profile-avatar">${(profile?.full_name?.[0] || session.user.email[0]).toUpperCase()}</div>
+                    <div class="profile-stats">
+                        <div class="stat"><div class="stat-number">${posts?.length || 0}</div><div class="stat-label">Posts</div></div>
+                        <div class="stat"><div class="stat-number">${profile?.followers_count || 0}</div><div class="stat-label">Followers</div></div>
+                        <div class="stat"><div class="stat-number">${profile?.following_count || 0}</div><div class="stat-label">Following</div></div>
                     </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label"><i class="fas fa-user"></i> Full Name</div>
-                        <div class="info-value">${profile.full_name || 'Not set'}</div>
-                    </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label"><i class="fas fa-envelope"></i> Email Address</div>
-                        <div class="info-value">${user?.email || profile.email}</div>
-                    </div>
-                    
-                    <div class="info-field">
-                        <div class="info-label"><i class="fas fa-church"></i> Parish</div>
-                        <div class="info-value">${profile.parish || 'Not assigned'}</div>
-                    </div>
-                    
-                    ${profile.leadership_tag ? `
-                        <div class="info-field">
-                            <div class="info-label"><i class="fas fa-crown"></i> Leadership Status</div>
-                            <div class="info-value">
-                                <span class="leadership-badge"><i class="fas fa-star"></i> ${profile.leadership_tag}</span>
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.likes_received || 0}</div>
-                            <div class="stat-label">Likes</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.comments_made || 0}</div>
-                            <div class="stat-label">Comments</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">${profile.is_a_squared ? '✓' : '○'}</div>
-                            <div class="stat-label">A-Squared</div>
-                        </div>
-                    </div>
-                    
-                    ${!profile.is_a_squared && !profile.a_squared_requested ? `
-                        <button class="btn btn-primary" onclick="requestASquared()">
-                            <i class="fas fa-star"></i> Request A-Squared Membership
-                        </button>
-                    ` : profile.a_squared_requested && !profile.is_a_squared ? `
-                        <div style="text-align:center; padding:1rem; background:rgba(237,137,54,0.2); border-radius:16px;">
-                            <i class="fas fa-clock"></i> A-Squared Request Pending Admin Approval
-                        </div>
-                    ` : ''}
-                    
-                    <button class="btn btn-danger" onclick="window.logout()">
-                        <i class="fas fa-sign-out-alt"></i> Logout
-                    </button>
                 </div>
+                <div class="profile-bio">
+                    <div class="profile-name">${profile?.full_name || session.user.email.split('@')[0]}</div>
+                    <div class="profile-bio-text">${profile?.bio || 'No bio yet'}</div>
+                    ${profile?.leadership_tag ? `<span class="leadership-tag"><i class="fas fa-crown"></i> ${profile.leadership_tag}</span>` : ''}
+                    <button class="edit-profile-btn" onclick="openEditModal()"><i class="fas fa-pen"></i> Edit Profile</button>
+                </div>
+                <div class="posts-grid" id="postsGrid"></div>
             `;
+            
+            const postsGrid = document.getElementById('postsGrid');
+            if (posts && posts.length > 0) {
+                postsGrid.innerHTML = posts.map(post => `
+                    <div class="post-item" onclick="alert('Post: ${post.title}')">
+                        ${post.media_url ? `<img src="${post.media_url}" alt="post">` : `<i class="fas fa-image" style="font-size:2rem; color:#666;"></i>`}
+                    </div>
+                `).join('');
+            } else {
+                postsGrid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem; color:#666;">No posts yet</div>';
+            }
         }
         
-        async function requestASquared() {
-            const user = window.getCurrentUser();
-            if (!user) return;
+        function openEditModal() {
+            document.getElementById('editName').value = currentProfile?.full_name || '';
+            document.getElementById('editBio').value = currentProfile?.bio || '';
+            document.getElementById('editModal').style.display = 'flex';
+        }
+        
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+        
+        async function saveProfile() {
+            const fullName = document.getElementById('editName').value;
+            const bio = document.getElementById('editBio').value;
             
-            const type = confirm("Request Parish A-Squared? Click OK for Parish, Cancel for Archdeaconry");
-            const aSquaredType = type ? "Parish A-Squared" : "Archdeaconry A-Squared";
-            
-            await supabaseClient
+            await supabase
                 .from('profiles')
-                .update({ a_squared_requested: true, a_squared_type: aSquaredType })
-                .eq('id', user.id);
+                .update({ full_name: fullName, bio: bio })
+                .eq('id', currentUser.id);
             
-            window.showToast("Request submitted to admin!", "success");
+            closeEditModal();
             loadProfile();
         }
         
