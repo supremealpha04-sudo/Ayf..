@@ -315,6 +315,7 @@
             color: #667eea;
             text-decoration: none;
             font-size: 0.8rem;
+            cursor: pointer;
         }
 
         .forgot-link a:hover {
@@ -371,7 +372,7 @@
                         <input type="password" id="loginPassword" placeholder="Enter your password">
                     </div>
                     <div class="forgot-link">
-                        <a href="#" onclick="showForgotPassword()">Forgot Password?</a>
+                        <a id="forgotPasswordBtn">Forgot Password?</a>
                     </div>
                 </div>
                 <button class="btn btn-primary" id="loginBtn">Login</button>
@@ -437,180 +438,266 @@
     </div>
 
     <script>
-        // Supabase Configuration
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        (function() {
+            console.log("Script starting...");
+            
+            // Supabase Configuration
+            const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+            
+            const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log("Supabase initialized");
 
-        function showAlert(element, message, type) {
-            element.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
-            element.classList.add('show');
-            element.className = `alert alert-${type} show`;
-            setTimeout(() => element.classList.remove('show'), 5000);
-        }
-
-        function clearAlerts() {
-            document.getElementById('loginAlert')?.classList.remove('show');
-            document.getElementById('registerAlert')?.classList.remove('show');
-        }
-
-        // Login handler
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const alertEl = document.getElementById('loginAlert');
-            const loginBtn = document.getElementById('loginBtn');
-
-            if (!email || !password) {
-                showAlert(alertEl, 'Please enter both email and password', 'error');
-                return;
-            }
-
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
-            loginBtn.disabled = true;
-
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-
-                if (error) throw error;
-
-                showAlert(alertEl, 'Login successful! Redirecting...', 'success');
+            function showAlert(element, message, type) {
+                if (!element) {
+                    console.error("Alert element not found");
+                    return;
+                }
+                element.innerHTML = `<i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i> ${message}`;
+                element.classList.add('show');
+                element.className = `alert alert-${type} show`;
                 setTimeout(() => {
-                    window.location.href = 'index.html';
-                }, 1500);
-
-            } catch (error) {
-                showAlert(alertEl, error.message, 'error');
-                loginBtn.innerHTML = 'Login';
-                loginBtn.disabled = false;
+                    if (element) element.classList.remove('show');
+                }, 5000);
             }
-        }
 
-        // Register handler
-        async function handleRegister() {
-            const fullName = document.getElementById('regFullName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
-            const parish = document.getElementById('regParish').value;
-            const aSquaredRadio = document.querySelector('input[name="aSquared"]:checked');
-            const aSquaredValue = aSquaredRadio ? aSquaredRadio.value : 'none';
-            const alertEl = document.getElementById('registerAlert');
-            const registerBtn = document.getElementById('registerBtn');
+            function clearAlerts() {
+                const loginAlert = document.getElementById('loginAlert');
+                const registerAlert = document.getElementById('registerAlert');
+                if (loginAlert) loginAlert.classList.remove('show');
+                if (registerAlert) registerAlert.classList.remove('show');
+            }
 
-            if (!fullName) { showAlert(alertEl, 'Please enter your full name', 'error'); return; }
-            if (!email) { showAlert(alertEl, 'Please enter your email', 'error'); return; }
-            if (!email.includes('@')) { showAlert(alertEl, 'Please enter a valid email address', 'error'); return; }
-            if (!password) { showAlert(alertEl, 'Please create a password', 'error'); return; }
-            if (password.length < 6) { showAlert(alertEl, 'Password must be at least 6 characters', 'error'); return; }
-            if (password !== confirmPassword) { showAlert(alertEl, 'Passwords do not match', 'error'); return; }
-            if (!parish) { showAlert(alertEl, 'Please select your parish', 'error'); return; }
+            // Login function
+            window.handleLogin = async function() {
+                console.log("Login button clicked");
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value;
+                const alertEl = document.getElementById('loginAlert');
+                const loginBtn = document.getElementById('loginBtn');
 
-            registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
-            registerBtn.disabled = true;
+                if (!email || !password) {
+                    showAlert(alertEl, 'Please enter both email and password', 'error');
+                    return;
+                }
 
-            try {
-                const { data, error } = await supabase.auth.signUp({
-                    email: email,
-                    password: password,
-                    options: {
-                        data: { full_name: fullName, parish: parish }
-                    }
-                });
+                const originalText = loginBtn.innerHTML;
+                loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+                loginBtn.disabled = true;
 
-                if (error) throw error;
-
-                // Try to create profile, but don't fail if table doesn't exist yet
                 try {
-                    const aSquaredRequested = aSquaredValue !== 'none';
-                    const aSquaredType = aSquaredValue === 'parish' ? 'Parish A-Squared' : 
-                                         aSquaredValue === 'archdeaconry' ? 'Archdeaconry A-Squared' : null;
-
-                    await supabase.from('profiles').insert([{
-                        id: data.user.id,
-                        full_name: fullName,
+                    const { data, error } = await supabase.auth.signInWithPassword({
                         email: email,
-                        parish: parish,
-                        role: 'user',
-                        is_a_squared: false,
-                        a_squared_requested: aSquaredRequested,
-                        a_squared_type: aSquaredType
-                    }]);
-                } catch (profileErr) {
-                    console.log('Profile creation skipped - table may not exist yet');
-                }
+                        password: password
+                    });
 
-                showAlert(alertEl, 'Account created! Please check your email to verify.', 'success');
-
-                // Clear form
-                document.getElementById('regFullName').value = '';
-                document.getElementById('regEmail').value = '';
-                document.getElementById('regPassword').value = '';
-                document.getElementById('regConfirmPassword').value = '';
-                document.getElementById('regParish').value = '';
-                document.getElementById('asquaredOptions').style.display = 'none';
-
-                setTimeout(() => {
-                    document.querySelector('.tab-btn[data-tab="login"]').click();
-                    document.getElementById('loginEmail').value = email;
-                }, 2000);
-
-            } catch (error) {
-                showAlert(alertEl, error.message, 'error');
-            } finally {
-                registerBtn.innerHTML = 'Create Account';
-                registerBtn.disabled = false;
-            }
-        }
-
-        async function showForgotPassword() {
-            const email = prompt('Enter your email address to reset your password:');
-            if (email && email.includes('@')) {
-                try {
-                    const { error } = await supabase.auth.resetPasswordForEmail(email);
                     if (error) throw error;
-                    alert('Password reset email sent! Check your inbox.');
+
+                    showAlert(alertEl, 'Login successful! Redirecting...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1500);
+
                 } catch (error) {
-                    alert(error.message);
+                    console.error("Login error:", error);
+                    showAlert(alertEl, error.message, 'error');
+                    loginBtn.innerHTML = originalText;
+                    loginBtn.disabled = false;
+                }
+            };
+
+            // Register function
+            window.handleRegister = async function() {
+                console.log("Register button clicked");
+                const fullName = document.getElementById('regFullName').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const password = document.getElementById('regPassword').value;
+                const confirmPassword = document.getElementById('regConfirmPassword').value;
+                const parish = document.getElementById('regParish').value;
+                const aSquaredRadio = document.querySelector('input[name="aSquared"]:checked');
+                const aSquaredValue = aSquaredRadio ? aSquaredRadio.value : 'none';
+                const alertEl = document.getElementById('registerAlert');
+                const registerBtn = document.getElementById('registerBtn');
+
+                // Validation
+                if (!fullName) { showAlert(alertEl, 'Please enter your full name', 'error'); return; }
+                if (!email) { showAlert(alertEl, 'Please enter your email', 'error'); return; }
+                if (!email.includes('@')) { showAlert(alertEl, 'Please enter a valid email address', 'error'); return; }
+                if (!password) { showAlert(alertEl, 'Please create a password', 'error'); return; }
+                if (password.length < 6) { showAlert(alertEl, 'Password must be at least 6 characters', 'error'); return; }
+                if (password !== confirmPassword) { showAlert(alertEl, 'Passwords do not match', 'error'); return; }
+                if (!parish) { showAlert(alertEl, 'Please select your parish', 'error'); return; }
+
+                const originalText = registerBtn.innerHTML;
+                registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating account...';
+                registerBtn.disabled = true;
+
+                try {
+                    const { data, error } = await supabase.auth.signUp({
+                        email: email,
+                        password: password,
+                        options: {
+                            data: { full_name: fullName, parish: parish }
+                        }
+                    });
+
+                    if (error) throw error;
+
+                    // Try to create profile
+                    try {
+                        const aSquaredRequested = aSquaredValue !== 'none';
+                        const aSquaredType = aSquaredValue === 'parish' ? 'Parish A-Squared' : 
+                                             aSquaredValue === 'archdeaconry' ? 'Archdeaconry A-Squared' : null;
+
+                        await supabase.from('profiles').insert([{
+                            id: data.user.id,
+                            full_name: fullName,
+                            email: email,
+                            parish: parish,
+                            role: 'user',
+                            is_a_squared: false,
+                            a_squared_requested: aSquaredRequested,
+                            a_squared_type: aSquaredType
+                        }]);
+                    } catch (profileErr) {
+                        console.log('Profile creation note:', profileErr.message);
+                    }
+
+                    let successMsg = 'Account created! Please check your email to verify.';
+                    if (aSquaredValue !== 'none') {
+                        successMsg += ' Your A-Squared request has been sent to admin.';
+                    }
+                    showAlert(alertEl, successMsg, 'success');
+
+                    // Clear form
+                    document.getElementById('regFullName').value = '';
+                    document.getElementById('regEmail').value = '';
+                    document.getElementById('regPassword').value = '';
+                    document.getElementById('regConfirmPassword').value = '';
+                    document.getElementById('regParish').value = '';
+                    document.getElementById('asquaredOptions').style.display = 'none';
+                    document.querySelector('input[name="aSquared"][value="none"]').checked = true;
+
+                    // Switch to login tab after 2 seconds
+                    setTimeout(() => {
+                        document.querySelector('.tab-btn[data-tab="login"]').click();
+                        document.getElementById('loginEmail').value = email;
+                    }, 2000);
+
+                } catch (error) {
+                    console.error("Registration error:", error);
+                    showAlert(alertEl, error.message, 'error');
+                } finally {
+                    registerBtn.innerHTML = originalText;
+                    registerBtn.disabled = false;
+                }
+            };
+
+            // Forgot password
+            window.handleForgotPassword = async function() {
+                console.log("Forgot password clicked");
+                const email = prompt('Enter your email address to reset your password:');
+                if (email && email.includes('@')) {
+                    try {
+                        const { error } = await supabase.auth.resetPasswordForEmail(email);
+                        if (error) throw error;
+                        alert('Password reset email sent! Check your inbox.');
+                    } catch (error) {
+                        alert(error.message);
+                    }
+                } else if (email) {
+                    alert('Please enter a valid email address');
+                }
+            };
+
+            // Check if already logged in
+            async function checkAlreadyLoggedIn() {
+                const { data: { session } } = await supabase.auth.getSession();
+                if (session) {
+                    window.location.href = 'index.html';
                 }
             }
-        }
 
-        async function checkAlreadyLoggedIn() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = 'index.html';
+            // Tab switching
+            function setupTabs() {
+                const tabs = document.querySelectorAll('.tab-btn');
+                tabs.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tab = btn.dataset.tab;
+                        tabs.forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
+                        document.getElementById(tab + 'Form').classList.add('active');
+                        clearAlerts();
+                    });
+                });
             }
-        }
 
-        // Event Listeners
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                document.querySelectorAll('.form').forEach(form => form.classList.remove('active'));
-                document.getElementById(tab + 'Form').classList.add('active');
-                clearAlerts();
+            // A-Squared options visibility
+            function setupASquaredOptions() {
+                const radios = document.querySelectorAll('input[name="aSquared"]');
+                radios.forEach(radio => {
+                    radio.addEventListener('change', () => {
+                        const options = document.getElementById('asquaredOptions');
+                        options.style.display = radio.value !== 'none' ? 'block' : 'none';
+                    });
+                });
+            }
+
+            // Setup all event listeners when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("DOM fully loaded");
+                
+                // Setup tabs
+                setupTabs();
+                
+                // Setup A-Squared options
+                setupASquaredOptions();
+                
+                // Login button
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    loginBtn.addEventListener('click', window.handleLogin);
+                    console.log("Login button listener attached");
+                } else {
+                    console.error("Login button not found");
+                }
+                
+                // Register button
+                const registerBtn = document.getElementById('registerBtn');
+                if (registerBtn) {
+                    registerBtn.addEventListener('click', window.handleRegister);
+                    console.log("Register button listener attached");
+                } else {
+                    console.error("Register button not found");
+                }
+                
+                // Forgot password button
+                const forgotBtn = document.getElementById('forgotPasswordBtn');
+                if (forgotBtn) {
+                    forgotBtn.addEventListener('click', window.handleForgotPassword);
+                    console.log("Forgot password listener attached");
+                }
+                
+                // Enter key submissions
+                const loginPassword = document.getElementById('loginPassword');
+                if (loginPassword) {
+                    loginPassword.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') window.handleLogin();
+                    });
+                }
+                
+                const regConfirmPassword = document.getElementById('regConfirmPassword');
+                if (regConfirmPassword) {
+                    regConfirmPassword.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') window.handleRegister();
+                    });
+                }
+                
+                // Check if already logged in
+                checkAlreadyLoggedIn();
             });
-        });
-
-        document.querySelectorAll('input[name="aSquared"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                document.getElementById('asquaredOptions').style.display = radio.value !== 'none' ? 'block' : 'none';
-            });
-        });
-
-        document.getElementById('loginBtn').addEventListener('click', handleLogin);
-        document.getElementById('registerBtn').addEventListener('click', handleRegister);
-        document.getElementById('loginPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleLogin(); });
-        document.getElementById('regConfirmPassword').addEventListener('keypress', (e) => { if (e.key === 'Enter') handleRegister(); });
-
-        checkAlreadyLoggedIn();
+        })();
     </script>
 </body>
 </html>
