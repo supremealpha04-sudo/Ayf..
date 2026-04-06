@@ -8,13 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: #0f0f0f;
             color: white;
         }
-        
         .admin-sidebar {
             position: fixed;
             left: 0;
@@ -24,7 +22,6 @@
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             padding: 2rem 1rem;
         }
-        
         .sidebar-nav a {
             display: flex;
             align-items: center;
@@ -35,37 +32,21 @@
             border-radius: 12px;
             margin: 0.5rem 0;
         }
-        
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background: rgba(102,126,234,0.2);
-            color: white;
-        }
-        
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-        }
-        
-        .requests-container {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
+        .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(102,126,234,0.2); color: white; }
+        .main-content { margin-left: 260px; padding: 2rem; }
         .request-card {
             background: #1a1a2e;
             border-radius: 20px;
             padding: 1.5rem;
+            margin-bottom: 1rem;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        
         .request-header {
             display: flex;
             align-items: center;
             gap: 1rem;
             margin-bottom: 1rem;
         }
-        
         .request-avatar {
             width: 60px;
             height: 60px;
@@ -76,40 +57,8 @@
             justify-content: center;
             font-size: 1.5rem;
         }
-        
-        .request-info {
-            flex: 1;
-        }
-        
-        .request-name {
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        
-        .request-parish {
-            color: #aaa;
-            font-size: 0.9rem;
-        }
-        
-        .request-type {
-            display: inline-block;
-            padding: 0.2rem 0.5rem;
-            background: rgba(102,126,234,0.2);
-            border-radius: 50px;
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
-        }
-        
-        .form-group {
-            margin-bottom: 1rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #aaa;
-        }
-        
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; color: #aaa; }
         select, input {
             width: 100%;
             padding: 0.8rem;
@@ -118,13 +67,6 @@
             background: rgba(255,255,255,0.05);
             color: white;
         }
-        
-        .action-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
         .btn-approve {
             padding: 0.8rem 1.5rem;
             background: #48bb78;
@@ -133,7 +75,6 @@
             color: white;
             cursor: pointer;
         }
-        
         .btn-reject {
             padding: 0.8rem 1.5rem;
             background: #f56565;
@@ -142,7 +83,6 @@
             color: white;
             cursor: pointer;
         }
-        
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
@@ -156,7 +96,7 @@
             <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a href="users.html"><i class="fas fa-users"></i> Users</a>
             <a href="posts.html"><i class="fas fa-newspaper"></i> Posts</a>
-            <a href="quotas.html"><i class="fas fa-chart-simple"></i> Quotas</a>
+            <a href="plans.html"><i class="fas fa-calendar-alt"></i> Plans</a>
             <a href="approvals.html" class="active"><i class="fas fa-check-circle"></i> Approvals</a>
             <a href="../index.html"><i class="fas fa-globe"></i> View Site</a>
         </div>
@@ -164,11 +104,7 @@
     
     <div class="main-content">
         <h1>A-Squared Membership Approvals</h1>
-        <p style="margin-bottom:2rem; opacity:0.7;">Review and approve leadership requests</p>
-        
-        <div class="requests-container" id="requestsContainer">
-            <div class="loading">Loading requests...</div>
-        </div>
+        <div id="requestsContainer"></div>
     </div>
     
     <script src="../supabase/client.js"></script>
@@ -183,110 +119,41 @@
             const container = document.getElementById('requestsContainer');
             
             if (!requests || requests.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding:3rem; background:#1a1a2e; border-radius:20px;">
-                        <i class="fas fa-check-circle" style="font-size:3rem; color:#48bb78;"></i>
-                        <p style="margin-top:1rem;">No pending requests</p>
-                    </div>
-                `;
+                container.innerHTML = `<div style="text-align:center; padding:3rem; background:#1a1a2e; border-radius:20px;"><i class="fas fa-check-circle" style="font-size:3rem; color:#48bb78;"></i><p style="margin-top:1rem;">No pending requests</p></div>`;
                 return;
             }
             
             container.innerHTML = requests.map(req => `
-                <div class="request-card" id="request-${req.id}">
+                <div class="request-card">
                     <div class="request-header">
-                        <div class="request-avatar">
-                            ${req.full_name?.[0] || '👤'}
-                        </div>
-                        <div class="request-info">
-                            <div class="request-name">${req.full_name || req.email}</div>
-                            <div class="request-parish">${req.parish || 'No parish'}</div>
-                            <div class="request-type">Requested: ${req.a_squared_type || 'A-Squared Membership'}</div>
-                        </div>
+                        <div class="request-avatar">${req.full_name?.[0] || '👤'}</div>
+                        <div><div class="request-name" style="font-size:1.2rem; font-weight:600;">${req.full_name || req.email}</div><div>${req.parish} | ${req.a_squared_type || 'A-Squared'}</div></div>
                     </div>
-                    
-                    <div class="form-group">
-                        <label>Leadership Role / Tag</label>
-                        <select id="role-${req.id}">
-                            <option value="">Select leadership role...</option>
-                            <option value="President">President</option>
-                            <option value="Vice President">Vice President</option>
-                            <option value="Secretary">Secretary</option>
-                            <option value="PRO">PRO</option>
-                            <option value="Provost">Provost</option>
-                            <option value="Treasurer">Treasurer</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Custom Tag Format (Optional)</label>
-                        <input type="text" id="customTag-${req.id}" placeholder="e.g., President - St. Mathus Parish">
-                    </div>
-                    
-                    <div class="action-buttons">
-                        <button class="btn-approve" onclick="approveRequest('${req.id}')">
-                            <i class="fas fa-check"></i> Approve & Assign Tag
-                        </button>
-                        <button class="btn-reject" onclick="rejectRequest('${req.id}')">
-                            <i class="fas fa-times"></i> Reject
-                        </button>
-                    </div>
+                    <div class="form-group"><label>Leadership Role</label><select id="role-${req.id}"><option value="">Select role...</option><option value="President">President</option><option value="Vice President">Vice President</option><option value="Secretary">Secretary</option><option value="PRO">PRO</option><option value="Provost">Provost</option><option value="Treasurer">Treasurer</option></select></div>
+                    <div class="form-group"><label>Custom Tag (Optional)</label><input type="text" id="customTag-${req.id}" placeholder="e.g., President - St. Mathus"></div>
+                    <div><button class="btn-approve" onclick="approveRequest('${req.id}')">Approve</button> <button class="btn-reject" onclick="rejectRequest('${req.id}')">Reject</button></div>
                 </div>
             `).join('');
         }
         
         async function approveRequest(userId) {
-            const roleSelect = document.getElementById(`role-${userId}`);
+            const role = document.getElementById(`role-${userId}`).value;
             const customTag = document.getElementById(`customTag-${userId}`).value;
-            const selectedRole = roleSelect.value;
-            
-            if (!selectedRole && !customTag) {
-                alert('Please select a leadership role or enter a custom tag');
-                return;
-            }
-            
-            let leadershipTag = customTag;
-            if (!leadershipTag && selectedRole) {
+            let tag = customTag;
+            if (!tag && role) {
                 const { data: user } = await supabaseClient.from('profiles').select('parish').eq('id', userId).single();
-                leadershipTag = `${selectedRole} - ${user?.parish || 'AYF'}`;
+                tag = `${role} - ${user?.parish || 'AYF'}`;
             }
-            
-            const { error } = await supabaseClient
-                .from('profiles')
-                .update({
-                    is_a_squared: true,
-                    a_squared_requested: false,
-                    leadership_role: selectedRole,
-                    leadership_tag: leadershipTag
-                })
-                .eq('id', userId);
-            
-            if (!error) {
-                await supabaseClient.from('notifications').insert([{
-                    user_id: userId,
-                    title: 'A-Squared Approved! 🎉',
-                    message: `Congratulations! You have been approved as an A-Squared member with the tag: ${leadershipTag}`,
-                    type: 'asquared_approval'
-                }]);
-                
-                alert('User approved as A-Squared member!');
-                loadRequests();
-            } else {
-                alert('Error approving user: ' + error.message);
-            }
+            await supabaseClient.from('profiles').update({ is_a_squared: true, a_squared_requested: false, leadership_role: role, leadership_tag: tag }).eq('id', userId);
+            await supabaseClient.from('notifications').insert([{ user_id: userId, title: 'A-Squared Approved!', message: `You are now an A-Squared member with tag: ${tag}`, type: 'asquared_approval' }]);
+            alert('User approved!');
+            loadRequests();
         }
         
         async function rejectRequest(userId) {
-            if (confirm('Reject this A-Squared request?')) {
-                const { error } = await supabaseClient
-                    .from('profiles')
-                    .update({ a_squared_requested: false })
-                    .eq('id', userId);
-                
-                if (!error) {
-                    alert('Request rejected');
-                    loadRequests();
-                }
+            if (confirm('Reject this request?')) {
+                await supabaseClient.from('profiles').update({ a_squared_requested: false }).eq('id', userId);
+                loadRequests();
             }
         }
         
