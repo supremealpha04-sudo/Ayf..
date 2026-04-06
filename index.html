@@ -6,546 +6,78 @@
     <title>AYF Gwarimpa | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
+            background: #0a0a0a;
+            color: white;
             padding-bottom: 70px;
-            transition: all 0.3s ease;
         }
-
-        /* DARK MODE - Premium Dark Theme */
-        body.dark {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #0f0f1a;
-            --bg-card: rgba(20, 20, 35, 0.95);
-            --bg-glass: rgba(15, 15, 25, 0.9);
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --text-muted: #6b6b7a;
-            --accent-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-hover: linear-gradient(135deg, #5a67d8 0%, #6b46a0 100%);
-            --border: rgba(255,255,255,0.08);
-            --shadow: 0 8px 32px rgba(0,0,0,0.3);
-            --stat-bg: rgba(255,255,255,0.03);
-            --card-hover: rgba(102,126,234,0.1);
-        }
-
-        /* LIGHT MODE - Premium Light Theme */
-        body.light {
-            --bg-primary: #f8fafc;
-            --bg-secondary: #ffffff;
-            --bg-card: rgba(255,255,255,0.98);
-            --bg-glass: rgba(255,255,255,0.95);
-            --text-primary: #1e293b;
-            --text-secondary: #475569;
-            --text-muted: #94a3b8;
-            --accent-primary: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-            --accent-hover: linear-gradient(135deg, #4338ca 0%, #6d28d9 100%);
-            --border: rgba(0,0,0,0.08);
-            --shadow: 0 8px 32px rgba(0,0,0,0.08);
-            --stat-bg: #f1f5f9;
-            --card-hover: rgba(79,70,229,0.05);
-        }
-
-        body {
-            background: var(--bg-primary);
-            color: var(--text-primary);
-        }
-
-        /* Animated Background - Dark Mode */
-        body.dark .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #0f0c29 0%, #1a1a3e 50%, #24243e 100%);
-        }
-
-        body.dark .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(102,126,234,0.15) 0%, transparent 50%);
-        }
-
-        body.dark .bg-animation::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 80% 80%, rgba(118,75,162,0.15) 0%, transparent 50%);
-        }
-
-        /* Animated Background - Light Mode */
-        body.light .bg-animation {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -2;
-            background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 50%, #fae8ff 100%);
-        }
-
-        body.light .bg-animation::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(79,70,229,0.08) 0%, transparent 50%);
-        }
-
-        body.light .bg-animation::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 80% 80%, rgba(124,58,237,0.08) 0%, transparent 50%);
-        }
-
-        /* Particles */
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            animation: float 20s infinite;
-            pointer-events: none;
-        }
-        body.dark .particle {
-            background: rgba(102,126,234,0.15);
-        }
-        body.light .particle {
-            background: rgba(79,70,229,0.1);
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
-            10% { opacity: 0.5; }
-            90% { opacity: 0.5; }
-            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
-        }
-
-        /* Header */
         .header {
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            padding: 1rem 2rem;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: wrap;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid var(--border);
-            box-shadow: var(--shadow);
+            border-bottom: 1px solid #222;
         }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        .logo:hover { transform: scale(1.02); }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--accent-primary);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.6rem;
-            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
-        }
-
-        .logo-text h1 {
-            font-size: 1.4rem;
-            font-weight: 700;
-            background: var(--accent-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .logo-text p { font-size: 0.7rem; opacity: 0.7; }
-
-        /* Horizontal Navigation */
-        .nav-horizontal {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        /* Dropdown Menu */
-        .dropdown { position: relative; display: inline-block; }
-        .dropbtn {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            font-weight: 500;
-            padding: 0.6rem 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            border-radius: 10px;
-        }
-        .dropbtn:hover {
-            background: var(--card-hover);
-            color: #667eea;
-            transform: translateY(-2px);
-        }
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 100%;
-            left: 0;
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            min-width: 220px;
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            z-index: 101;
-            box-shadow: var(--shadow);
-            padding: 0.5rem;
-        }
-        .dropdown-content a {
-            color: var(--text-primary);
-            padding: 0.75rem 1rem;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            transition: all 0.3s;
-            border-radius: 10px;
-            margin: 2px 0;
-        }
-        .dropdown-content a:hover {
-            background: var(--card-hover);
-            color: #667eea;
-            transform: translateX(5px);
-        }
-        .dropdown:hover .dropdown-content { display: block; animation: fadeIn 0.2s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            background: var(--stat-bg);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            padding: 0.5rem;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-        }
-        .theme-toggle:hover { transform: scale(1.05); background: var(--card-hover); }
-
-        /* Mobile Menu */
-        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-primary); font-size: 1.5rem; cursor: pointer; }
-        .mobile-nav {
-            display: none;
-            position: fixed;
-            top: 70px;
-            left: 0;
-            right: 0;
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
-            padding: 1rem;
-            flex-direction: column;
-            gap: 0.5rem;
-            z-index: 999;
-            border-bottom: 1px solid var(--border);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        .mobile-nav.open { display: flex; animation: slideDown 0.3s ease; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-        .mobile-nav a, .mobile-nav .mobile-dropdown-btn {
-            color: var(--text-primary);
-            text-decoration: none;
-            padding: 0.8rem;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            background: none;
-            border: none;
-            width: 100%;
-            text-align: left;
-            font-size: 1rem;
-            cursor: pointer;
-        }
-        .mobile-nav a:hover, .mobile-nav .mobile-dropdown-btn:hover { background: var(--card-hover); }
-        .mobile-submenu { padding-left: 2rem; display: none; flex-direction: column; gap: 0.3rem; }
-        .mobile-submenu.show { display: flex; }
-
-        /* Hero Section */
-        .hero {
-            min-height: 60vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 4rem 2rem;
-            position: relative;
-        }
-        .hero-content { max-width: 800px; animation: fadeInUp 0.8s ease; }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: var(--accent-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .hero p { font-size: 1.2rem; opacity: 0.8; margin-bottom: 2rem; line-height: 1.6; }
+        .logo { display: flex; align-items: center; gap: 0.8rem; cursor: pointer; }
+        .logo-icon { width: 35px; height: 35px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .nav-links a { color: white; text-decoration: none; margin-left: 1rem; font-size: 0.9rem; }
+        
+        .hero { text-align: center; padding: 3rem 1rem; background: linear-gradient(135deg, #667eea20, #764ba220); }
+        .hero h1 { font-size: 2rem; margin-bottom: 0.5rem; }
         .btn {
-            padding: 0.9rem 2rem;
+            padding: 0.7rem 1.5rem;
             border: none;
-            border-radius: 50px;
-            font-size: 1rem;
+            border-radius: 30px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            font-family: inherit;
-        }
-        .btn-primary {
-            background: var(--accent-primary);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
-            box-shadow: 0 4px 15px rgba(102,126,234,0.3);
         }
-        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(102,126,234,0.4); }
-
-        /* Stats Bar */
+        
         .stats-bar {
-            background: var(--stat-bg);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            margin: 1rem 2rem;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            transition: all 0.3s;
-        }
-        .stats-grid-horizontal {
             display: flex;
             justify-content: space-around;
-            align-items: center;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            margin: 1rem;
+            border-radius: 20px;
             flex-wrap: wrap;
-            gap: 2rem;
+            gap: 1rem;
         }
-        .stat-item-horizontal { text-align: center; flex: 1; min-width: 120px; }
-        .stat-number-horizontal {
-            font-size: 2.5rem;
-            font-weight: 800;
-            background: var(--accent-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .stat-label-horizontal { margin-top: 0.5rem; opacity: 0.7; font-size: 0.9rem; }
-
-        /* A-Squared Exclusive Section */
-        .asquared-exclusive {
-            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
-            border-radius: 24px;
-            padding: 2rem;
-            margin: 2rem;
-            border: 2px solid;
-            border-image: var(--accent-primary);
-            border-image-slice: 1;
-            position: relative;
-            overflow: hidden;
-        }
-        body.dark .asquared-exclusive { background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); }
-        body.light .asquared-exclusive { background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.08)); }
-        .asquared-badge {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: var(--accent-primary);
-            padding: 0.3rem 1rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: white;
-        }
-        .asquared-title { font-size: 1.5rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
-        .group-tabs { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
-        .group-tab {
-            padding: 0.6rem 1.2rem;
-            background: var(--stat-bg);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .group-tab.active, .group-tab:hover { background: var(--accent-primary); color: white; border-color: transparent; transform: translateY(-2px); }
-        .group-content { display: none; margin-top: 1rem; animation: fadeIn 0.3s ease; }
-        .group-content.active { display: block; }
-        .executive-card {
-            background: var(--bg-card);
+        .stat-item { text-align: center; }
+        .stat-number { font-size: 1.5rem; font-weight: 700; color: #667eea; }
+        
+        .feed-section { max-width: 600px; margin: 0 auto; padding: 1rem; }
+        .post-card {
+            background: rgba(255,255,255,0.05);
             border-radius: 16px;
             padding: 1rem;
             margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 1px solid var(--border);
         }
-        .executive-card:hover { transform: translateX(5px); border-color: #667eea; }
-        .executive-avatar {
-            width: 50px;
-            height: 50px;
-            background: var(--accent-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            color: white;
-        }
-
-        /* Feed Section */
-        .feed-section { max-width: 1200px; margin: 0 auto; padding: 2rem; }
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        .section-title { font-size: 1.8rem; font-weight: 700; }
-        .category-filters { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .filter-chip {
-            padding: 0.5rem 1.2rem;
-            background: var(--stat-bg);
-            border: 1px solid var(--border);
-            border-radius: 50px;
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .filter-chip:hover, .filter-chip.active { background: var(--accent-primary); color: white; border-color: transparent; }
-        .feed-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 1.5rem;
-        }
-        .post-card {
-            background: var(--bg-card);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            overflow: hidden;
-            transition: all 0.3s;
-            cursor: pointer;
-            border: 1px solid var(--border);
-        }
-        .post-card:hover { transform: translateY(-5px); border-color: #667eea; box-shadow: var(--shadow); }
-        .post-header {
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            border-bottom: 1px solid var(--border);
-        }
-        .post-avatar {
-            width: 45px;
-            height: 45px;
-            background: var(--accent-primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-        }
-        .post-author-name { font-weight: 600; cursor: pointer; }
-        .leadership-tag {
-            font-size: 0.7rem;
-            padding: 0.2rem 0.6rem;
-            background: #48bb78;
-            border-radius: 50px;
-            display: inline-block;
-            margin-left: 0.5rem;
-            color: white;
-        }
-        .post-content { padding: 1rem; }
-        .post-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
-        .post-text { opacity: 0.8; line-height: 1.5; }
-        .post-media {
-            width: 100%;
-            max-height: 200px;
-            object-fit: cover;
-            margin-top: 0.5rem;
-            border-radius: 12px;
-        }
-        .post-stats {
-            display: flex;
-            gap: 1rem;
-            padding: 0.5rem 1rem;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        .post-stats span { display: flex; align-items: center; gap: 0.3rem; }
-        .post-actions {
-            display: flex;
-            gap: 1rem;
-            padding: 0.5rem 1rem 1rem;
-            border-top: 1px solid var(--border);
-        }
-        .action-btn {
-            flex: 1;
-            padding: 0.5rem;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            border-radius: 8px;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-        .action-btn:hover { background: var(--card-hover); color: #667eea; }
-        .action-btn.liked { color: #ff4757; }
-
-        /* Footer Navigation */
+        .post-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+        .post-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .post-title { font-weight: 600; margin-bottom: 0.3rem; }
+        
         .footer-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--bg-glass);
-            backdrop-filter: blur(12px);
+            background: rgba(0,0,0,0.95);
             display: flex;
             justify-content: space-around;
             padding: 0.8rem;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid #222;
             z-index: 1000;
         }
         .footer-nav-item {
@@ -553,183 +85,41 @@
             flex-direction: column;
             align-items: center;
             gap: 0.3rem;
-            color: var(--text-muted);
+            color: #888;
             text-decoration: none;
             font-size: 0.7rem;
-            transition: all 0.3s;
         }
-        .footer-nav-item i { font-size: 1.3rem; }
-        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; transform: translateY(-3px); }
-
-        /* Modals */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(8px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            overflow-y: auto;
-        }
-        .modal-content {
-            max-width: 800px;
-            width: 90%;
-            background: var(--bg-secondary);
-            border-radius: 24px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-        }
-        .modal-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--bg-secondary);
-        }
-        .close-modal {
-            background: none;
-            border: none;
-            color: var(--text-primary);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        .loading { text-align: center; padding: 2rem; }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        @media (max-width: 768px) {
-            .hero h1 { font-size: 2rem; }
-            .feed-grid { grid-template-columns: 1fr; }
-            .nav-horizontal { display: none; }
-            .mobile-menu-btn { display: block; }
-            .stats-bar { margin: 1rem; padding: 1rem; }
-            .stat-number-horizontal { font-size: 1.5rem; }
-            .asquared-exclusive { margin: 1rem; padding: 1rem; }
-        }
+        .footer-nav-item.active, .footer-nav-item:hover { color: #667eea; }
+        
+        @media (max-width: 768px) { .nav-links { display: none; } .hero h1 { font-size: 1.5rem; } }
     </style>
 </head>
-<body class="dark">
-    <div class="bg-animation" id="bgAnimation"></div>
-
+<body>
     <header class="header">
         <div class="logo" onclick="window.location.href='index.html'">
             <div class="logo-icon">✝️</div>
-            <div class="logo-text">
-                <h1>AYF Gwarimpa</h1>
-                <p>Arise & Shine</p>
-            </div>
+            <h3>AYF Gwarimpa</h3>
         </div>
-        
-        <div class="nav-horizontal">
-            <div class="dropdown"><button class="dropbtn"><i class="fas fa-home"></i> Home</button></div>
-            <div class="dropdown">
-                <button class="dropbtn"><i class="fas fa-info-circle"></i> About <i class="fas fa-chevron-down"></i></button>
-                <div class="dropdown-content">
-                    <a href="#" onclick="showAboutPage()"><i class="fas fa-info-circle"></i> About AYF</a>
-                    <a href="#" onclick="showPrivacyPolicy()"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
-                    <a href="#" onclick="showTerms()"><i class="fas fa-file-contract"></i> Terms of Service</a>
-                </div>
-            </div>
-            <div class="dropdown"><button class="dropbtn" onclick="window.location.href='plan.html'"><i class="fas fa-calendar-alt"></i> Plan</button></div>
-            <div class="dropdown"><button class="dropbtn" onclick="window.location.href='parish.html'"><i class="fas fa-church"></i> Parish</button></div>
-            <div class="dropdown"><button class="dropbtn" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i> Profile</button></div>
-            <div class="dropdown" id="excoDropdown" style="display: none;">
-                <button class="dropbtn"><i class="fas fa-crown"></i> A-Squared Exco <i class="fas fa-chevron-down"></i></button>
-                <div class="dropdown-content">
-                    <a href="#" onclick="showParishExecutives()"><i class="fas fa-users"></i> Parish Executives</a>
-                    <a href="#" onclick="showArchdeaconryExecutives()"><i class="fas fa-star"></i> IC3A / ASGSK Executives</a>
-                    <a href="#" onclick="showExecutiveAnnouncements()"><i class="fas fa-bullhorn"></i> Executive Announcements</a>
-                </div>
-            </div>
-        </div>
-        
-        <div style="display: flex; gap: 0.8rem; align-items: center;">
-            <button class="theme-toggle" id="themeToggle"><i class="fas fa-moon"></i> <span id="themeText">Dark</span></button>
-            <button class="mobile-menu-btn" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="plan.html">Plan</a>
+            <a href="parish.html">Parish</a>
+            <a href="profile.html">Profile</a>
         </div>
     </header>
-    
-    <div class="mobile-nav" id="mobileNav">
-        <a href="index.html"><i class="fas fa-home"></i> Home</a>
-        <button class="mobile-dropdown-btn" onclick="toggleMobileSubmenu('aboutSubmenu')"><i class="fas fa-info-circle"></i> About <i class="fas fa-chevron-down"></i></button>
-        <div id="aboutSubmenu" class="mobile-submenu">
-            <a href="#" onclick="showAboutPage()">About AYF</a>
-            <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a>
-            <a href="#" onclick="showTerms()">Terms of Service</a>
-        </div>
-        <a href="plan.html"><i class="fas fa-calendar-alt"></i> Plan</a>
-        <a href="parish.html"><i class="fas fa-church"></i> Parish</a>
-        <a href="profile.html"><i class="fas fa-user"></i> Profile</a>
-        <button class="mobile-dropdown-btn" id="mobileExcoBtn" style="display: none;" onclick="toggleMobileSubmenu('excoSubmenu')"><i class="fas fa-crown"></i> A-Squared Exco <i class="fas fa-chevron-down"></i></button>
-        <div id="excoSubmenu" class="mobile-submenu">
-            <a href="#" onclick="showParishExecutives()">Parish Executives</a>
-            <a href="#" onclick="showArchdeaconryExecutives()">IC3A / ASGSK Executives</a>
-            <a href="#" onclick="showExecutiveAnnouncements()">Executive Announcements</a>
-        </div>
+
+    <div class="hero">
+        <h1>Welcome to AYF Gwarimpa</h1>
+        <p>Arise & Shine - Growing in Faith, Leadership & Service</p>
+        <button class="btn" id="joinBtn">Join Fellowship</button>
     </div>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1>Welcome to AYF Gwarimpa Archdeaconry</h1>
-            <p>A vibrant community of young people dedicated to spiritual growth, leadership development, and community impact.</p>
-            <button class="btn btn-primary" id="joinBtn"><i class="fas fa-user-plus"></i> Join Fellowship</button>
-        </div>
-    </section>
+    <div class="stats-bar" id="statsBar"></div>
 
-    <div class="stats-bar" id="statsBar">
-        <div class="stats-grid-horizontal">
-            <div class="stat-item-horizontal"><div class="stat-number-horizontal" id="statMembers">0</div><div class="stat-label-horizontal"><i class="fas fa-users"></i> Members</div></div>
-            <div class="stat-item-horizontal"><div class="stat-number-horizontal" id="statParishes">3</div><div class="stat-label-horizontal"><i class="fas fa-church"></i> Parishes</div></div>
-            <div class="stat-item-horizontal"><div class="stat-number-horizontal" id="statEvents">0</div><div class="stat-label-horizontal"><i class="fas fa-calendar"></i> Events</div></div>
-            <div class="stat-item-horizontal"><div class="stat-number-horizontal" id="statLeaders">0</div><div class="stat-label-horizontal"><i class="fas fa-crown"></i> A-Squared</div></div>
-            <div class="stat-item-horizontal"><div class="stat-number-horizontal" id="statPosts">0</div><div class="stat-label-horizontal"><i class="fas fa-newspaper"></i> Posts</div></div>
-        </div>
+    <div class="feed-section">
+        <h3 style="margin-bottom: 1rem;">Latest Updates</h3>
+        <div id="feedGrid"></div>
     </div>
-
-    <div class="asquared-exclusive" id="asquaredSection" style="display: none;">
-        <div class="asquared-badge"><i class="fas fa-crown"></i> A-Squared Exclusive</div>
-        <div class="asquared-title"><i class="fas fa-users"></i> Executive Leadership Hub</div>
-        <div class="group-tabs">
-            <button class="group-tab active" data-group="parish">🏘️ Parish Executives</button>
-            <button class="group-tab" data-group="archdeaconry">🌟 IC3A / ASGSK Executives</button>
-            <button class="group-tab" data-group="announcements">📢 Executive Announcements</button>
-        </div>
-        <div class="group-content active" id="group-parish"><div id="parishExecutivesList"></div></div>
-        <div class="group-content" id="group-archdeaconry"><div id="archdeaconryExecutivesList"></div></div>
-        <div class="group-content" id="group-announcements"><div id="executiveAnnouncements"></div></div>
-    </div>
-
-    <section class="feed-section">
-        <div class="section-header">
-            <h2 class="section-title">Latest Updates</h2>
-            <div class="category-filters" id="categoryFilters">
-                <button class="filter-chip active" data-category="all">All</button>
-                <button class="filter-chip" data-category="event">Events</button>
-                <button class="filter-chip" data-category="article">Articles</button>
-                <button class="filter-chip" data-category="notice">Notices</button>
-                <button class="filter-chip" data-category="video">Videos</button>
-            </div>
-        </div>
-        <div class="feed-grid" id="feedGrid"><div class="loading"><div class="spinner"></div></div></div>
-    </section>
 
     <div class="footer-nav">
         <a href="index.html" class="footer-nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
@@ -738,196 +128,45 @@
         <a href="profile.html" class="footer-nav-item"><i class="fas fa-user"></i><span>Profile</span></a>
     </div>
 
-    <div class="modal" id="postModal"><div class="modal-content"><div class="modal-header"><h3>Post Details</h3><button class="close-modal" onclick="closeModal()">&times;</button></div><div id="modalBody"></div></div></div>
-    <div class="modal" id="profileModal"><div class="modal-content"><div class="modal-header"><h3>User Profile</h3><button class="close-modal" onclick="closeProfileModal()">&times;</button></div><div id="profileModalBody"></div></div></div>
-    <div class="modal" id="infoModal"><div class="modal-content"><div class="modal-header"><h3 id="infoModalTitle">Information</h3><button class="close-modal" onclick="closeInfoModal()">&times;</button></div><div id="infoModalBody" style="padding: 1rem;"></div></div></div>
-
-    <script src="supabase/client.js"></script>
     <script>
-        let currentUser = null, currentProfile = null, currentCategory = 'all', posts = [], userLikes = new Set();
-
-        // Particles
-        for(let i = 0; i < 50; i++) {
-            const p = document.createElement('div');
-            p.className = 'particle';
-            p.style.width = Math.random() * 5 + 2 + 'px';
-            p.style.height = p.style.width;
-            p.style.left = Math.random() * 100 + '%';
-            p.style.animationDelay = Math.random() * 20 + 's';
-            p.style.animationDuration = Math.random() * 15 + 10 + 's';
-            document.getElementById('bgAnimation').appendChild(p);
-        }
-
-        // Theme Toggle
-        function initTheme() {
-            const saved = localStorage.getItem('theme') || 'dark';
-            document.body.classList.remove('dark', 'light');
-            document.body.classList.add(saved);
-            const btn = document.getElementById('themeToggle');
-            const span = document.getElementById('themeText');
-            if(saved === 'dark') {
-                btn.innerHTML = '<i class="fas fa-sun"></i> <span>Light</span>';
-                span.textContent = 'Light';
+        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        async function loadData() {
+            const { data: profiles } = await supabase.from('profiles').select('*');
+            const { data: posts } = await supabase.from('posts').select('*').order('created_at', { ascending: false }).limit(10);
+            const { data: aSquared } = await supabase.from('profiles').select('*').eq('is_a_squared', true);
+            
+            document.getElementById('statsBar').innerHTML = `
+                <div class="stat-item"><div class="stat-number">${profiles?.length || 0}</div><div>Members</div></div>
+                <div class="stat-item"><div class="stat-number">3</div><div>Parishes</div></div>
+                <div class="stat-item"><div class="stat-number">${aSquared?.length || 0}</div><div>A-Squared</div></div>
+                <div class="stat-item"><div class="stat-number">${posts?.length || 0}</div><div>Posts</div></div>
+            `;
+            
+            const feedGrid = document.getElementById('feedGrid');
+            if (posts && posts.length > 0) {
+                feedGrid.innerHTML = posts.map(post => `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-avatar">✝️</div>
+                            <div><strong>AYF Admin</strong><br><small>${new Date(post.created_at).toLocaleDateString()}</small></div>
+                        </div>
+                        <div class="post-title">${post.title}</div>
+                        <p style="opacity:0.7; font-size:0.9rem;">${post.content?.substring(0, 100)}...</p>
+                    </div>
+                `).join('');
             } else {
-                btn.innerHTML = '<i class="fas fa-moon"></i> <span>Dark</span>';
-                span.textContent = 'Dark';
+                feedGrid.innerHTML = '<p style="text-align:center;">No posts yet. Check back soon!</p>';
             }
         }
         
-        document.getElementById('themeToggle').addEventListener('click', () => {
-            const isDark = document.body.classList.contains('dark');
-            const newTheme = isDark ? 'light' : 'dark';
-            document.body.classList.remove('dark', 'light');
-            document.body.classList.add(newTheme);
-            localStorage.setItem('theme', newTheme);
-            const btn = document.getElementById('themeToggle');
-            const span = document.getElementById('themeText');
-            if(newTheme === 'dark') {
-                btn.innerHTML = '<i class="fas fa-sun"></i> <span>Light</span>';
-                span.textContent = 'Light';
-            } else {
-                btn.innerHTML = '<i class="fas fa-moon"></i> <span>Dark</span>';
-                span.textContent = 'Dark';
-            }
+        document.getElementById('joinBtn').addEventListener('click', () => {
+            window.location.href = 'auth.html';
         });
-
-        async function init() {
-            initTheme();
-            const loggedIn = await window.checkAuth(false);
-            if(loggedIn) {
-                currentUser = window.appState.currentUser;
-                currentProfile = window.appState.currentProfile;
-                if(currentProfile?.is_a_squared) {
-                    document.getElementById('asquaredSection').style.display = 'block';
-                    document.getElementById('excoDropdown').style.display = 'block';
-                    document.getElementById('mobileExcoBtn').style.display = 'flex';
-                    loadExecutives();
-                    loadExecutiveAnnouncements();
-                }
-            }
-            await loadStats();
-            await loadPosts();
-            await loadUserLikes();
-            setupRealtime();
-            setupMobileMenu();
-        }
-
-        async function loadStats() {
-            const { data: profiles } = await supabaseClient.from('profiles').select('*');
-            const { data: posts } = await supabaseClient.from('posts').select('*');
-            const { data: events } = await supabaseClient.from('posts').select('*').eq('type', 'event');
-            const { data: aSquared } = await supabaseClient.from('profiles').select('*').eq('is_a_squared', true);
-            document.getElementById('statMembers').innerHTML = profiles?.length || 0;
-            document.getElementById('statEvents').innerHTML = events?.length || 0;
-            document.getElementById('statLeaders').innerHTML = aSquared?.length || 0;
-            document.getElementById('statPosts').innerHTML = posts?.length || 0;
-        }
-
-        async function loadExecutives() {
-            const { data: parishExecs } = await supabaseClient.from('profiles').select('*').eq('is_a_squared', true).eq('a_squared_type', 'Parish A-Squared');
-            document.getElementById('parishExecutivesList').innerHTML = parishExecs?.map(e => `<div class="executive-card" onclick="showUserProfile('${e.id}')"><div class="executive-avatar">${e.full_name?.[0] || 'E'}</div><div><strong>${e.full_name || e.email}</strong><div><span class="leadership-tag">${e.leadership_tag || 'Parish Executive'}</span></div><small>${e.parish}</small></div></div>`).join('') || '<p>No parish executives found.</p>';
-            
-            const { data: archExecs } = await supabaseClient.from('profiles').select('*').eq('is_a_squared', true).eq('a_squared_type', 'Archdeaconry A-Squared');
-            document.getElementById('archdeaconryExecutivesList').innerHTML = archExecs?.map(e => `<div class="executive-card" onclick="showUserProfile('${e.id}')"><div class="executive-avatar">${e.full_name?.[0] || 'E'}</div><div><strong>${e.full_name || e.email}</strong><div><span class="leadership-tag" style="background:#ffd700; color:#000;">${e.leadership_tag || 'Archdeaconry Executive'}</span></div><small>${e.parish}</small></div></div>`).join('') || '<p>No archdeaconry executives found.</p>';
-        }
-
-        async function loadExecutiveAnnouncements() {
-            const { data: announcements } = await supabaseClient.from('posts').select('*').eq('type', 'notice').order('created_at', { ascending: false }).limit(5);
-            document.getElementById('executiveAnnouncements').innerHTML = announcements?.map(a => `<div class="executive-card" onclick="showPostDetail(${a.id})"><div class="executive-avatar"><i class="fas fa-bullhorn"></i></div><div><strong>${a.title}</strong><div style="font-size:0.8rem; opacity:0.8;">${a.content.substring(0, 100)}...</div><small>${new Date(a.created_at).toLocaleDateString()}</small></div></div>`).join('') || '<p>No executive announcements.</p>';
-        }
-
-        async function loadPosts() {
-            const { data } = await supabaseClient.from('posts').select('*, profiles(full_name, leadership_tag)').order('created_at', { ascending: false });
-            posts = data || [];
-            renderPosts();
-        }
-
-        async function loadUserLikes() {
-            if(!currentUser) return;
-            const { data } = await supabaseClient.from('likes').select('post_id').eq('user_id', currentUser.id);
-            userLikes = new Set(data?.map(l => l.post_id) || []);
-        }
-
-        function renderPosts() {
-            const filtered = currentCategory === 'all' ? posts : posts.filter(p => p.type === currentCategory);
-            const grid = document.getElementById('feedGrid');
-            if(filtered.length === 0) { grid.innerHTML = '<p style="text-align:center; padding:2rem;">No posts found</p>'; return; }
-            grid.innerHTML = filtered.map(post => `
-                <div class="post-card" onclick="showPostDetail(${post.id})">
-                    <div class="post-header">
-                        <div class="post-avatar" onclick="event.stopPropagation(); showUserProfile('${post.author_id}')">${post.profiles?.full_name?.[0] || 'A'}</div>
-                        <div><div class="post-author-name" onclick="event.stopPropagation(); showUserProfile('${post.author_id}')">${post.profiles?.full_name || 'AYF Admin'}${post.profiles?.leadership_tag ? `<span class="leadership-tag">${post.profiles.leadership_tag}</span>` : ''}</div><small>${new Date(post.created_at).toLocaleDateString()}</small></div>
-                    </div>
-                    <div class="post-content"><div class="post-title">${escapeHtml(post.title)}</div><div class="post-text">${escapeHtml(post.content?.substring(0, 150) || '')}${post.content?.length > 150 ? '...' : ''}</div>${post.media_url ? `<img src="${post.media_url}" class="post-media" onerror="this.style.display='none'">` : ''}</div>
-                    <div class="post-stats"><span><i class="fas fa-eye"></i> ${post.view_count || 0}</span><span><i class="fas fa-heart"></i> ${post.like_count || 0}</span><span><i class="fas fa-comment"></i> ${post.comment_count || 0}</span></div>
-                    <div class="post-actions"><button class="action-btn like-btn ${userLikes.has(post.id) ? 'liked' : ''}" onclick="event.stopPropagation(); toggleLike(${post.id})"><i class="fas fa-heart"></i> ${userLikes.has(post.id) ? 'Liked' : 'Like'}</button><button class="action-btn" onclick="event.stopPropagation(); showPostDetail(${post.id})"><i class="fas fa-comment"></i> Comment</button><button class="action-btn" onclick="event.stopPropagation(); sharePost(${post.id})"><i class="fas fa-share"></i> Share</button></div>
-                </div>`).join('');
-        }
-
-        async function toggleLike(postId) {
-            if(!currentUser) { window.showToast('Please login to like posts', 'error'); setTimeout(() => window.location.href = 'auth.html', 1500); return; }
-            if(userLikes.has(postId)) {
-                await supabaseClient.from('likes').delete().eq('post_id', postId).eq('user_id', currentUser.id);
-                await supabaseClient.rpc('decrement_post_likes', { post_id: postId });
-                userLikes.delete(postId);
-            } else {
-                await supabaseClient.from('likes').insert([{ post_id: postId, user_id: currentUser.id }]);
-                await supabaseClient.rpc('increment_post_likes', { post_id: postId });
-                userLikes.add(postId);
-            }
-            await loadPosts();
-        }
-
-        async function showPostDetail(postId) {
-            const post = posts.find(p => p.id === postId);
-            if(!post) return;
-            await supabaseClient.rpc('increment_post_views', { post_id: postId });
-            const { data: comments } = await supabaseClient.from('comments').select('*, profiles(full_name, leadership_tag)').eq('post_id', postId).order('created_at', { ascending: true });
-            document.getElementById('modalBody').innerHTML = `<div style="padding:1rem;"><h2>${escapeHtml(post.title)}</h2><div class="post-header" style="padding:0.5rem 0;"><div class="post-avatar" onclick="showUserProfile('${post.author_id}')">${post.profiles?.full_name?.[0] || 'A'}</div><div><div class="post-author-name" onclick="showUserProfile('${post.author_id}')">${post.profiles?.full_name || 'AYF Admin'}${post.profiles?.leadership_tag ? `<span class="leadership-tag">${post.profiles.leadership_tag}</span>` : ''}</div><small>${new Date(post.created_at).toLocaleString()}</small></div></div><p style="opacity:0.8; margin:1rem 0;">${escapeHtml(post.content)}</p>${post.media_url ? `<img src="${post.media_url}" style="width:100%; border-radius:12px; margin:1rem 0;">` : ''}<div class="post-stats" style="margin:1rem 0;"><span><i class="fas fa-eye"></i> ${post.view_count || 0} views</span><span><i class="fas fa-heart"></i> ${post.like_count || 0} likes</span><span><i class="fas fa-comment"></i> ${post.comment_count || 0} comments</span></div><div class="comments-section"><h4>Comments (${comments?.length || 0})</h4><div id="commentsList">${comments?.map(c => `<div style="margin-bottom:1rem; padding:0.8rem; background:rgba(255,255,255,0.03); border-radius:12px; border-left:3px solid #667eea;"><div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.5rem;"><span style="font-weight:600; cursor:pointer;" onclick="showUserProfile('${c.user_id}')">${c.profiles?.full_name || 'User'}${c.profiles?.leadership_tag ? `<span class="leadership-tag">${c.profiles.leadership_tag}</span>` : ''}</span><span style="font-size:0.7rem; color:#888;">${new Date(c.created_at).toLocaleString()}</span></div><p>${escapeHtml(c.content)}</p></div>`).join('') || '<p>No comments yet.</p>'}</div>${currentUser ? `<div style="display:flex; gap:0.5rem; margin-top:1rem;"><input type="text" id="newComment" placeholder="Write a comment..." style="flex:1; padding:0.8rem; border:none; border-radius:10px; background:rgba(255,255,255,0.1); color:var(--text-primary);"><button class="btn btn-primary" onclick="addComment(${postId}, null)" style="padding:0.8rem 1.5rem;">Post</button></div>` : '<p style="margin-top:1rem; text-align:center;"><a href="auth.html" style="color:#667eea;">Login</a> to comment</p>'}</div></div>`;
-            document.getElementById('postModal').style.display = 'flex';
-        }
-
-        async function addComment(postId, parentId = null) {
-            if(!currentUser) { window.showToast('Please login to comment', 'error'); return; }
-            const input = parentId ? document.getElementById(`replyText-${parentId}`) : document.getElementById('newComment');
-            const content = input?.value;
-            if(!content?.trim()) { window.showToast('Please enter a comment', 'error'); return; }
-            await supabaseClient.from('comments').insert([{ post_id: postId, user_id: currentUser.id, parent_id: parentId, content: content.trim() }]);
-            if(parentId) input.value = ''; else input.value = '';
-            await supabaseClient.rpc('increment_post_comments', { post_id: postId });
-            await loadPosts();
-            showPostDetail(postId);
-            window.showToast('Comment posted!', 'success');
-        }
-
-        function sharePost(postId) { navigator.clipboard.writeText(`${window.location.origin}/post.html?id=${postId}`); window.showToast('Link copied!', 'success'); }
-        function closeModal() { document.getElementById('postModal').style.display = 'none'; }
-        function closeProfileModal() { document.getElementById('profileModal').style.display = 'none'; }
-        function closeInfoModal() { document.getElementById('infoModal').style.display = 'none'; }
-        async function showUserProfile(userId) {
-            const { data: p } = await supabaseClient.from('profiles').select('*').eq('id', userId).single();
-            if(!p) return;
-            document.getElementById('profileModalBody').innerHTML = `<div style="padding:1rem; text-align:center;"><div class="post-avatar" style="width:80px; height:80px; font-size:2rem; margin:0 auto 1rem;">${p.full_name?.[0] || p.email?.[0] || 'U'}</div><h2>${p.full_name || 'Member'}</h2>${p.leadership_tag ? `<span class="leadership-tag" style="font-size:0.9rem;">${p.leadership_tag}</span>` : ''}<p style="margin-top:0.5rem;">${p.parish || 'No parish'}</p>${p.bio ? `<p style="margin:1rem 0;">${escapeHtml(p.bio)}</p>` : ''}</div>`;
-            document.getElementById('profileModal').style.display = 'flex';
-        }
-        function showAboutPage() { showInfoModal('About AYF', '<h3>Anglican Youth Fellowship - Gwarimpa Archdeaconry</h3><p style="margin:1rem 0;">A vibrant community of young people dedicated to spiritual growth, leadership development, and community service.</p><h4>Mission</h4><p>To raise young people who are spiritually mature, morally upright, and socially responsible.</p><h4>Vision</h4><p>To nurture leaders, promote unity, and impact communities through faith-driven initiatives.</p>'); }
-        function showPrivacyPolicy() { showInfoModal('Privacy Policy', '<p>We collect information you provide directly to us. We use it to provide fellowship services. We do not share your data with third parties.</p><p style="margin-top:1rem;">Contact: privacy@ayfgwarimpa.org</p>'); }
-        function showTerms() { showInfoModal('Terms of Service', '<p>By using this platform, you agree to these terms. You agree not to post offensive content. A-Squared membership requires admin approval.</p>'); }
-        function showInfoModal(title, content) { document.getElementById('infoModalTitle').innerHTML = title; document.getElementById('infoModalBody').innerHTML = content; document.getElementById('infoModal').style.display = 'flex'; }
-        function showParishExecutives() { document.getElementById('asquaredSection').style.display = 'block'; document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' }); document.querySelector('.group-tab[data-group="parish"]').click(); }
-        function showArchdeaconryExecutives() { document.getElementById('asquaredSection').style.display = 'block'; document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' }); document.querySelector('.group-tab[data-group="archdeaconry"]').click(); }
-        function showExecutiveAnnouncements() { document.getElementById('asquaredSection').style.display = 'block'; document.getElementById('asquaredSection').scrollIntoView({ behavior: 'smooth' }); document.querySelector('.group-tab[data-group="announcements"]').click(); }
-        function setupMobileMenu() { document.getElementById('mobileMenuBtn').addEventListener('click', () => document.getElementById('mobileNav').classList.toggle('open')); }
-        function toggleMobileSubmenu(id) { document.getElementById(id).classList.toggle('show'); }
-        function escapeHtml(t) { if(!t) return ''; const d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
-        function setupRealtime() { supabaseClient.channel('public:posts').on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => loadPosts()).subscribe(); }
-
-        document.querySelectorAll('.filter-chip').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active')); b.classList.add('active'); currentCategory = b.dataset.category; renderPosts(); }));
-        document.querySelectorAll('.group-tab').forEach(b => b.addEventListener('click', () => { document.querySelectorAll('.group-tab').forEach(c => c.classList.remove('active')); b.classList.add('active'); document.querySelectorAll('.group-content').forEach(c => c.classList.remove('active')); document.getElementById(`group-${b.dataset.group}`).classList.add('active'); }));
-        document.getElementById('joinBtn').addEventListener('click', () => window.location.href = 'auth.html');
-
-        window.showPostDetail = showPostDetail; window.toggleLike = toggleLike; window.addComment = addComment; window.sharePost = sharePost; window.closeModal = closeModal; window.showUserProfile = showUserProfile; window.closeProfileModal = closeProfileModal; window.closeInfoModal = closeInfoModal; window.showAboutPage = showAboutPage; window.showPrivacyPolicy = showPrivacyPolicy; window.showTerms = showTerms; window.showParishExecutives = showParishExecutives; window.showArchdeaconryExecutives = showArchdeaconryExecutives; window.showExecutiveAnnouncements = showExecutiveAnnouncements; window.toggleMobileSubmenu = toggleMobileSubmenu;
-        init();
+        
+        loadData();
     </script>
 </body>
 </html>
