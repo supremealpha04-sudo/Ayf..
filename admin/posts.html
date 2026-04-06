@@ -3,18 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Management | Admin</title>
+    <title>Manage Posts | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body {
             font-family: 'Inter', sans-serif;
             background: #0f0f0f;
             color: white;
         }
-        
         .admin-sidebar {
             position: fixed;
             left: 0;
@@ -24,7 +22,6 @@
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             padding: 2rem 1rem;
         }
-        
         .sidebar-nav a {
             display: flex;
             align-items: center;
@@ -35,17 +32,8 @@
             border-radius: 12px;
             margin: 0.5rem 0;
         }
-        
-        .sidebar-nav a:hover, .sidebar-nav a.active {
-            background: rgba(102,126,234,0.2);
-            color: white;
-        }
-        
-        .main-content {
-            margin-left: 260px;
-            padding: 2rem;
-        }
-        
+        .sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(102,126,234,0.2); color: white; }
+        .main-content { margin-left: 260px; padding: 2rem; }
         .btn {
             padding: 0.8rem 1.5rem;
             border: none;
@@ -55,12 +43,7 @@
             cursor: pointer;
             margin-bottom: 1rem;
         }
-        
-        .posts-grid {
-            display: grid;
-            gap: 1rem;
-        }
-        
+        .posts-list { display: grid; gap: 1rem; }
         .post-item {
             background: #1a1a2e;
             border-radius: 16px;
@@ -70,7 +53,6 @@
             align-items: center;
             flex-wrap: wrap;
         }
-        
         .modal {
             display: none;
             position: fixed;
@@ -83,7 +65,6 @@
             justify-content: center;
             align-items: center;
         }
-        
         .modal-content {
             background: #1a1a2e;
             border-radius: 20px;
@@ -91,7 +72,6 @@
             width: 90%;
             max-width: 500px;
         }
-        
         input, textarea, select {
             width: 100%;
             padding: 0.8rem;
@@ -101,7 +81,6 @@
             background: rgba(255,255,255,0.05);
             color: white;
         }
-        
         @media (max-width: 768px) {
             .admin-sidebar { transform: translateX(-100%); }
             .main-content { margin-left: 0; }
@@ -115,7 +94,7 @@
             <a href="dashboard.html"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a href="users.html"><i class="fas fa-users"></i> Users</a>
             <a href="posts.html" class="active"><i class="fas fa-newspaper"></i> Posts</a>
-            <a href="quotas.html"><i class="fas fa-chart-simple"></i> Quotas</a>
+            <a href="plans.html"><i class="fas fa-calendar-alt"></i> Plans</a>
             <a href="approvals.html"><i class="fas fa-check-circle"></i> Approvals</a>
             <a href="../index.html"><i class="fas fa-globe"></i> View Site</a>
         </div>
@@ -124,7 +103,7 @@
     <div class="main-content">
         <h1>Content Management</h1>
         <button class="btn" onclick="showPostModal()"><i class="fas fa-plus"></i> Create New Post</button>
-        <div class="posts-grid" id="postsGrid"></div>
+        <div class="posts-list" id="postsList"></div>
     </div>
     
     <div class="modal" id="postModal">
@@ -144,7 +123,7 @@
                 <option value="St. Philip Anglican Church">St. Philip</option>
                 <option value="St. Barnabas Jaiyuan">St. Barnabas</option>
             </select>
-            <input type="file" id="postMedia" accept="image/*,video/*">
+            <input type="url" id="postMedia" placeholder="Media URL (image/video link)">
             <button class="btn" onclick="savePost()">Save</button>
             <button class="btn" style="background:#444;" onclick="closeModal()">Cancel</button>
         </div>
@@ -156,13 +135,10 @@
         
         async function loadPosts() {
             const { data: posts } = await supabaseClient.from('posts').select('*').order('created_at', { ascending: false });
-            const grid = document.getElementById('postsGrid');
-            grid.innerHTML = posts.map(post => `
+            const container = document.getElementById('postsList');
+            container.innerHTML = posts.map(post => `
                 <div class="post-item">
-                    <div>
-                        <strong>${post.title}</strong>
-                        <div style="font-size:0.8rem; opacity:0.7;">${post.type} | ${post.parish || 'General'}</div>
-                    </div>
+                    <div><strong>${post.title}</strong><div style="font-size:0.8rem; opacity:0.7;">${post.type} | ${post.parish || 'General'}</div></div>
                     <div>
                         <button class="btn" style="padding:0.3rem 0.8rem; margin-right:0.5rem;" onclick="editPost(${post.id})">Edit</button>
                         <button class="btn" style="padding:0.3rem 0.8rem; background:#f56565;" onclick="deletePost(${post.id})">Delete</button>
@@ -171,14 +147,15 @@
             `).join('');
         }
         
-        function showPostModal(editMode = false) {
+        function showPostModal() {
+            editingPostId = null;
+            document.getElementById('modalTitle').innerHTML = 'Create Post';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            document.getElementById('postType').value = 'event';
+            document.getElementById('postParish').value = 'all';
+            document.getElementById('postMedia').value = '';
             document.getElementById('postModal').style.display = 'flex';
-            if (!editMode) {
-                editingPostId = null;
-                document.getElementById('modalTitle').innerHTML = 'Create Post';
-                document.getElementById('postTitle').value = '';
-                document.getElementById('postContent').value = '';
-            }
         }
         
         async function editPost(postId) {
@@ -189,6 +166,7 @@
             document.getElementById('postContent').value = post.content;
             document.getElementById('postType').value = post.type;
             document.getElementById('postParish').value = post.parish || 'all';
+            document.getElementById('postMedia').value = post.media_url || '';
             document.getElementById('postModal').style.display = 'flex';
         }
         
@@ -197,19 +175,14 @@
             const content = document.getElementById('postContent').value;
             const type = document.getElementById('postType').value;
             const parish = document.getElementById('postParish').value === 'all' ? null : document.getElementById('postParish').value;
+            const media_url = document.getElementById('postMedia').value;
             
-            let media_url = null;
-            const file = document.getElementById('postMedia').files[0];
-            if (file) {
-                const fileName = `${Date.now()}_${file.name}`;
-                const { data } = await supabaseClient.storage.from('media').upload(fileName, file);
-                if (data) media_url = supabaseClient.storage.from('media').getPublicUrl(fileName).data.publicUrl;
-            }
+            const user = await supabaseClient.auth.getUser();
             
             if (editingPostId) {
                 await supabaseClient.from('posts').update({ title, content, type, parish, media_url }).eq('id', editingPostId);
             } else {
-                await supabaseClient.from('posts').insert([{ title, content, type, parish, media_url, author_id: (await supabaseClient.auth.getUser()).data.user.id }]);
+                await supabaseClient.from('posts').insert([{ title, content, type, parish, media_url, author_id: user.data.user.id }]);
             }
             
             closeModal();
@@ -225,7 +198,6 @@
         
         function closeModal() {
             document.getElementById('postModal').style.display = 'none';
-            editingPostId = null;
         }
         
         loadPosts();
