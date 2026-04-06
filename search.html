@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AYF GWARIMPA - Search Users</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background: #0f1419;
+            color: #fff;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+
+        /* Header */
+        .header {
+            background: #17212b;
+            padding: 12px 16px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid #242f3d;
+        }
+
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #fff;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .search-box {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #242f3d;
+            border-radius: 20px;
+            padding: 8px 16px;
+            gap: 10px;
+        }
+
+        .search-box i {
+            color: #8a9aa8;
+            font-size: 14px;
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: #8a9aa8;
+        }
+
+        .clear-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #8a9aa8;
+            border: none;
+            color: #17212b;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .clear-btn.visible {
+            display: flex;
+        }
+
+        /* Filter Tags */
+        .filter-section {
+            background: #17212b;
+            padding: 12px 16px;
+            border-bottom: 1px solid #242f3d;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            color: #8a9aa8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .filter-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tag {
+            padding: 6px 14px;
+            background: #242f3d;
+            border-radius: 16px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .filter-tag:hover {
+            background: #2b3a4a;
+        }
+
+        .filter-tag.active {
+            background: #2b5278;
+            border-color: #3a6d99;
+        }
+
+        /* Results */
+        .results-container {
+            padding: 16px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: #8a9aa8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            padding: 0 8px;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #17212b;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .user-card:hover {
+            background: #1e2a35;
+            border-color: #2b5278;
+            transform: translateX(4px);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            border: 2px solid #2b5278;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .username-tag {
+            font-size: 12px;
+            color: #3a6d99;
+            background: rgba(58, 109, 153, 0.2);
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .user-details {
+            font-size: 13px;
+            color: #8a9aa8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .parish-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+        }
+
+        .role-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .role-exco {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+        }
+
+        .role-member {
+            background: rgba(138, 154, 168, 0.2);
+            color: #8a9aa8;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #242f3d;
+            border: none;
+            color: #8a9aa8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #2b5278;
+            color: #fff;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #8a9aa8;
+        }
+
+        .empty-state i {
+            font-size: 60px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .empty-hint {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #242f3d;
+            border-top-color: #3a6d99;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Recent Searches */
+        .recent-searches {
+            padding: 16px;
+        }
+
+        .recent-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .clear-all {
+            font-size: 13px;
+            color: #3a6d99;
+            cursor: pointer;
+        }
+
+        .recent-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 8px;
+        }
+
+        .recent-item:hover {
+            background: #17212b;
+        }
+
+        .recent-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #242f3d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #8a9aa8;
+        }
+
+        .recent-text {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .recent-remove {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #8a9aa8;
+            cursor: pointer;
+        }
+
+        .recent-remove:hover {
+            background: rgba(255, 59, 48, 0.2);
+            color: #ff3b30;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #17212b;
+            border-top: 1px solid #242f3d;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 20px;
+            cursor: pointer;
+            color: #8a9aa8;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: #3a6d99;
+        }
+
+        .nav-item i {
+            font-size: 22px;
+        }
+
+        .nav-item span {
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="search-container">
+            <div class="back-btn" onclick="goBack()">
+                <i class="fas fa-arrow-left"></i>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by name, username, or parish..." autocomplete="off">
+                <button class="clear-btn" id="clearBtn" onclick="clearSearch()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Filters -->
+    <div class="filter-section" id="filterSection">
+        <div class="filter-label">Filter by Parish</div>
+        <div class="filter-tags">
+            <div class="filter-tag active" data-parish="all">All</div>
+            <div class="filter-tag" data-parish="St. Matthews">St. Matthews</div>
+            <div class="filter-tag" data-parish="St. Pauls">St. Pauls</div>
+            <div class="filter-tag" data-parish="St. Johns">St. Johns</div>
+            <div class="filter-tag" data-parish="All Saints">All Saints</div>
+            <div class="filter-tag" data-parish="St. Peters">St. Peters</div>
+            <div class="filter-tag" data-parish="Holy Trinity">Holy Trinity</div>
+        </div>
+    </div>
+
+    <!-- Recent Searches -->
+    <div class="recent-searches" id="recentSearches">
+        <div class="recent-header">
+            <span class="section-title">Recent</span>
+            <span class="clear-all" onclick="clearRecent()">Clear All</span>
+        </div>
+        <div id="recentList"></div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-container" id="resultsContainer" style="display:none;">
+        <div class="section-title" id="resultsTitle">Results</div>
+        <div id="usersList"></div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-search"></i>
+        <div class="empty-text">No users found</div>
+        <div class="empty-hint">Try a different search term</div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading" style="display:none;">
+        <div class="spinner"></div>
+        <p>Searching...</p>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="parish.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Parish</span>
+        </a>
+        <a href="plan.html" class="nav-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Plan</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user-circle"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        const SUPABASE_URL = 'https://your-project.supabase.co';
+        const SUPABASE_KEY = 'your-anon-key';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        let currentUser = null;
+        let currentFilter = 'all';
+        let searchTimeout = null;
+        let recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+
+        async function init() {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const { data: user } = await supabase
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+
+            currentUser = user;
+            renderRecentSearches();
+
+            // Focus search input
+            document.getElementById('searchInput').focus();
+        }
+
+        function renderRecentSearches() {
+            const container = document.getElementById('recentList');
+            
+            if (recentSearches.length === 0) {
+                document.getElementById('recentSearches').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('recentSearches').style.display = 'block';
+            container.innerHTML = recentSearches.map((search, index) => `
+                <div class="recent-item" onclick="searchFromRecent('${search}')">
+                    <div class="recent-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <span class="recent-text">${search}</span>
+                    <div class="recent-remove" onclick="removeRecent(event, ${index})">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function searchFromRecent(term) {
+            document.getElementById('searchInput').value = term;
+            performSearch(term);
+        }
+
+        function removeRecent(event, index) {
+            event.stopPropagation();
+            recentSearches.splice(index, 1);
+            localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+            renderRecentSearches();
+        }
+
+        function clearRecent() {
+            recentSearches = [];
+            localStorage.removeItem('recentSearches');
+            renderRecentSearches();
+        }
+
+        // Search input handler
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const value = e.target.value.trim();
+            
+            document.getElementById('clearBtn').classList.toggle('visible', value.length > 0);
+            
+            clearTimeout(searchTimeout);
+            
+            if (value.length === 0) {
+                showRecent();
+                return;
+            }
+
+            if (value.length < 2) return;
+
+            searchTimeout = setTimeout(() => performSearch(value), 300);
+        });
+
+        async function performSearch(query) {
+            document.getElementById('recentSearches').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            // Add to recent searches
+            if (!recentSearches.includes(query)) {
+                recentSearches.unshift(query);
+                if (recentSearches.length > 10) recentSearches.pop();
+                localStorage.setItem('recentSearches', JSON.stringify(recentSearches));
+            }
+
+            let dbQuery = supabase
+                .from('users')
+                .select('*')
+                .neq('id', currentUser.id)
+                .or(`full_name.ilike.%${query}%,username.ilike.%${query}%,email.ilike.%${query}%`);
+
+            if (currentFilter !== 'all') {
+                dbQuery = dbQuery.eq('parish', currentFilter);
+            }
+
+            const { data: users, error } = await dbQuery.order('full_name').limit(50);
+
+            document.getElementById('loading').style.display = 'none';
+
+            if (error) {
+                console.error('Search error:', error);
+                return;
+            }
+
+            if (!users || users.length === 0) {
+                document.getElementById('emptyState').style.display = 'block';
+                return;
+            }
+
+            renderResults(users, query);
+        }
+
+        function renderResults(users, query) {
+            const container = document.getElementById('usersList');
+            document.getElementById('resultsContainer').style.display = 'block';
+            document.getElementById('resultsTitle').textContent = `${users.length} result${users.length !== 1 ? 's' : ''} for "${query}"`;
+
+            container.innerHTML = users.map(user => `
+                <div class="user-card" onclick="viewProfile('${user.id}')">
+                    <img src="${user.profile_image || 'https://via.placeholder.com/50'}" class="user-avatar" alt="${user.full_name}">
+                    <div class="user-info">
+                        <div class="user-name">
+                            ${highlightMatch(user.full_name, query)}
+                            ${user.username ? `<span class="username-tag">@${highlightMatch(user.username, query)}</span>` : ''}
+                        </div>
+                        <div class="user-details">
+                            <span class="parish-badge">
+                                <i class="fas fa-church" style="font-size:10px;"></i>
+                                ${user.parish || 'No parish'}
+                            </span>
+                            <span class="role-badge ${user.role === 'exco' || user.role === 'archediceanry' || user.role === 'both' ? 'role-exco' : 'role-member'}">
+                                ${user.role === 'both' ? 'Exco & Archediceanry' : user.role === 'exco' ? 'Parish Exco' : user.role === 'archediceanry' ? 'Archediceanry' : 'Member'}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="user-actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); startChat('${user.id}')" title="Message">
+                            <i class="fas fa-comment"></i>
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); viewProfile('${user.id}')" title="View Profile">
+                            <i class="fas fa-user"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function highlightMatch(text, query) {
+            if (!text) return '';
+            const regex = new RegExp(`(${query})`, 'gi');
+            return text.replace(regex, '<mark style="background:rgba(43, 82, 120, 0.5);color:#fff;border-radius:2px;padding:0 2px;">$1</mark>');
+        }
+
+        function showRecent() {
+            document.getElementById('resultsContainer').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'none';
+            renderRecentSearches();
+        }
+
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('clearBtn').classList.remove('visible');
+            showRecent();
+            document.getElementById('searchInput').focus();
+        }
+
+        // Filter handlers
+        document.querySelectorAll('.filter-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                currentFilter = this.dataset.parish;
+                
+                const searchValue = document.getElementById('searchInput').value.trim();
+                if (searchValue.length >= 2) {
+                    performSearch(searchValue);
+                }
+            });
+        });
+
+        function viewProfile(userId) {
+            window.location.href = `view-profile.html?id=${userId}`;
+        }
+
+        function startChat(userId) {
+            window.location.href = `messages.html?user=${userId}`;
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>
