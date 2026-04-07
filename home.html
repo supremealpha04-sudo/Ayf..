@@ -493,6 +493,13 @@
         .share-option span {
             font-size: 12px;
         }
+
+        /* Error message */
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+        }
     </style>
 </head>
 <body>
@@ -577,9 +584,11 @@
     </div>
 
     <script>
-        // Supabase Configuration
+        // SUPABASE CONFIGURATION - ONLY DECLARED ONCE
         const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+        
+        // Create supabase client - ONLY ONCE
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentUser = null;
@@ -588,48 +597,86 @@
 
         // Initialize
         async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
+            try {
+                console.log('Checking session...');
+                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+                
+                if (sessionError) throw sessionError;
+                
+                if (!session) {
+                    console.log('No session found, redirecting to login...');
+                    window.location.href = 'index.html';
+                    return;
+                }
 
-            const { data: user } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-            
-            currentUser = user;
-            loadPosts();
-            setupRealtime();
+                console.log('Session found, loading user profile...');
+                const { data: user, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                
+                if (userError) throw userError;
+                
+                if (user.approval_status === 'pending') {
+                    console.log('User pending approval');
+                    await supabase.auth.signOut();
+                    alert('Your account is pending admin approval.');
+                    window.location.href = 'index.html';
+                    return;
+                }
+                
+                currentUser = user;
+                console.log('User loaded:', currentUser.full_name);
+                loadPosts();
+                setupRealtime();
+                
+                // Update online count
+                document.getElementById('onlineCount').innerHTML = '<i class="fas fa-circle" style="color: #4ecdc4; font-size: 8px;"></i> Online';
+                
+            } catch (error) {
+                console.error('Init error:', error);
+                document.getElementById('feedContainer').innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                        <p>Error loading page: ${error.message}</p>
+                        <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; background: #2b5278; border: none; border-radius: 8px; color: white; cursor: pointer;">Go to Login</button>
+                    </div>
+                `;
+            }
         }
 
         // Load Posts
         async function loadPosts() {
-            let query = supabase
-                .from('posts')
-                .select(`
-                    *,
-                    author:users(id, full_name, profile_image, parish),
-                    likes:post_likes(count),
-                    comments:comments(count)
-                `)
-                .order('created_at', { ascending: false });
+            try {
+                let query = supabase
+                    .from('posts')
+                    .select(`
+                        *,
+                        author:users(id, full_name, profile_image, parish),
+                        likes:post_likes(count),
+                        comments:comments(count)
+                    `)
+                    .order('created_at', { ascending: false });
 
-            if (currentCategory !== 'all') {
-                query = query.eq('category', currentCategory);
-            }
+                if (currentCategory !== 'all') {
+                    query = query.eq('category', currentCategory);
+                }
 
-            const { data, error } = await query;
+                const { data, error } = await query;
 
-            if (error) {
+                if (error) throw error;
+
+                posts = data || [];
+                renderPosts();
+            } catch (error) {
                 console.error('Error loading posts:', error);
-                return;
+                document.getElementById('feedContainer').innerHTML = `
+                    <div class="error-message">
+                        <p>Error loading posts: ${error.message}</p>
+                    </div>
+                `;
             }
-
-            posts = data || [];
-            renderPosts();
         }
 
         // Render Posts
@@ -647,6 +694,9 @@
             }
 
             container.innerHTML = posts.map(post => createPostHTML(post)).join('');
+            
+            // Update countdown timers
+            updateAllCountdowns();
         }
 
         // Create Post HTML
@@ -671,36 +721,36 @@
             return `
                 <div class="post-card" data-post-id="${post.id}">
                     <div class="post-header">
-                        <img src="${post.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar" alt="">
+                        <img src="${post.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar" alt="" onerror="this.src='https://via.placeholder.com/44'">
                         <div class="post-meta">
-                            <div class="post-author">${post.author?.full_name || 'Unknown'}</div>
-                            <div class="post-time">${timeAgo} • ${post.author?.parish || ''}</div>
+                            <div class="post-author">${escapeHtml(post.author?.full_name || 'Unknown')}</div>
+                            <div class="post-time">${timeAgo} • ${escapeHtml(post.author?.parish || '')}</div>
                         </div>
                         <span class="post-category-badge ${badgeClass}">${post.category}</span>
                     </div>
                     
                     <div class="post-content">
-                        <div class="post-title">${post.title || ''}</div>
-                        <div class="post-text">${post.content || ''}</div>
+                        <div class="post-title">${escapeHtml(post.title || '')}</div>
+                        <div class="post-text">${escapeHtml(post.content || '')}</div>
                         ${countdownHTML}
                         ${hasMedia ? `
                             ${isVideo ? 
                                 `<video class="post-video" controls poster="${post.thumbnail_url || ''}">
                                     <source src="${post.media_url}" type="video/mp4">
                                 </video>` :
-                                `<img src="${post.media_url}" class="post-media" alt="">`
+                                `<img src="${post.media_url}" class="post-media" alt="" onerror="this.style.display='none'">`
                             }
                         ` : ''}
                     </div>
 
                     <div class="post-actions">
-                        <div class="action-btn ${post.user_liked ? 'liked' : ''}" onclick="toggleLike('${post.id}')">
-                            <i class="${post.user_liked ? 'fas' : 'far'} fa-heart"></i>
-                            <span>${post.likes?.count || 0}</span>
+                        <div class="action-btn" onclick="toggleLike('${post.id}')">
+                            <i class="far fa-heart"></i>
+                            <span>${post.likes?.[0]?.count || 0}</span>
                         </div>
                         <div class="action-btn" onclick="toggleComments('${post.id}')">
                             <i class="far fa-comment"></i>
-                            <span>${post.comments?.count || 0}</span>
+                            <span>${post.comments?.[0]?.count || 0}</span>
                         </div>
                         <div class="action-spacer"></div>
                         <div class="action-btn" onclick="openShareModal('${post.id}')">
@@ -728,24 +778,40 @@
             `;
         }
 
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
         // Toggle Like
         async function toggleLike(postId) {
-            const btn = document.querySelector(`[data-post-id="${postId}"] .action-btn:first-child`);
-            const isLiked = btn.classList.contains('liked');
-
-            if (isLiked) {
-                await supabase
+            if (!currentUser) return;
+            
+            try {
+                const { data: existing } = await supabase
                     .from('post_likes')
-                    .delete()
+                    .select('id')
                     .eq('post_id', postId)
-                    .eq('user_id', currentUser.id);
-            } else {
-                await supabase
-                    .from('post_likes')
-                    .insert([{ post_id: postId, user_id: currentUser.id }]);
-            }
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
 
-            loadPosts();
+                if (existing) {
+                    await supabase
+                        .from('post_likes')
+                        .delete()
+                        .eq('id', existing.id);
+                } else {
+                    await supabase
+                        .from('post_likes')
+                        .insert([{ post_id: postId, user_id: currentUser.id }]);
+                }
+
+                loadPosts();
+            } catch (error) {
+                console.error('Like error:', error);
+            }
         }
 
         // Toggle Comments
@@ -760,46 +826,58 @@
 
         // Load Comments
         async function loadComments(postId) {
-            const { data: comments } = await supabase
-                .from('comments')
-                .select(`
-                    *,
-                    user:users(id, full_name, profile_image)
-                `)
-                .eq('post_id', postId)
-                .order('created_at', { ascending: true });
+            try {
+                const { data: comments } = await supabase
+                    .from('comments')
+                    .select(`
+                        *,
+                        user:users(id, full_name, profile_image)
+                    `)
+                    .eq('post_id', postId)
+                    .order('created_at', { ascending: true });
 
-            const container = document.getElementById(`comments-list-${postId}`);
-            container.innerHTML = (comments || []).map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <img src="${comment.user?.profile_image || 'https://via.placeholder.com/32'}" class="comment-avatar">
-                        <span class="comment-author">${comment.user?.full_name || 'Unknown'}</span>
-                        <span class="comment-time">${getTimeAgo(comment.created_at)}</span>
-                    </div>
-                    <div class="comment-text">${comment.content}</div>
-                </div>
-            `).join('');
+                const container = document.getElementById(`comments-list-${postId}`);
+                if (container) {
+                    container.innerHTML = (comments || []).map(comment => `
+                        <div class="comment">
+                            <div class="comment-header">
+                                <img src="${comment.user?.profile_image || 'https://via.placeholder.com/32'}" class="comment-avatar" onerror="this.src='https://via.placeholder.com/32'">
+                                <span class="comment-author">${escapeHtml(comment.user?.full_name || 'Unknown')}</span>
+                                <span class="comment-time">${getTimeAgo(comment.created_at)}</span>
+                            </div>
+                            <div class="comment-text">${escapeHtml(comment.content)}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Load comments error:', error);
+            }
         }
 
         // Post Comment
         async function postComment(postId) {
+            if (!currentUser) return;
+            
             const input = document.getElementById(`comment-input-${postId}`);
             const content = input.value.trim();
             
             if (!content) return;
 
-            await supabase
-                .from('comments')
-                .insert([{
-                    post_id: postId,
-                    user_id: currentUser.id,
-                    content
-                }]);
+            try {
+                await supabase
+                    .from('comments')
+                    .insert([{
+                        post_id: postId,
+                        user_id: currentUser.id,
+                        content
+                    }]);
 
-            input.value = '';
-            loadComments(postId);
-            loadPosts();
+                input.value = '';
+                loadComments(postId);
+                loadPosts();
+            } catch (error) {
+                console.error('Post comment error:', error);
+            }
         }
 
         function handleCommentKeypress(e, postId) {
@@ -815,6 +893,16 @@
                 loadPosts();
             });
         });
+
+        // Update all countdowns
+        function updateAllCountdowns() {
+            document.querySelectorAll('.countdown-text').forEach(el => {
+                const date = el.getAttribute('data-date');
+                if (date) {
+                    el.textContent = getCountdown(date);
+                }
+            });
+        }
 
         // Utilities
         function getTimeAgo(date) {
@@ -836,7 +924,8 @@
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             
             if (days > 0) return `${days} days ${hours}h remaining`;
-            return `${hours} hours remaining`;
+            if (hours > 0) return `${hours} hours remaining`;
+            return 'Less than an hour remaining';
         }
 
         // Share Modal
@@ -851,19 +940,17 @@
             const post = posts.find(p => p.id === currentSharePostId);
             if (!post) return;
 
-            const shareData = {
-                title: post.title,
-                text: post.content,
-                url: window.location.href
-            };
-
             if (method === 'whatsapp') {
                 window.open(`https://wa.me/?text=${encodeURIComponent(post.title + ' - ' + window.location.href)}`);
             } else if (method === 'copy') {
                 navigator.clipboard.writeText(window.location.href);
                 alert('Link copied to clipboard!');
             } else if (method === 'native' && navigator.share) {
-                navigator.share(shareData);
+                navigator.share({
+                    title: post.title,
+                    text: post.content,
+                    url: window.location.href
+                });
             }
 
             document.getElementById('shareModal').classList.remove('active');
@@ -879,8 +966,8 @@
 
         // Realtime Updates
         function setupRealtime() {
-            supabase
-                .channel('posts')
+            const channel = supabase
+                .channel('posts-channel')
                 .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
                     loadPosts();
                 })
@@ -893,12 +980,10 @@
         }
 
         function openSearch() {
-            // Implement search functionality
             alert('Search feature coming soon!');
         }
 
         function toggleSidebar() {
-            // Implement sidebar menu
             alert('Menu feature coming soon!');
         }
 
@@ -909,9 +994,11 @@
             }
         });
 
-        // Initialize
+        // Update countdown every minute
+        setInterval(updateAllCountdowns, 60000);
+
+        // Start the app
         init();
     </script>
 </body>
 </html>
-
