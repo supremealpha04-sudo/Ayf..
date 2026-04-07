@@ -3,253 +3,341 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYF GWARIMPA - Login/Register</title>
+    <title>AYF GWARIMPA - Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .auth-container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 450px; overflow: hidden; }
-        .auth-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; color: white; }
-        .logo { width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; color: #667eea; }
-        .auth-tabs { display: flex; border-bottom: 1px solid #e0e0e0; }
-        .auth-tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; background: #f5f5f5; transition: all 0.3s; font-weight: 500; color: #666; }
-        .auth-tab.active { background: white; color: #667eea; border-bottom: 2px solid #667eea; }
-        .auth-form { padding: 30px; display: none; }
-        .auth-form.active { display: block; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; font-size: 14px; }
-        .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; }
-        .form-group input:focus { outline: none; border-color: #667eea; }
-        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; }
-        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-        .alert { padding: 12px; border-radius: 8px; margin-bottom: 20px; display: none; }
-        .alert.error { background: #fee; color: #c33; border: 1px solid #fcc; }
-        .alert.success { background: #efe; color: #3c3; border: 1px solid #cfc; }
-        .loading { display: none; text-align: center; padding: 20px; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.95); z-index: 100; border-radius: 20px; flex-direction: column; justify-content: center; }
-        .loading.active { display: flex; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .role-selection { display: flex; gap: 10px; flex-wrap: wrap; }
-        .role-option { flex: 1; min-width: 100px; }
-        .role-option input { display: none; }
-        .role-option label { display: block; padding: 12px; text-align: center; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; }
-        .role-option input:checked + label { border-color: #667eea; background: #f0f0ff; color: #667eea; }
-        .pending-approval { text-align: center; padding: 40px; display: none; }
-        .pending-approval.active { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+        
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: #667eea;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .form-container {
+            padding: 30px;
+        }
+        
+        .form {
+            display: none;
+        }
+        
+        .form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        
+        .alert.success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        
+        .role-option {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .role-option input {
+            margin-right: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="auth-container" style="position: relative;">
-        <div class="auth-header">
+    <div class="container">
+        <div class="header">
             <div class="logo"><i class="fas fa-church"></i></div>
             <h1>AYF GWARIMPA</h1>
             <p>Anglican Youth Fellowship</p>
         </div>
-        <div class="auth-tabs">
-            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" onclick="switchTab('register')">Register</div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('login')">Login</div>
+            <div class="tab" onclick="switchTab('register')">Register</div>
         </div>
-
-        <form id="loginForm" class="auth-form active">
-            <div class="alert" id="loginAlert"></div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" required placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="loginPassword" required placeholder="Enter your password">
-            </div>
-            <button type="submit" class="btn-primary" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
-        </form>
-
-        <form id="registerForm" class="auth-form">
-            <div class="alert" id="registerAlert"></div>
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="fullName" required placeholder="Enter your full name">
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="regEmail" required placeholder="Enter your email">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)">
-            </div>
-            <div class="form-group">
-                <label>Parish</label>
-                <select id="parish" required>
-                    <option value="">Select your parish</option>
-                    <option value="St. Matthews">St. Matthews</option>
-                    <option value="St. Pauls">St. Paul's</option>
-                    <option value="St. Johns">St. John's</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Gender</label>
-                <select id="gender" required>
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Role</label>
-                <div class="role-selection">
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleMember" value="member" checked>
-                        <label for="roleMember">Member</label>
-                    </div>
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleExco" value="exco">
-                        <label for="roleExco">Parish Exco</label>
+        
+        <div class="form-container">
+            <!-- Login Form -->
+            <form id="loginForm" class="form active" onsubmit="handleLogin(event)">
+                <div id="loginAlert" class="alert"></div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="loginEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" required>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            
+            <!-- Register Form -->
+            <form id="registerForm" class="form" onsubmit="handleRegister(event)">
+                <div id="registerAlert" class="alert"></div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="fullName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label>Password (min 6 chars)</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label>Parish</label>
+                    <select id="parish" required>
+                        <option value="">Select</option>
+                        <option>St. Matthews</option>
+                        <option>St. Pauls</option>
+                        <option>St. Johns</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="gender" required>
+                        <option value="">Select</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Role</label>
+                    <div>
+                        <label class="role-option"><input type="radio" name="role" value="member" checked> Member</label>
+                        <label class="role-option"><input type="radio" name="role" value="exco"> Exco</label>
                     </div>
                 </div>
-            </div>
-            <button type="submit" class="btn-primary" id="registerBtn"><i class="fas fa-user-plus"></i> Create Account</button>
-        </form>
-
-        <div class="loading" id="loading"><div class="spinner"></div><p>Processing...</p></div>
-        <div class="pending-approval" id="pendingApproval">
-            <i class="fas fa-clock pending-icon"></i>
-            <h2>Approval Pending</h2>
-            <p>Your role request has been sent to the admin for approval.</p>
-            <button class="btn-primary" onclick="switchTab('login')">Go to Login</button>
+                <button type="submit">Register</button>
+            </form>
         </div>
     </div>
-
+    
     <script>
         const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        function switchTab(tab) {
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-            document.getElementById('loading').classList.remove('active');
-            document.getElementById('pendingApproval').classList.remove('active');
-            
-            if (tab === 'login') {
-                document.querySelector('.auth-tab:first-child').classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                document.querySelector('.auth-tab:last-child').classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
-
-        function showAlert(id, message, type) {
-            const alert = document.getElementById(id);
+        
+        function showAlert(elementId, message, type) {
+            const alert = document.getElementById(elementId);
             alert.textContent = message;
             alert.className = `alert ${type}`;
             alert.style.display = 'block';
             setTimeout(() => alert.style.display = 'none', 5000);
         }
-
-        // REGISTER
-        document.getElementById('registerForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('registerBtn');
-            const loading = document.getElementById('loading');
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+        
+        async function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const btn = event.target.querySelector('button');
             btn.disabled = true;
-            loading.classList.add('active');
-
+            btn.textContent = 'Logging in...';
+            
             try {
-                const email = document.getElementById('regEmail').value;
-                const password = document.getElementById('regPassword').value;
-                const fullName = document.getElementById('fullName').value;
-                const parish = document.getElementById('parish').value;
-                const gender = document.getElementById('gender').value;
-                const role = document.querySelector('input[name="role"]:checked').value;
-
+                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                if (error) throw error;
+                
+                // Check approval status
+                const { data: profile, error: profileError } = await supabase
+                    .from('users')
+                    .select('approval_status')
+                    .eq('id', data.user.id)
+                    .single();
+                
+                if (profileError) throw profileError;
+                
+                if (profile.approval_status === 'pending') {
+                    await supabase.auth.signOut();
+                    throw new Error('Account pending approval. Please wait for admin.');
+                }
+                
+                // Success - redirect to home.html
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                showAlert('loginAlert', error.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Login';
+            }
+        }
+        
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const fullName = document.getElementById('fullName').value;
+            const parish = document.getElementById('parish').value;
+            const gender = document.getElementById('gender').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
+            
+            const btn = event.target.querySelector('button');
+            btn.disabled = true;
+            btn.textContent = 'Creating account...';
+            
+            try {
+                if (password.length < 6) throw new Error('Password must be at least 6 characters');
+                
                 const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
                 if (authError) throw authError;
-
+                
                 const { error: profileError } = await supabase.from('users').insert([{
                     id: authData.user.id,
                     email, full_name: fullName, parish, gender, role,
                     is_approved: role === 'member',
                     approval_status: role === 'member' ? 'approved' : 'pending'
                 }]);
-
+                
                 if (profileError) throw profileError;
-
-                if (role !== 'member') {
-                    await supabase.from('role_requests').insert([{
-                        user_id: authData.user.id, requested_role: role, status: 'pending'
-                    }]);
-                    document.getElementById('registerForm').classList.remove('active');
-                    document.getElementById('pendingApproval').classList.add('active');
-                } else {
-                    showAlert('registerAlert', 'Account created! Please login.', 'success');
-                    setTimeout(() => switchTab('login'), 2000);
-                }
+                
+                showAlert('registerAlert', 'Account created! Please login.', 'success');
+                setTimeout(() => switchTab('login'), 2000);
+                event.target.reset();
+                
             } catch (error) {
                 showAlert('registerAlert', error.message, 'error');
             } finally {
                 btn.disabled = false;
-                loading.classList.remove('active');
+                btn.textContent = 'Register';
             }
-        });
-
-        // LOGIN - FIXED VERSION with debug
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            console.log('Login form submitted'); // DEBUG
-            
-            const btn = document.getElementById('loginBtn');
-            const loading = document.getElementById('loading');
-            btn.disabled = true;
-            loading.classList.add('active');
-
-            try {
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                console.log('Attempting login for:', email); // DEBUG
-
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-                if (error) throw error;
-                console.log('Login successful! User ID:', data.user.id); // DEBUG
-
-                // Check approval status
-                const { data: userData, error: userError } = await supabase
-                    .from('users')
-                    .select('approval_status, role')
-                    .eq('id', data.user.id)
-                    .single();
-
-                if (userError) {
-                    console.error('Error fetching user profile:', userError);
-                    throw userError;
-                }
-                
-                console.log('User approval status:', userData.approval_status); // DEBUG
-
-                if (userData.approval_status === 'pending') {
-                    await supabase.auth.signOut();
-                    showAlert('loginAlert', 'Your account is pending admin approval.', 'error');
-                } else {
-                    console.log('Redirecting to home.html...'); // DEBUG
-                    // FORCE REDIRECT - use multiple methods to ensure it works
-                    window.location.href = 'home.html';
-                    window.location.replace('home.html');
-                }
-            } catch (error) {
-                console.error('Login error:', error); // DEBUG
-                showAlert('loginAlert', error.message, 'error');
-            } finally {
-                btn.disabled = false;
-                loading.classList.remove('active');
-            }
-        });
-
+        }
+        
         // Check if already logged in
         async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                console.log('Existing session found, redirecting...');
                 window.location.href = 'home.html';
             }
         }
