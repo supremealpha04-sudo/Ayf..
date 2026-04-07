@@ -13,7 +13,7 @@
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-        
+
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -22,7 +22,7 @@
             justify-content: center;
             padding: 20px;
         }
-        
+
         .container {
             background: white;
             border-radius: 20px;
@@ -31,14 +31,14 @@
             max-width: 450px;
             overflow: hidden;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 40px 30px;
             text-align: center;
             color: white;
         }
-        
+
         .logo {
             width: 80px;
             height: 80px;
@@ -51,12 +51,12 @@
             font-size: 32px;
             color: #667eea;
         }
-        
+
         .tabs {
             display: flex;
             border-bottom: 1px solid #e0e0e0;
         }
-        
+
         .tab {
             flex: 1;
             padding: 15px;
@@ -67,29 +67,29 @@
             color: #666;
             transition: all 0.3s;
         }
-        
+
         .tab.active {
             background: white;
             color: #667eea;
             border-bottom: 2px solid #667eea;
         }
-        
+
         .form-container {
             padding: 30px;
         }
-        
+
         .form {
             display: none;
         }
-        
+
         .form.active {
             display: block;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
@@ -97,7 +97,7 @@
             color: #333;
             font-size: 14px;
         }
-        
+
         .form-group input, .form-group select {
             width: 100%;
             padding: 12px 15px;
@@ -105,12 +105,12 @@
             border-radius: 10px;
             font-size: 14px;
         }
-        
+
         .form-group input:focus {
             outline: none;
             border-color: #667eea;
         }
-        
+
         button {
             width: 100%;
             padding: 14px;
@@ -123,38 +123,68 @@
             cursor: pointer;
             margin-top: 10px;
         }
-        
+
         button:disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-        
+
         .alert {
             padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             display: none;
         }
-        
+
         .alert.error {
             background: #fee;
             color: #c33;
             border: 1px solid #fcc;
         }
-        
+
         .alert.success {
             background: #efe;
             color: #3c3;
             border: 1px solid #cfc;
         }
-        
+
         .role-option {
             display: inline-block;
-            margin-right: 10px;
+            margin-right: 15px;
         }
-        
+
         .role-option input {
             margin-right: 5px;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -176,14 +206,14 @@
             <form id="loginForm" class="form active" onsubmit="handleLogin(event)">
                 <div id="loginAlert" class="alert"></div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="loginEmail" required>
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="Enter your email">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" id="loginPassword" required>
+                    <input type="password" id="loginPassword" required placeholder="Enter your password">
                 </div>
-                <button type="submit">Login</button>
+                <button type="submit" id="loginBtn">Login</button>
             </form>
             
             <!-- Register Form -->
@@ -191,157 +221,313 @@
                 <div id="registerAlert" class="alert"></div>
                 <div class="form-group">
                     <label>Full Name</label>
-                    <input type="text" id="fullName" required>
+                    <input type="text" id="fullName" required placeholder="Enter your full name">
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <input type="email" id="regEmail" required>
+                    <label>Email Address</label>
+                    <input type="email" id="regEmail" required placeholder="Enter your email">
                 </div>
                 <div class="form-group">
-                    <label>Password (min 6 chars)</label>
-                    <input type="password" id="regPassword" required>
+                    <label>Password (min 6 characters)</label>
+                    <input type="password" id="regPassword" required placeholder="Create password">
                 </div>
                 <div class="form-group">
                     <label>Parish</label>
                     <select id="parish" required>
-                        <option value="">Select</option>
-                        <option>St. Matthews</option>
-                        <option>St. Pauls</option>
-                        <option>St. Johns</option>
+                        <option value="">Select your parish</option>
+                        <option value="St. Matthews">St. Matthews</option>
+                        <option value="St. Pauls">St. Paul's</option>
+                        <option value="St. Johns">St. John's</option>
+                        <option value="All Saints">All Saints</option>
+                        <option value="St. Peters">St. Peter's</option>
+                        <option value="Holy Trinity">Holy Trinity</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Gender</label>
                     <select id="gender" required>
-                        <option value="">Select</option>
-                        <option>Male</option>
-                        <option>Female</option>
+                        <option value="">Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Role</label>
                     <div>
-                        <label class="role-option"><input type="radio" name="role" value="member" checked> Member</label>
-                        <label class="role-option"><input type="radio" name="role" value="exco"> Exco</label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="member" checked> Member
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="exco"> Parish Exco
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="role" value="archediceanry"> Archediceanry
+                        </label>
                     </div>
                 </div>
-                <button type="submit">Register</button>
+                <button type="submit" id="registerBtn">Create Account</button>
             </form>
         </div>
     </div>
-    
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
     <script>
+        // Supabase Configuration
         const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        
+
+        // Show/hide loading
+        function showLoading(show) {
+            const loader = document.getElementById('loading');
+            if (show) {
+                loader.classList.add('active');
+            } else {
+                loader.classList.remove('active');
+            }
+        }
+
+        // Show alert message
         function showAlert(elementId, message, type) {
             const alert = document.getElementById(elementId);
             alert.textContent = message;
             alert.className = `alert ${type}`;
             alert.style.display = 'block';
-            setTimeout(() => alert.style.display = 'none', 5000);
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
         }
-        
+
+        // Switch between login and register tabs
         function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            const tabs = document.querySelectorAll('.tab');
+            const forms = document.querySelectorAll('.form');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            forms.forEach(f => f.classList.remove('active'));
             
             if (tab === 'login') {
-                document.querySelector('.tab:first-child').classList.add('active');
+                tabs[0].classList.add('active');
                 document.getElementById('loginForm').classList.add('active');
             } else {
-                document.querySelector('.tab:last-child').classList.add('active');
+                tabs[1].classList.add('active');
                 document.getElementById('registerForm').classList.add('active');
             }
         }
-        
+
+        // Handle Login
         async function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
             
-            const btn = event.target.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Logging in...';
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showAlert('loginAlert', 'Please enter email and password', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Logging in...';
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+                console.log('Attempting login for:', email);
+                
+                // Sign in with Supabase
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
                 if (error) throw error;
                 
-                // Check approval status
+                console.log('Login successful! User ID:', data.user.id);
+                
+                // Check user profile for approval status
                 const { data: profile, error: profileError } = await supabase
                     .from('users')
-                    .select('approval_status')
+                    .select('approval_status, role')
                     .eq('id', data.user.id)
                     .single();
                 
-                if (profileError) throw profileError;
-                
-                if (profile.approval_status === 'pending') {
-                    await supabase.auth.signOut();
-                    throw new Error('Account pending approval. Please wait for admin.');
+                if (profileError) {
+                    console.error('Profile fetch error:', profileError);
+                    throw new Error('User profile not found. Please contact support.');
                 }
                 
-                // Success - redirect to home.html
+                console.log('User approval status:', profile.approval_status);
+                
+                // Check if account is pending approval
+                if (profile.approval_status === 'pending') {
+                    await supabase.auth.signOut();
+                    throw new Error('Your account is pending admin approval. Please wait.');
+                }
+                
+                // Success! Redirect to home.html
+                console.log('Redirecting to home.html...');
                 window.location.href = 'home.html';
                 
             } catch (error) {
-                showAlert('loginAlert', error.message, 'error');
-                btn.disabled = false;
-                btn.textContent = 'Login';
+                console.error('Login error:', error);
+                let errorMessage = error.message;
+                if (errorMessage.includes('Invalid login credentials')) {
+                    errorMessage = 'Incorrect email or password. Please try again.';
+                }
+                showAlert('loginAlert', errorMessage, 'error');
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Login';
+                showLoading(false);
             }
         }
-        
+
+        // Handle Register
         async function handleRegister(event) {
             event.preventDefault();
             
-            const email = document.getElementById('regEmail').value;
+            const email = document.getElementById('regEmail').value.trim();
             const password = document.getElementById('regPassword').value;
-            const fullName = document.getElementById('fullName').value;
+            const fullName = document.getElementById('fullName').value.trim();
             const parish = document.getElementById('parish').value;
             const gender = document.getElementById('gender').value;
             const role = document.querySelector('input[name="role"]:checked').value;
+            const registerBtn = document.getElementById('registerBtn');
             
-            const btn = event.target.querySelector('button');
-            btn.disabled = true;
-            btn.textContent = 'Creating account...';
+            // Validation
+            if (!email || !password || !fullName || !parish || !gender) {
+                showAlert('registerAlert', 'Please fill in all fields', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('registerAlert', 'Password must be at least 6 characters', 'error');
+                return;
+            }
+            
+            showLoading(true);
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Creating account...';
             
             try {
-                if (password.length < 6) throw new Error('Password must be at least 6 characters');
+                console.log('Registering user:', email);
                 
-                const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+                // Create auth user
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            full_name: fullName
+                        }
+                    }
+                });
+                
                 if (authError) throw authError;
+                if (!authData.user) throw new Error('Signup failed');
                 
-                const { error: profileError } = await supabase.from('users').insert([{
-                    id: authData.user.id,
-                    email, full_name: fullName, parish, gender, role,
-                    is_approved: role === 'member',
-                    approval_status: role === 'member' ? 'approved' : 'pending'
-                }]);
+                console.log('Auth user created:', authData.user.id);
                 
-                if (profileError) throw profileError;
+                // Create user profile
+                const isMember = role === 'member';
+                const { error: profileError } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: authData.user.id,
+                        email: email,
+                        full_name: fullName,
+                        parish: parish,
+                        gender: gender,
+                        role: role,
+                        is_approved: isMember,
+                        approval_status: isMember ? 'approved' : 'pending',
+                        created_at: new Date().toISOString()
+                    }]);
                 
-                showAlert('registerAlert', 'Account created! Please login.', 'success');
-                setTimeout(() => switchTab('login'), 2000);
-                event.target.reset();
+                if (profileError) {
+                    console.error('Profile insert error:', profileError);
+                    throw new Error('Failed to create user profile');
+                }
+                
+                // If role is not member, create role request
+                if (!isMember) {
+                    const { error: requestError } = await supabase
+                        .from('role_requests')
+                        .insert([{
+                            user_id: authData.user.id,
+                            requested_role: role,
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+                    
+                    if (requestError) {
+                        console.warn('Role request error:', requestError);
+                    }
+                    
+                    showAlert('registerAlert', 'Registration successful! Your account needs admin approval. Please login later.', 'success');
+                } else {
+                    showAlert('registerAlert', 'Registration successful! Please login.', 'success');
+                }
+                
+                // Reset form
+                document.getElementById('registerForm').reset();
+                
+                // Switch to login tab after 2 seconds
+                setTimeout(() => {
+                    switchTab('login');
+                }, 2000);
                 
             } catch (error) {
+                console.error('Registration error:', error);
                 showAlert('registerAlert', error.message, 'error');
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Register';
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Create Account';
+                showLoading(false);
             }
         }
+
+        // Check if user is already logged in
+        async function checkExistingSession() {
+            try {
+                const { data: { session }, error } = await supabase.auth.getSession();
+                
+                if (error) throw error;
+                
+                if (session) {
+                    console.log('Existing session found, checking approval...');
+                    
+                    // Check if user is approved
+                    const { data: profile, error: profileError } = await supabase
+                        .from('users')
+                        .select('approval_status')
+                        .eq('id', session.user.id)
+                        .single();
+                    
+                    if (!profileError && profile.approval_status !== 'pending') {
+                        console.log('User is approved, redirecting to home...');
+                        window.location.href = 'home.html';
+                    } else if (profile && profile.approval_status === 'pending') {
+                        console.log('User pending approval, signing out...');
+                        await supabase.auth.signOut();
+                        showAlert('loginAlert', 'Your account is pending approval. Please wait for admin.', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Session check error:', error);
+            }
+        }
+
+        // Make functions global
+        window.switchTab = switchTab;
+        window.handleLogin = handleLogin;
+        window.handleRegister = handleRegister;
         
-        // Check if already logged in
-        async function checkSession() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                window.location.href = 'home.html';
-            }
-        }
-        checkSession();
+        // Check session on page load
+        checkExistingSession();
     </script>
 </body>
 </html>
