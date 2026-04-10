@@ -3,173 +3,630 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SupremeMotive - Login</title>
-    <link rel="stylesheet" href="css/style.css">
-    <script type="importmap">
-        {
-            "imports": {
-                "@supabase/supabase-js": "https://esm.sh/@supabase/supabase-js@2.39.0"
-            }
+    <title>AYF GWARIMPA - Welcome</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
-    </script>
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .auth-header h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .auth-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f5f5f5;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .auth-tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .auth-form {
+            padding: 30px;
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .image-upload {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .image-upload input {
+            display: none;
+        }
+
+        .image-upload-label {
+            width: 100%;
+            height: 100%;
+            border: 3px dashed #ccc;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9f9f9;
+            overflow: hidden;
+        }
+
+        .image-upload-label:hover {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .image-upload-label img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .image-upload-label.has-image img {
+            display: block;
+        }
+
+        .image-upload-label.has-image .upload-icon {
+            display: none;
+        }
+
+        .upload-icon {
+            font-size: 24px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .upload-text {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .role-selection {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .role-option {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .role-option input {
+            display: none;
+        }
+
+        .role-option label {
+            display: block;
+            padding: 12px;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 13px;
+        }
+
+        .role-option input:checked + label {
+            border-color: #667eea;
+            background: #f0f0ff;
+            color: #667eea;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert.success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .pending-approval {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .pending-approval.active {
+            display: block;
+        }
+
+        .pending-icon {
+            font-size: 60px;
+            color: #f0ad4e;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="logo">SupremeMotive</div>
-        <div class="nav-links">
-            <a href="index.html">Home</a>
-            <a href="ebooks.html">Ebooks</a>
-            <a href="register.html">Register</a>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="logo">
+                <i class="fas fa-church"></i>
+            </div>
+            <h1>AYF GWARIMPA</h1>
+            <p>Anglican Youth Fellowship</p>
         </div>
-    </nav>
 
-    <!-- Login Form -->
-    <main class="container">
-        <div class="card" style="max-width: 400px; margin: 60px auto;">
-            <h1 class="text-center" style="color: var(--gold); margin-bottom: 32px;">
-                Welcome Back
-            </h1>
-
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
-                </div>
-
-                <div id="error-message" class="error-message" style="color: var(--error); margin-bottom: 16px; display: none;"></div>
-                <div id="loading-message" class="loading-message" style="color: var(--electric-blue); margin-bottom: 16px; display: none;">Processing...</div>
-
-                <button type="submit" class="btn btn-primary" style="width: 100%;" id="login-button">
-                    Login
-                </button>
-            </form>
-
-            <p class="text-center mt-20">
-                Don't have an account? 
-                <a href="register.html">Register here</a>
-            </p>
-
-            <p class="text-center mt-10">
-                <a href="#" id="forgot-password">Forgot Password?</a>
-            </p>
+        <div class="auth-tabs">
+            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+            <div class="auth-tab" onclick="switchTab('register')">Register</div>
         </div>
-    </main>
 
-    <script type="module">
-        import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.0';
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active">
+            <div class="alert" id="loginAlert"></div>
 
-        // Initialize Supabase
-        const SUPABASE_URL =     'https://dzcykpbfykajhoutzhpf.supabase.co';
-        const SUPABASE_ANON_KEY =     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR6Y3lrcGJmeWthamhvdXR6aHBmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2MDcxNjQsImV4cCI6MjA4ODE4MzE2NH0.IcuAZj89hwpeRGokawx-V-6BAQtwsiOTBIS_E5-TSMg';
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="loginEmail" required placeholder="Enter your email">
+            </div>
 
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="loginPassword" required placeholder="Enter your password">
+            </div>
 
-        // Login function
-        async function loginUser(email, password) {
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerForm" class="auth-form">
+            <div class="alert" id="registerAlert"></div>
+
+            <div class="image-upload">
+                <input type="file" id="profileImage" accept="image/*">
+                <label for="profileImage" class="image-upload-label" id="uploadLabel">
+                    <i class="fas fa-camera upload-icon"></i>
+                    <span class="upload-text">Add Photo</span>
+                    <img id="previewImage" alt="Preview">
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="fullName" required placeholder="Enter your full name">
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="regEmail" required placeholder="Enter your email">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)">
+            </div>
+
+            <div class="form-group">
+                <label>Parish</label>
+                <select id="parish" required>
+                    <option value="">Select your parish</option>
+                    <option value="St. Matthews">St. Matthews</option>
+                    <option value="St. Pauls">St. Paul's</option>
+                    <option value="St. Johns">St. John's</option>
+                    <option value="All Saints">All Saints</option>
+                    <option value="St. Peters">St. Peter's</option>
+                    <option value="Holy Trinity">Holy Trinity</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select id="gender" required>
+                    <option value="">Select gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Role (Requires Admin Approval)</label>
+                <div class="role-selection">
+                    <div class="role-option">
+                        <input type="radio" name="role" id="roleMember" value="member" checked>
+                        <label for="roleMember">Member</label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" name="role" id="roleExco" value="exco">
+                        <label for="roleExco">Parish Exco</label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" name="role" id="roleArchediceanry" value="archediceanry">
+                        <label for="roleArchediceanry">Archediceanry</label>
+                    </div>
+                    <div class="role-option">
+                        <input type="radio" name="role" id="roleBoth" value="both">
+                        <label for="roleBoth">Both</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary" id="registerBtn">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Processing...</p>
+        </div>
+
+        <div class="pending-approval" id="pendingApproval">
+            <i class="fas fa-clock pending-icon"></i>
+            <h2>Approval Pending</h2>
+            <p>Your Exco/Archediceanry role request has been sent to the admin for approval. You will be notified once approved.</p>
+            <button class="btn-primary" onclick="switchTab('login')" style="margin-top: 20px;">
+                Go to Login
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+
+        let supabase;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch (e) {
+            console.error('Supabase init failed:', e);
+        }
+
+        // Tab Switching
+        function switchTab(tab) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+            document.getElementById('loading').classList.remove('active');
+            document.getElementById('pendingApproval').classList.remove('active');
+
+            if (tab === 'login') {
+                document.querySelector('.auth-tab:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.auth-tab:last-child').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
+        }
+
+        // Image Preview
+        document.getElementById('profileImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                    document.getElementById('uploadLabel').classList.add('has-image');
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Show Alert
+        function showAlert(id, message, type) {
+            const alert = document.getElementById(id);
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            setTimeout(() => alert.style.display = 'none', 5000);
+        }
+
+        // Register
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.getElementById('registerBtn');
+            const loading = document.getElementById('loading');
+
+            btn.disabled = true;
+            loading.classList.add('active');
+
             try {
+                const email = document.getElementById('regEmail').value;
+                const password = document.getElementById('regPassword').value;
+                const fullName = document.getElementById('fullName').value;
+                const parish = document.getElementById('parish').value;
+                const gender = document.getElementById('gender').value;
+                const role = document.querySelector('input[name="role"]:checked').value;
+                const profileImage = document.getElementById('profileImage').files[0];
+
+                // Create auth user
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+
+                if (authError) throw authError;
+
+                // Upload image if exists
+                let imageUrl = null;
+                if (profileImage) {
+                    const fileExt = profileImage.name.split('.').pop();
+                    const fileName = `${authData.user.id}-${Date.now()}.${fileExt}`;
+
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('profiles')
+                        .upload(fileName, profileImage);
+
+                    if (!uploadError) {
+                        const { data: urlData } = supabase.storage
+                            .from('profiles')
+                            .getPublicUrl(fileName);
+                        imageUrl = urlData.publicUrl;
+                    }
+                }
+
+                // Create user profile
+                const { error: profileError } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: authData.user.id,
+                        email,
+                        full_name: fullName,
+                        parish,
+                        gender,
+                        role,
+                        profile_image: imageUrl,
+                        is_approved: role === 'member',
+                        approval_status: role === 'member' ? 'approved' : 'pending',
+                        created_at: new Date().toISOString()
+                    }]);
+
+                if (profileError) throw profileError;
+
+                // Create role request if not member
+                if (role !== 'member') {
+                    await supabase
+                        .from('role_requests')
+                        .insert([{
+                            user_id: authData.user.id,
+                            requested_role: role,
+                            status: 'pending',
+                            created_at: new Date().toISOString()
+                        }]);
+
+                    document.getElementById('registerForm').style.display = 'none';
+                    document.getElementById('pendingApproval').classList.add('active');
+                } else {
+                    showAlert('registerAlert', 'Account created successfully! Please login.', 'success');
+                    setTimeout(() => switchTab('login'), 2000);
+                }
+
+            } catch (error) {
+                showAlert('registerAlert', error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('active');
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const btn = document.querySelector('#loginForm .btn-primary');
+            const loading = document.getElementById('loading');
+
+            btn.disabled = true;
+            loading.classList.add('active');
+
+            try {
+                const email = document.getElementById('loginEmail').value;
+                const password = document.getElementById('loginPassword').value;
+
                 const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
+                    email,
+                    password
                 });
 
                 if (error) throw error;
 
-                // Check if user has a profile
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('*')
+                // Check approval status
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('approval_status, role')
                     .eq('id', data.user.id)
                     .single();
 
-                if (profileError && profileError.code !== 'PGRST116') {
-                    console.error('Profile fetch error:', profileError);
+                if (userError) throw userError;
+
+                if (userData.approval_status === 'pending' && userData.role !== 'member') {
+                    await supabase.auth.signOut();
+                    showAlert('loginAlert', 'Your Exco/Archediceanry role is pending approval. Please wait for admin confirmation.', 'error');
+                } else {
+                    window.location.href = 'home.html';
                 }
 
-                return { success: true, user: data.user, profile };
             } catch (error) {
-                console.error('Login error:', error);
-                return { success: false, error: error.message };
-            }
-        }
-
-        // Handle form submission
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const errorDiv = document.getElementById('error-message');
-            const loadingDiv = document.getElementById('loading-message');
-            const loginButton = document.getElementById('login-button');
-
-            errorDiv.style.display = 'none';
-            loadingDiv.style.display = 'block';
-            loginButton.disabled = true;
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-
-            // Validate inputs
-            if (!email || !password) {
-                errorDiv.textContent = 'Please fill in all fields';
-                errorDiv.style.display = 'block';
-                loadingDiv.style.display = 'none';
-                loginButton.disabled = false;
-                return;
-            }
-
-            const result = await loginUser(email, password);
-
-            loadingDiv.style.display = 'none';
-            loginButton.disabled = false;
-
-            if (result.success) {
-                // Store user info in session
-                sessionStorage.setItem('user', JSON.stringify({
-                    id: result.user.id,
-                    email: result.user.email
-                }));
-
-                window.location.href = 'index.html';
-            } else {
-                errorDiv.textContent = result.error || 'Login failed. Please check your credentials.';
-                errorDiv.style.display = 'block';
-            }
-        });
-
-        // Forgot password handler
-        document.getElementById('forgot-password').addEventListener('click', async (e) => {
-            e.preventDefault();
-            const email = prompt('Enter your email address:');
-
-            if (email) {
-                try {
-                    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-                        redirectTo: window.location.origin + '/reset-password.html',
-                    });
-
-                    if (error) throw error;
-
-                    alert('Password reset email sent! Check your inbox.');
-                } catch (error) {
-                    alert('Error: ' + error.message);
-                }
+                showAlert('loginAlert', error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('active');
             }
         });
 
         // Check if already logged in
-        async function checkExistingSession() {
+        async function checkSession() {
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                window.location.href = 'index.html';
+                window.location.href = 'home.html';
             }
         }
 
-        checkExistingSession();
+        checkSession();
     </script>
 </body>
 </html>
