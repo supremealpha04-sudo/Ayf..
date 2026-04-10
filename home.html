@@ -583,422 +583,199 @@
         </div>
     </div>
 
-    <script>
-        // SUPABASE CONFIGURATION - ONLY DECLARED ONCE
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        
-        // Create supabase client - ONLY ONCE
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+      <script>
+    // Supabase Configuration
+    const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
 
-        let currentUser = null;
-        let posts = [];
-        let currentCategory = 'all';
+    // ✅ FIXED: Use different name
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Initialize
-        async function init() {
-            try {
-                console.log('Checking session...');
-                const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-                
-                if (sessionError) throw sessionError;
-                
-                if (!session) {
-                    console.log('No session found, redirecting to login...');
-                    window.location.href = 'index.html';
-                    return;
-                }
+    let currentUser = null;
+    let posts = [];
+    let currentCategory = 'all';
 
-                console.log('Session found, loading user profile...');
-                const { data: user, error: userError } = await supabase
-                    .from('users')
-                    .select('*')
-                    .eq('id', session.user.id)
-                    .single();
-                
-                if (userError) throw userError;
-                
-                if (user.approval_status === 'pending') {
-                    console.log('User pending approval');
-                    await supabase.auth.signOut();
-                    alert('Your account is pending admin approval.');
-                    window.location.href = 'index.html';
-                    return;
-                }
-                
-                currentUser = user;
-                console.log('User loaded:', currentUser.full_name);
-                loadPosts();
-                setupRealtime();
-                
-                // Update online count
-                document.getElementById('onlineCount').innerHTML = '<i class="fas fa-circle" style="color: #4ecdc4; font-size: 8px;"></i> Online';
-                
-            } catch (error) {
-                console.error('Init error:', error);
-                document.getElementById('feedContainer').innerHTML = `
-                    <div class="error-message">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
-                        <p>Error loading page: ${error.message}</p>
-                        <button onclick="window.location.href='index.html'" style="margin-top: 20px; padding: 10px 20px; background: #2b5278; border: none; border-radius: 8px; color: white; cursor: pointer;">Go to Login</button>
-                    </div>
-                `;
-            }
-        }
+    // Initialize
+    async function init() {
+        try {
+            const { data: { session }, error } = await supabaseClient.auth.getSession();
+            if (error) throw error;
 
-        // Load Posts
-        async function loadPosts() {
-            try {
-                let query = supabase
-                    .from('posts')
-                    .select(`
-                        *,
-                        author:users(id, full_name, profile_image, parish),
-                        likes:post_likes(count),
-                        comments:comments(count)
-                    `)
-                    .order('created_at', { ascending: false });
-
-                if (currentCategory !== 'all') {
-                    query = query.eq('category', currentCategory);
-                }
-
-                const { data, error } = await query;
-
-                if (error) throw error;
-
-                posts = data || [];
-                renderPosts();
-            } catch (error) {
-                console.error('Error loading posts:', error);
-                document.getElementById('feedContainer').innerHTML = `
-                    <div class="error-message">
-                        <p>Error loading posts: ${error.message}</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Render Posts
-        function renderPosts() {
-            const container = document.getElementById('feedContainer');
-            
-            if (posts.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-inbox"></i>
-                        <p>No updates available</p>
-                    </div>
-                `;
+            if (!session) {
+                window.location.href = 'index.html';
                 return;
             }
 
-            container.innerHTML = posts.map(post => createPostHTML(post)).join('');
-            
-            // Update countdown timers
-            updateAllCountdowns();
-        }
+            const { data: user, error: userError } = await supabaseClient
+                .from('users')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
 
-        // Create Post HTML
-        function createPostHTML(post) {
-            const timeAgo = getTimeAgo(post.created_at);
-            const badgeClass = `badge-${post.category}`;
-            const hasMedia = post.media_url ? true : false;
-            const isVideo = post.media_type === 'video';
-            
-            let countdownHTML = '';
-            if (post.category === 'event' && post.event_date) {
-                countdownHTML = `
-                    <div class="countdown-timer">
-                        <i class="fas fa-clock"></i>
-                        <span class="countdown-text" data-date="${post.event_date}">
-                            ${getCountdown(post.event_date)}
-                        </span>
-                    </div>
-                `;
+            if (userError) throw userError;
+
+            if (user.approval_status === 'pending') {
+                await supabaseClient.auth.signOut();
+                alert('Your account is pending approval.');
+                window.location.href = 'index.html';
+                return;
             }
 
-            return `
-                <div class="post-card" data-post-id="${post.id}">
-                    <div class="post-header">
-                        <img src="${post.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar" alt="" onerror="this.src='https://via.placeholder.com/44'">
-                        <div class="post-meta">
-                            <div class="post-author">${escapeHtml(post.author?.full_name || 'Unknown')}</div>
-                            <div class="post-time">${timeAgo} • ${escapeHtml(post.author?.parish || '')}</div>
-                        </div>
-                        <span class="post-category-badge ${badgeClass}">${post.category}</span>
-                    </div>
-                    
-                    <div class="post-content">
-                        <div class="post-title">${escapeHtml(post.title || '')}</div>
-                        <div class="post-text">${escapeHtml(post.content || '')}</div>
-                        ${countdownHTML}
-                        ${hasMedia ? `
-                            ${isVideo ? 
-                                `<video class="post-video" controls poster="${post.thumbnail_url || ''}">
-                                    <source src="${post.media_url}" type="video/mp4">
-                                </video>` :
-                                `<img src="${post.media_url}" class="post-media" alt="" onerror="this.style.display='none'">`
-                            }
-                        ` : ''}
-                    </div>
+            currentUser = user;
 
-                    <div class="post-actions">
-                        <div class="action-btn" onclick="toggleLike('${post.id}')">
-                            <i class="far fa-heart"></i>
-                            <span>${post.likes?.[0]?.count || 0}</span>
-                        </div>
-                        <div class="action-btn" onclick="toggleComments('${post.id}')">
-                            <i class="far fa-comment"></i>
-                            <span>${post.comments?.[0]?.count || 0}</span>
-                        </div>
-                        <div class="action-spacer"></div>
-                        <div class="action-btn" onclick="openShareModal('${post.id}')">
-                            <i class="fas fa-share"></i>
-                        </div>
-                        ${post.file_url ? `
-                            <div class="action-btn" onclick="downloadFile('${post.file_url}', '${post.file_name}')">
-                                <i class="fas fa-download"></i>
-                            </div>
-                        ` : ''}
-                    </div>
+            loadPosts();
+            setupRealtime();
 
-                    <div class="comments-section" id="comments-${post.id}">
-                        <div id="comments-list-${post.id}"></div>
-                        <div class="comment-input-area">
-                            <input type="text" class="comment-input" id="comment-input-${post.id}" 
-                                   placeholder="Write a comment..." 
-                                   onkeypress="handleCommentKeypress(event, '${post.id}')">
-                            <button class="send-btn" onclick="postComment('${post.id}')">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                    </div>
+            document.getElementById('onlineCount').innerHTML =
+                '<i class="fas fa-circle" style="color:#4ecdc4;font-size:8px;"></i> Online';
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('feedContainer').innerHTML = `
+                <div class="error-message">
+                    <p>${err.message}</p>
                 </div>
             `;
         }
+    }
 
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+    // Load Posts
+    async function loadPosts() {
+        try {
+            let query = supabaseClient
+                .from('posts')
+                .select(`
+                    *,
+                    author:users(id, full_name, profile_image, parish),
+                    likes:post_likes(count),
+                    comments:comments(count)
+                `)
+                .order('created_at', { ascending: false });
+
+            if (currentCategory !== 'all') {
+                query = query.eq('category', currentCategory);
+            }
+
+            const { data, error } = await query;
+            if (error) throw error;
+
+            posts = data || [];
+            renderPosts();
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Render Posts
+    function renderPosts() {
+        const container = document.getElementById('feedContainer');
+
+        if (!posts.length) {
+            container.innerHTML = `<div class="empty-state">No posts yet</div>`;
+            return;
         }
 
-        // Toggle Like
-        async function toggleLike(postId) {
-            if (!currentUser) return;
-            
-            try {
-                const { data: existing } = await supabase
-                    .from('post_likes')
-                    .select('id')
-                    .eq('post_id', postId)
-                    .eq('user_id', currentUser.id)
-                    .maybeSingle();
+        container.innerHTML = posts.map(p => `
+            <div class="post-card">
+                <div class="post-header">
+                    <img src="${p.author?.profile_image || ''}" class="post-avatar">
+                    <div>
+                        <div>${p.author?.full_name || 'User'}</div>
+                        <small>${getTimeAgo(p.created_at)}</small>
+                    </div>
+                </div>
 
-                if (existing) {
-                    await supabase
-                        .from('post_likes')
-                        .delete()
-                        .eq('id', existing.id);
-                } else {
-                    await supabase
-                        .from('post_likes')
-                        .insert([{ post_id: postId, user_id: currentUser.id }]);
-                }
+                <div class="post-content">
+                    <div class="post-title">${p.title || ''}</div>
+                    <div class="post-text">${p.content || ''}</div>
+                </div>
 
+                <div class="post-actions">
+                    <div class="action-btn" onclick="toggleLike('${p.id}')">
+                        ❤️ ${p.likes?.[0]?.count || 0}
+                    </div>
+                    <div class="action-btn" onclick="toggleComments('${p.id}')">
+                        💬 ${p.comments?.[0]?.count || 0}
+                    </div>
+                </div>
+
+                <div class="comments-section" id="comments-${p.id}"></div>
+            </div>
+        `).join('');
+    }
+
+    // Like
+    async function toggleLike(postId) {
+        const { data } = await supabaseClient
+            .from('post_likes')
+            .select('id')
+            .eq('post_id', postId)
+            .eq('user_id', currentUser.id)
+            .maybeSingle();
+
+        if (data) {
+            await supabaseClient.from('post_likes').delete().eq('id', data.id);
+        } else {
+            await supabaseClient.from('post_likes').insert([{
+                post_id: postId,
+                user_id: currentUser.id
+            }]);
+        }
+
+        loadPosts();
+    }
+
+    // Comments
+    async function toggleComments(postId) {
+        const box = document.getElementById(`comments-${postId}`);
+
+        if (box.innerHTML) {
+            box.innerHTML = '';
+            return;
+        }
+
+        const { data } = await supabaseClient
+            .from('comments')
+            .select('*')
+            .eq('post_id', postId);
+
+        box.innerHTML = (data || []).map(c => `<p>${c.content}</p>`).join('');
+    }
+
+    // Realtime
+    function setupRealtime() {
+        supabaseClient.channel('posts')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
                 loadPosts();
-            } catch (error) {
-                console.error('Like error:', error);
-            }
-        }
+            })
+            .subscribe();
+    }
 
-        // Toggle Comments
-        async function toggleComments(postId) {
-            const section = document.getElementById(`comments-${postId}`);
-            section.classList.toggle('expanded');
-            
-            if (section.classList.contains('expanded')) {
-                loadComments(postId);
-            }
-        }
+    // Time helper
+    function getTimeAgo(date) {
+        const diff = (new Date() - new Date(date)) / 1000;
+        if (diff < 60) return 'now';
+        if (diff < 3600) return Math.floor(diff / 60) + 'm';
+        if (diff < 86400) return Math.floor(diff / 3600) + 'h';
+        return Math.floor(diff / 86400) + 'd';
+    }
 
-        // Load Comments
-        async function loadComments(postId) {
-            try {
-                const { data: comments } = await supabase
-                    .from('comments')
-                    .select(`
-                        *,
-                        user:users(id, full_name, profile_image)
-                    `)
-                    .eq('post_id', postId)
-                    .order('created_at', { ascending: true });
+    // Category filter
+    document.querySelectorAll('.category-chip').forEach(el => {
+        el.onclick = () => {
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            currentCategory = el.dataset.category;
+            loadPosts();
+        };
+    });
 
-                const container = document.getElementById(`comments-list-${postId}`);
-                if (container) {
-                    container.innerHTML = (comments || []).map(comment => `
-                        <div class="comment">
-                            <div class="comment-header">
-                                <img src="${comment.user?.profile_image || 'https://via.placeholder.com/32'}" class="comment-avatar" onerror="this.src='https://via.placeholder.com/32'">
-                                <span class="comment-author">${escapeHtml(comment.user?.full_name || 'Unknown')}</span>
-                                <span class="comment-time">${getTimeAgo(comment.created_at)}</span>
-                            </div>
-                            <div class="comment-text">${escapeHtml(comment.content)}</div>
-                        </div>
-                    `).join('');
-                }
-            } catch (error) {
-                console.error('Load comments error:', error);
-            }
-        }
-
-        // Post Comment
-        async function postComment(postId) {
-            if (!currentUser) return;
-            
-            const input = document.getElementById(`comment-input-${postId}`);
-            const content = input.value.trim();
-            
-            if (!content) return;
-
-            try {
-                await supabase
-                    .from('comments')
-                    .insert([{
-                        post_id: postId,
-                        user_id: currentUser.id,
-                        content
-                    }]);
-
-                input.value = '';
-                loadComments(postId);
-                loadPosts();
-            } catch (error) {
-                console.error('Post comment error:', error);
-            }
-        }
-
-        function handleCommentKeypress(e, postId) {
-            if (e.key === 'Enter') postComment(postId);
-        }
-
-        // Category Filter
-        document.querySelectorAll('.category-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
-                document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
-                currentCategory = chip.dataset.category;
-                loadPosts();
-            });
-        });
-
-        // Update all countdowns
-        function updateAllCountdowns() {
-            document.querySelectorAll('.countdown-text').forEach(el => {
-                const date = el.getAttribute('data-date');
-                if (date) {
-                    el.textContent = getCountdown(date);
-                }
-            });
-        }
-
-        // Utilities
-        function getTimeAgo(date) {
-            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-            if (seconds < 60) return 'just now';
-            const minutes = Math.floor(seconds / 60);
-            if (minutes < 60) return `${minutes}m ago`;
-            const hours = Math.floor(minutes / 60);
-            if (hours < 24) return `${hours}h ago`;
-            const days = Math.floor(hours / 24);
-            return `${days}d ago`;
-        }
-
-        function getCountdown(eventDate) {
-            const diff = new Date(eventDate) - new Date();
-            if (diff < 0) return 'Event has passed';
-            
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            
-            if (days > 0) return `${days} days ${hours}h remaining`;
-            if (hours > 0) return `${hours} hours remaining`;
-            return 'Less than an hour remaining';
-        }
-
-        // Share Modal
-        let currentSharePostId = null;
-
-        function openShareModal(postId) {
-            currentSharePostId = postId;
-            document.getElementById('shareModal').classList.add('active');
-        }
-
-        function shareVia(method) {
-            const post = posts.find(p => p.id === currentSharePostId);
-            if (!post) return;
-
-            if (method === 'whatsapp') {
-                window.open(`https://wa.me/?text=${encodeURIComponent(post.title + ' - ' + window.location.href)}`);
-            } else if (method === 'copy') {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copied to clipboard!');
-            } else if (method === 'native' && navigator.share) {
-                navigator.share({
-                    title: post.title,
-                    text: post.content,
-                    url: window.location.href
-                });
-            }
-
-            document.getElementById('shareModal').classList.remove('active');
-        }
-
-        // Download File
-        function downloadFile(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename || 'download';
-            link.click();
-        }
-
-        // Realtime Updates
-        function setupRealtime() {
-            const channel = supabase
-                .channel('posts-channel')
-                .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-                    loadPosts();
-                })
-                .subscribe();
-        }
-
-        // Navigation
-        function goToProfile() {
-            window.location.href = 'profile.html';
-        }
-
-        function openSearch() {
-            alert('Search feature coming soon!');
-        }
-
-        function toggleSidebar() {
-            alert('Menu feature coming soon!');
-        }
-
-        // Close modal on outside click
-        document.getElementById('shareModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                e.target.classList.remove('active');
-            }
-        });
-
-        // Update countdown every minute
-        setInterval(updateAllCountdowns, 60000);
-
-        // Start the app
-        init();
-    </script>
+    // Start app
+    init();
+</script>
 </body>
-</html>
+</html>  
+
+                
