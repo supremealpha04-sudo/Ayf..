@@ -721,204 +721,187 @@
 
     <input type="file" id="avatarInput" accept="image/*" style="display:none">
 
-    <script>
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-        let currentUser = null;
-        let userStats = {};
+<script>
+const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+const SUPABASE_KEY = 'YOUR_ANON_KEY_HERE';
 
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
+// ✅ Prevent "defined twice" error
+window.supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = window.supabaseClient;
 
-            await loadUserProfile(session.user.id);
-            await loadUserStats(session.user.id);
-        }
+let currentUser = null;
 
-        async function loadUserProfile(userId) {
-            const { data: user, error } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', userId)
-                .single();
+// =====================
+// AUTH + USER LOADING
+// =====================
+async function initProfile() {
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
 
-            if (error) {
-                console.error('Error loading profile:', error);
-                return;
-            }
+    if (sessionError || !session) {
+        window.location.href = "index.html";
+        return;
+    }
 
-            currentUser = user;
+    const userId = session.user.id;
 
-            // Update UI
-            document.getElementById('profileName').textContent = user.full_name || 'User';
-            document.getElementById('profileStatus').textContent = user.role === 'exco' ? 'Parish Exco' : 
-                                                                   user.role === 'archediceanry' ? 'Archediceanry Member' :
-                                                                   user.role === 'both' ? 'Exco & Archediceanry' : 'Member';
-            
-            if (user.profile_image) {
-                document.getElementById('profileAvatar').src = user.profile_image;
-            }
+    // ✅ SAFE FETCH (NO .single ERROR)
+    const { data: user, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
 
-            document.getElementById('usernameText').textContent = '@' + (user.username || user.full_name?.toLowerCase().replace(/\s/g, '') || 'user');
-            document.getElementById('parishValue').textContent = user.parish || 'Not specified';
-            document.getElementById('genderValue').textContent = user.gender || 'Not specified';
-            document.getElementById('roleValue').textContent = user.role || 'Member';
-            document.getElementById('emailValue').textContent = user.email || 'Not specified';
+    if (error || !user) {
+        console.error("User load error:", error);
+        await supabase.auth.signOut();
+        window.location.href = "index.html";
+        return;
+    }
 
-            // Update badges
-            const roleBadge = document.getElementById('roleBadge');
-            if (user.approval_status === 'pending') {
-                roleBadge.textContent = 'Pending';
-                roleBadge.classList.add('pending');
-            } else {
-                roleBadge.textContent = user.role === 'member' ? 'Member' : 'Exco';
-            }
+    // ❌ block pending users
+    if (user.approval_status === "pending") {
+        await supabase.auth.signOut();
+        alert("Your account is pending approval");
+        window.location.href = "index.html";
+        return;
+    }
 
-            // Joined date
-            const joined = new Date(user.created_at);
-            document.getElementById('joinedDate').textContent = joined.getFullYear();
+    currentUser = user;
 
-            // Pre-fill edit form
-            document.getElementById('editName').value = user.full_name || '';
-            document.getElementById('editUsername').value = user.username || '';
-            document.getElementById('editBio').value = user.bio || '';
-        }
+    renderProfile(user);
+    loadStats(userId);
+}
 
-        async function loadUserStats(userId) {
-            // Count posts
-            const { count: postsCount } = await supabase
-                .from('posts')
-                .select('*', { count: 'exact' })
-                .eq('author_id', userId);
+// =====================
+// RENDER PROFILE
+// =====================
+function renderProfile(user) {
+    document.getElementById("profileName").textContent = user.full_name || "User";
+    document.getElementById("profileStatus").textContent = user.role || "Member";
 
-            // Count messages
-            const { count: messagesCount } = await supabase
-                .from('parish_messages')
-                .select('*', { count: 'exact' })
-                .eq('sender_id', userId);
+    document.getElementById("profileAvatar").src =
+        user.profile_image || "https://via.placeholder.com/120";
 
-            document.getElementById('postsCount').textContent = postsCount || 0;
-            document.getElementById('messagesCount').textContent = messagesCount || 0;
-        }
+    document.getElementById("usernameText").textContent =
+        "@" + (user.username || "user");
 
-        function changeAvatar() {
-            document.getElementById('avatarInput').click();
-        }
+    document.getElementById("parishValue").textContent = user.parish || "Not specified";
+    document.getElementById("genderValue").textContent = user.gender || "Not specified";
+    document.getElementById("roleValue").textContent = user.role || "Member";
+    document.getElementById("emailValue").textContent = user.email || "";
 
-        document.getElementById('avatarInput').addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+    document.getElementById("joinedDate").textContent =
+        new Date(user.created_at).getFullYear();
 
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
+    // fill edit modal
+    document.getElementById("editName").value = user.full_name || "";
+    document.getElementById("editUsername").value = user.username || "";
+    document.getElementById("editBio").value = user.bio || "";
+}
 
-            const { data: uploadData, error: uploadError } = await supabase.storage
-                .from('profiles')
-                .upload(fileName, file);
+// =====================
+// LOAD STATS
+// =====================
+async function loadStats(userId) {
+    const { count: postsCount } = await supabase
+        .from('posts')
+        .select('*', { count: 'exact', head: true })
+        .eq('author_id', userId);
 
-            if (uploadError) {
-                showToast('Error uploading image');
-                return;
-            }
+    const { count: messagesCount } = await supabase
+        .from('parish_messages')
+        .select('*', { count: 'exact', head: true })
+        .eq('sender_id', userId);
 
-            const { data: urlData } = supabase.storage
-                .from('profiles')
-                .getPublicUrl(fileName);
+    document.getElementById("postsCount").textContent = postsCount || 0;
+    document.getElementById("messagesCount").textContent = messagesCount || 0;
+}
 
-            const { error: updateError } = await supabase
-                .from('users')
-                .update({ profile_image: urlData.publicUrl })
-                .eq('id', currentUser.id);
+// =====================
+// UPDATE PROFILE
+// =====================
+async function saveProfile() {
+    const full_name = document.getElementById("editName").value;
+    const username = document.getElementById("editUsername").value;
+    const bio = document.getElementById("editBio").value;
 
-            if (!updateError) {
-                document.getElementById('profileAvatar').src = urlData.publicUrl;
-                showToast('Profile photo updated');
-            }
-        });
+    const { error } = await supabase
+        .from('users')
+        .update({ full_name, username, bio })
+        .eq('id', currentUser.id);
 
-        function editProfile() {
-            document.getElementById('editModal').classList.add('active');
-        }
+    if (error) {
+        alert("Update failed");
+        console.error(error);
+        return;
+    }
 
-        function closeEditModal() {
-            document.getElementById('editModal').classList.remove('active');
-        }
+    alert("Profile updated!");
+    initProfile();
+    closeEditModal();
+}
 
-        async function saveProfile() {
-            const fullName = document.getElementById('editName').value;
-            const username = document.getElementById('editUsername').value;
-            const bio = document.getElementById('editBio').value;
+// =====================
+// AVATAR UPLOAD
+// =====================
+document.getElementById("avatarInput").addEventListener("change", async (e) => {
+    const file = e.target.files[0];
+    if (!file || !currentUser) return;
 
-            const { error } = await supabase
-                .from('users')
-                .update({ full_name: fullName, username, bio })
-                .eq('id', currentUser.id);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${currentUser.id}-${Date.now()}.${fileExt}`;
 
-            if (!error) {
-                document.getElementById('profileName').textContent = fullName;
-                document.getElementById('usernameText').textContent = '@' + username;
-                showToast('Profile updated successfully');
-                closeEditModal();
-            }
-        }
+    const { error: uploadError } = await supabase.storage
+        .from('profiles')
+        .upload(fileName, file);
 
-        function sendMessage() {
-            // Navigate to private chat or show coming soon
-            showToast('Messaging feature - Select user from search');
-        }
+    if (uploadError) {
+        alert("Upload failed");
+        return;
+    }
 
-        function callUser() {
-            showToast('Voice calls coming soon');
-        }
+    const { data } = supabase.storage
+        .from('profiles')
+        .getPublicUrl(fileName);
 
-        function searchUser() {
-            window.location.href = 'search.html';
-        }
+    const publicUrl = data.publicUrl;
 
-        function showInfoDetail(type) {
-            // Show detailed info modal
-            showToast(`${type} details - Tap and hold to copy`);
-        }
+    await supabase
+        .from('users')
+        .update({ profile_image: publicUrl })
+        .eq('id', currentUser.id);
 
-        function openSettings(type) {
-            showToast(`${type} settings coming soon`);
-        }
+    document.getElementById("profileAvatar").src = publicUrl;
+});
 
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        }
+// =====================
+// UI FUNCTIONS
+// =====================
+function editProfile() {
+    document.getElementById("editModal").classList.add("active");
+}
 
-        function goBack() {
-            window.location.href = 'home.html';
-        }
+function closeEditModal() {
+    document.getElementById("editModal").classList.remove("active");
+}
 
-        function showMoreOptions() {
-            // Show action sheet
-            showToast('More options coming soon');
-        }
+function logout() {
+    supabase.auth.signOut();
+    window.location.href = "index.html";
+}
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
+function goBack() {
+    window.location.href = "home.html";
+}
 
-        // Close modal on outside click
-        document.getElementById('editModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                closeEditModal();
-            }
-        });
+// =====================
+// INIT
+// =====================
+initProfile();
+</script>
 
-        // Initialize
-        init();
-    </script>
 </body>
 </html>
+       
