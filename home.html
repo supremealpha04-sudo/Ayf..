@@ -583,20 +583,19 @@
         </div>
     </div>
 
-    
-      <script>
-    // Supabase Configuration
+    <script>
+    // Supabase Config
     const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
 
-    // ✅ FIXED: Use different name
+    // ✅ FIXED CLIENT NAME
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let currentUser = null;
     let posts = [];
     let currentCategory = 'all';
 
-    // Initialize
+    // ================= INIT =================
     async function init() {
         try {
             const { data: { session }, error } = await supabaseClient.auth.getSession();
@@ -607,14 +606,35 @@
                 return;
             }
 
-            const { data: user, error: userError } = await supabaseClient
+            // ✅ FIXED: safe fetch
+            let { data: user, error: userError } = await supabaseClient
                 .from('users')
                 .select('*')
                 .eq('id', session.user.id)
-                .single();
+                .maybeSingle();
 
             if (userError) throw userError;
 
+            // ✅ AUTO CREATE USER IF MISSING
+            if (!user) {
+                console.log("Creating missing user profile...");
+
+                const { error: insertError } = await supabaseClient
+                    .from('users')
+                    .insert([{
+                        id: session.user.id,
+                        email: session.user.email,
+                        full_name: session.user.user_metadata?.full_name || 'New User',
+                        role: 'member',
+                        approval_status: 'approved'
+                    }]);
+
+                if (insertError) throw insertError;
+
+                return init(); // reload
+            }
+
+            // Approval check
             if (user.approval_status === 'pending') {
                 await supabaseClient.auth.signOut();
                 alert('Your account is pending approval.');
@@ -624,14 +644,15 @@
 
             currentUser = user;
 
-            loadPosts();
-            setupRealtime();
-
             document.getElementById('onlineCount').innerHTML =
                 '<i class="fas fa-circle" style="color:#4ecdc4;font-size:8px;"></i> Online';
 
+            loadPosts();
+            setupRealtime();
+
         } catch (err) {
-            console.error(err);
+            console.error("INIT ERROR:", err);
+
             document.getElementById('feedContainer').innerHTML = `
                 <div class="error-message">
                     <p>${err.message}</p>
@@ -640,7 +661,7 @@
         }
     }
 
-    // Load Posts
+    // ================= LOAD POSTS =================
     async function loadPosts() {
         try {
             let query = supabaseClient
@@ -664,23 +685,27 @@
             renderPosts();
 
         } catch (err) {
-            console.error(err);
+            console.error("POST LOAD ERROR:", err);
         }
     }
 
-    // Render Posts
+    // ================= RENDER =================
     function renderPosts() {
         const container = document.getElementById('feedContainer');
 
         if (!posts.length) {
-            container.innerHTML = `<div class="empty-state">No posts yet</div>`;
+            container.innerHTML = `
+                <div class="empty-state">
+                    <p>No posts yet</p>
+                </div>
+            `;
             return;
         }
 
         container.innerHTML = posts.map(p => `
             <div class="post-card">
                 <div class="post-header">
-                    <img src="${p.author?.profile_image || ''}" class="post-avatar">
+                    <img src="${p.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar">
                     <div>
                         <div>${p.author?.full_name || 'User'}</div>
                         <small>${getTimeAgo(p.created_at)}</small>
@@ -688,8 +713,8 @@
                 </div>
 
                 <div class="post-content">
-                    <div class="post-title">${p.title || ''}</div>
-                    <div class="post-text">${p.content || ''}</div>
+                    <div class="post-title">${escapeHtml(p.title || '')}</div>
+                    <div class="post-text">${escapeHtml(p.content || '')}</div>
                 </div>
 
                 <div class="post-actions">
@@ -706,28 +731,39 @@
         `).join('');
     }
 
-    // Like
-    async function toggleLike(postId) {
-        const { data } = await supabaseClient
-            .from('post_likes')
-            .select('id')
-            .eq('post_id', postId)
-            .eq('user_id', currentUser.id)
-            .maybeSingle();
-
-        if (data) {
-            await supabaseClient.from('post_likes').delete().eq('id', data.id);
-        } else {
-            await supabaseClient.from('post_likes').insert([{
-                post_id: postId,
-                user_id: currentUser.id
-            }]);
-        }
-
-        loadPosts();
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
     }
 
-    // Comments
+    // ================= LIKE =================
+    async function toggleLike(postId) {
+        try {
+            const { data } = await supabaseClient
+                .from('post_likes')
+                .select('id')
+                .eq('post_id', postId)
+                .eq('user_id', currentUser.id)
+                .maybeSingle();
+
+            if (data) {
+                await supabaseClient.from('post_likes').delete().eq('id', data.id);
+            } else {
+                await supabaseClient.from('post_likes').insert([{
+                    post_id: postId,
+                    user_id: currentUser.id
+                }]);
+            }
+
+            loadPosts();
+        } catch (err) {
+            console.error("LIKE ERROR:", err);
+        }
+    }
+
+    // ================= COMMENTS =================
     async function toggleComments(postId) {
         const box = document.getElementById(`comments-${postId}`);
 
@@ -736,24 +772,32 @@
             return;
         }
 
-        const { data } = await supabaseClient
-            .from('comments')
-            .select('*')
-            .eq('post_id', postId);
+        try {
+            const { data } = await supabaseClient
+                .from('comments')
+                .select('*')
+                .eq('post_id', postId);
 
-        box.innerHTML = (data || []).map(c => `<p>${c.content}</p>`).join('');
+            box.innerHTML = (data || [])
+                .map(c => `<p>${escapeHtml(c.content)}</p>`)
+                .join('');
+        } catch (err) {
+            console.error("COMMENT ERROR:", err);
+        }
     }
 
-    // Realtime
+    // ================= REALTIME =================
     function setupRealtime() {
-        supabaseClient.channel('posts')
-            .on('postgres_changes', { event: '*', schema: 'public', table: 'posts' }, () => {
-                loadPosts();
-            })
+        supabaseClient
+            .channel('posts')
+            .on('postgres_changes',
+                { event: '*', schema: 'public', table: 'posts' },
+                () => loadPosts()
+            )
             .subscribe();
     }
 
-    // Time helper
+    // ================= UTIL =================
     function getTimeAgo(date) {
         const diff = (new Date() - new Date(date)) / 1000;
         if (diff < 60) return 'now';
@@ -762,7 +806,7 @@
         return Math.floor(diff / 86400) + 'd';
     }
 
-    // Category filter
+    // Category Filter
     document.querySelectorAll('.category-chip').forEach(el => {
         el.onclick = () => {
             document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
@@ -772,9 +816,11 @@
         };
     });
 
-    // Start app
+    // Start App
     init();
 </script>
+      
+    
 </body>
 </html>  
 
