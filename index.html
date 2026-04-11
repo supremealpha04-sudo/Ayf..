@@ -433,200 +433,152 @@
             </button>
         </div>
     </div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-     <script>
-    // Supabase Configuration (Your Original Credentials)
-    const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+<script>
+const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE';
 
-    // ✅ FIXED: No conflict anymore
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ✅ prevent double init
+window.supabaseClient = window.supabaseClient ||
+    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-    // Tab Switching
-    function switchTab(tab) {
-        document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
-        document.getElementById('loading').classList.remove('active');
-        document.getElementById('pendingApproval').classList.remove('active');
+const supabase = window.supabaseClient;
 
-        if (tab === 'login') {
-            document.querySelector('.auth-tab:first-child').classList.add('active');
-            document.getElementById('loginForm').classList.add('active');
-        } else {
-            document.querySelector('.auth-tab:last-child').classList.add('active');
-            document.getElementById('registerForm').classList.add('active');
+// =====================
+// SIGN UP
+// =====================
+async function signUp(email, password, full_name, parish, gender) {
+    try {
+        // 1. Create Auth User
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email,
+            password
+        });
+
+        if (authError) {
+            console.error("Auth error:", authError);
+            alert(authError.message);
+            return;
         }
+
+        const user = authData.user;
+
+        if (!user) {
+            alert("Signup failed - no user returned");
+            return;
+        }
+
+        // 2. Insert into public.users table (SAFE VERSION)
+        const { error: insertError } = await supabase
+            .from('users')
+            .insert([{
+                id: user.id,
+                email: user.email,
+                full_name,
+                parish,
+                gender,
+                role: 'member',
+                approval_status: 'pending'
+            }]);
+
+        if (insertError) {
+            console.error("Profile insert error:", insertError);
+            alert("Account created but profile failed to save");
+            return;
+        }
+
+        alert("Account created successfully! Awaiting approval.");
+        window.location.href = "index.html";
+
+    } catch (err) {
+        console.error("Signup crash:", err);
+        alert("Something went wrong");
     }
+}
 
-    // Image Preview
-    document.getElementById('profileImage').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('previewImage').src = e.target.result;
-                document.getElementById('uploadLabel').classList.add('has-image');
-            };
-            reader.readAsDataURL(file);
+// =====================
+// LOGIN
+// =====================
+async function login(email, password) {
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            console.error(error);
+            alert(error.message);
+            return;
         }
-    });
 
-    // Show Alert
-    function showAlert(id, message, type) {
-        const alert = document.getElementById(id);
-        alert.textContent = message;
-        alert.className = `alert ${type}`;
-        alert.style.display = 'block';
-        setTimeout(() => alert.style.display = 'none', 5000);
+        const user = data.user;
+
+        // fetch profile
+        const { data: profile, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (profileError || !profile) {
+            console.error(profileError);
+            alert("Profile not found");
+            return;
+        }
+
+        if (profile.approval_status === "pending") {
+            await supabase.auth.signOut();
+            alert("Account pending approval");
+            return;
+        }
+
+        window.location.href = "home.html";
+
+    } catch (err) {
+        console.error("Login error:", err);
+        alert("Login failed");
     }
+}
 
-    // Register
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
+// =====================
+// CHECK SESSION (AUTO LOGIN)
+// =====================
+async function checkSession() {
+    const { data: { session } } = await supabase.auth.getSession();
 
-        const btn = document.getElementById('registerBtn');
-        const loading = document.getElementById('loading');
-
-        btn.disabled = true;
-        loading.classList.add('active');
-
-        try {
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const fullName = document.getElementById('fullName').value;
-            const parish = document.getElementById('parish').value;
-            const gender = document.getElementById('gender').value;
-            const role = document.querySelector('input[name="role"]:checked').value;
-            const profileImage = document.getElementById('profileImage').files[0];
-
-            if (password.length < 6) {
-                throw new Error("Password must be at least 6 characters");
-            }
-
-            const { data: authData, error: authError } = await supabaseClient.auth.signUp({
-                email,
-                password
-            });
-
-            if (authError) throw authError;
-
-            if (!authData.user) {
-                throw new Error("Signup failed. Check your email for confirmation.");
-            }
-
-            let imageUrl = null;
-            if (profileImage) {
-                const fileExt = profileImage.name.split('.').pop();
-                const fileName = `${authData.user.id}-${Date.now()}.${fileExt}`;
-
-                const { error: uploadError } = await supabaseClient.storage
-                    .from('profiles')
-                    .upload(fileName, profileImage);
-
-                if (!uploadError) {
-                    const { data: urlData } = supabaseClient.storage
-                        .from('profiles')
-                        .getPublicUrl(fileName);
-                    imageUrl = urlData.publicUrl;
-                }
-            }
-
-            const { error: profileError } = await supabaseClient
-                .from('users')
-                .insert([{
-                    id: authData.user.id,
-                    email,
-                    full_name: fullName,
-                    parish,
-                    gender,
-                    role,
-                    profile_image: imageUrl,
-                    is_approved: role === 'member',
-                    approval_status: role === 'member' ? 'approved' : 'pending',
-                    created_at: new Date().toISOString()
-                }]);
-
-            if (profileError) throw profileError;
-
-            if (role !== 'member') {
-                await supabaseClient
-                    .from('role_requests')
-                    .insert([{
-                        user_id: authData.user.id,
-                        requested_role: role,
-                        status: 'pending',
-                        created_at: new Date().toISOString()
-                    }]);
-
-                document.getElementById('registerForm').style.display = 'none';
-                document.getElementById('pendingApproval').classList.add('active');
-            } else {
-                showAlert('registerAlert', 'Account created! Check your email.', 'success');
-                setTimeout(() => switchTab('login'), 2000);
-            }
-
-        } catch (error) {
-            showAlert('registerAlert', error.message, 'error');
-        } finally {
-            btn.disabled = false;
-            loading.classList.remove('active');
-        }
-    });
-
-    // Login
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        const btn = document.querySelector('#loginForm .btn-primary');
-        const loading = document.getElementById('loading');
-
-        btn.disabled = true;
-        loading.classList.add('active');
-
-        try {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-
-            const { data, error } = await supabaseClient.auth.signInWithPassword({
-                email,
-                password
-            });
-
-            if (error) throw error;
-
-            const { data: userData, error: userError } = await supabaseClient
-                .from('users')
-                .select('approval_status, role')
-                .eq('id', data.user.id)
-                .single();
-
-            if (userError) throw userError;
-
-            if (userData.approval_status === 'pending' && userData.role !== 'member') {
-                await supabaseClient.auth.signOut();
-                showAlert('loginAlert', 'Your role is pending approval.', 'error');
-            } else {
-                window.location.href = 'home.html';
-            }
-
-        } catch (error) {
-            showAlert('loginAlert', error.message, 'error');
-        } finally {
-            btn.disabled = false;
-            loading.classList.remove('active');
-        }
-    });
-
-    // Check session
-    async function checkSession() {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (session) {
-            window.location.href = 'home.html';
-        }
+    if (session) {
+        window.location.href = "home.html";
     }
+}
 
-    checkSession();
+// run on page load
+checkSession();
+
+// =====================
+// EXAMPLE FORM HOOKS
+// =====================
+
+// LOGIN BUTTON
+document.getElementById("loginBtn")?.addEventListener("click", () => {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+    login(email, password);
+});
+
+// SIGNUP BUTTON
+document.getElementById("signupBtn")?.addEventListener("click", () => {
+    const email = document.getElementById("signupEmail").value;
+    const password = document.getElementById("signupPassword").value;
+    const full_name = document.getElementById("signupName").value;
+    const parish = document.getElementById("signupParish").value;
+    const gender = document.getElementById("signupGender").value;
+
+    signUp(email, password, full_name, parish, gender);
+});
 </script>
- 
-</body>
+     </body>
 </html>
+
+                
