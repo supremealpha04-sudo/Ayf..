@@ -1,0 +1,244 @@
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+const SUPABASE_ANON_KEY = 'YOUR_ANON_KEY_HERE'; // ⚠️ Replace with real key
+
+// ✅ Prevent double initialization
+window.supabaseClient = window.supabaseClient ||
+    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const supabase = window.supabaseClient;
+
+// =====================
+// TAB SWITCHING
+// =====================
+function switchTab(tab) {
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const tabs = document.querySelectorAll('.auth-tab');
+
+    tabs.forEach(t => t.classList.remove('active'));
+    loginForm.classList.remove('active');
+    registerForm.classList.remove('active');
+
+    if (tab === 'login') {
+        tabs[0].classList.add('active');
+        loginForm.classList.add('active');
+    } else {
+        tabs[1].classList.add('active');
+        registerForm.classList.add('active');
+    }
+}
+
+// =====================
+// IMAGE PREVIEW
+// =====================
+document.getElementById('profileImage')?.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            const previewImg = document.getElementById('previewImage');
+            previewImg.src = event.target.result;
+            document.getElementById('uploadLabel').classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// =====================
+// ALERT HELPER
+// =====================
+function showAlert(type, message, elementId) {
+    const alert = document.getElementById(elementId);
+    alert.textContent = message;
+    alert.className = `alert ${type}`;
+    alert.style.display = 'block';
+    setTimeout(() => {
+        alert.style.display = 'none';
+    }, 5000);
+}
+
+// =====================
+// SIGN UP
+// =====================
+async function signUp(email, password, full_name, parish, gender, role) {
+    try {
+        document.getElementById('loading').classList.add('active');
+
+        // 1. Create Auth User
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+            email,
+            password
+        });
+
+        if (authError) {
+            console.error("Auth error:", authError);
+            showAlert('error', authError.message, 'registerAlert');
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        const user = authData.user;
+
+        if (!user) {
+            showAlert('error', 'Signup failed - no user returned', 'registerAlert');
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        // 2. Determine approval status based on role
+        const approval_status = (role !== 'member') ? 'pending_approval' : 'approved';
+
+        // 3. Insert into public.users table
+        const { error: insertError } = await supabase
+            .from('users')
+            .insert([{
+                id: user.id,
+                email: user.email,
+                full_name,
+                parish,
+                gender,
+                role: role,
+                approval_status: approval_status
+            }]);
+
+        if (insertError) {
+            console.error("Profile insert error:", insertError);
+            showAlert('error', 'Account created but profile failed to save', 'registerAlert');
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        document.getElementById('loading').classList.remove('active');
+
+        // Show appropriate message based on role
+        if (role !== 'member') {
+            document.getElementById('registerForm').classList.remove('active');
+            document.getElementById('pendingApproval').classList.add('active');
+        } else {
+            showAlert('success', 'Account created successfully!', 'registerAlert');
+            document.getElementById('registerForm').reset();
+            document.getElementById('uploadLabel').classList.remove('has-image');
+            setTimeout(() => switchTab('login'), 2000);
+        }
+
+    } catch (err) {
+        console.error("Signup crash:", err);
+        showAlert('error', 'Something went wrong: ' + err.message, 'registerAlert');
+        document.getElementById('loading').classList.remove('active');
+    }
+}
+
+// =====================
+// LOGIN
+// =====================
+async function login(email, password) {
+    try {
+        document.getElementById('loading').classList.add('active');
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+        });
+
+        if (error) {
+            console.error(error);
+            showAlert('error', error.message, 'loginAlert');
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        const user = data.user;
+
+        // Fetch profile
+        const { data: profile, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', user.id)
+            .maybeSingle();
+
+        if (profileError || !profile) {
+            console.error(profileError);
+            showAlert('error', 'Profile not found', 'loginAlert');
+            await supabase.auth.signOut();
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        if (profile.approval_status === "pending_approval") {
+            await supabase.auth.signOut();
+            showAlert('error', 'Your account is pending admin approval', 'loginAlert');
+            document.getElementById('loading').classList.remove('active');
+            return;
+        }
+
+        document.getElementById('loading').classList.remove('active');
+        window.location.href = "home.html";
+
+    } catch (err) {
+        console.error("Login error:", err);
+        showAlert('error', 'Login failed: ' + err.message, 'loginAlert');
+        document.getElementById('loading').classList.remove('active');
+    }
+}
+
+// =====================
+// CHECK SESSION (AUTO LOGIN)
+// =====================
+async function checkSession() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+            window.location.href = "home.html";
+        }
+    } catch (err) {
+        console.error("Session check failed:", err);
+    }
+}
+
+// Run on page load
+checkSession();
+
+// =====================
+// FORM SUBMISSION HANDLERS
+// =====================
+
+// LOGIN FORM
+document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+
+    if (!email || !password) {
+        showAlert('error', 'Please fill in all fields', 'loginAlert');
+        return;
+    }
+
+    login(email, password);
+});
+
+// REGISTER FORM
+document.getElementById('registerForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('regEmail').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const full_name = document.getElementById('fullName').value.trim();
+    const parish = document.getElementById('parish').value;
+    const gender = document.getElementById('gender').value;
+    const role = document.querySelector('input[name="role"]:checked').value;
+
+    if (!email || !password || !full_name || !parish || !gender) {
+        showAlert('error', 'Please fill in all fields', 'registerAlert');
+        return;
+    }
+
+    if (password.length < 6) {
+        showAlert('error', 'Password must be at least 6 characters', 'registerAlert');
+        return;
+    }
+
+    signUp(email, password, full_name, parish, gender, role);
+});
+</script>
