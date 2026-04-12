@@ -5,823 +5,413 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AYF GWARIMPA - Home</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #0f1419;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #17212b;
             color: #fff;
-            min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 70px;
         }
 
-        /* Header - Telegram Style */
+        /* Telegram-style header */
         .header {
             background: #17212b;
-            padding: 12px 16px;
+            padding: 15px;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid #242f3d;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            border-bottom: 1px solid #2b2f36;
         }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .menu-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .menu-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .header-title {
-            font-size: 18px;
+        .header h1 {
+            font-size: 24px;
             font-weight: 600;
         }
 
-        .header-subtitle {
-            font-size: 12px;
-            color: #8a9aa8;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .icon-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #8a9aa8;
-            transition: all 0.2s;
-        }
-
-        .icon-btn:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-
-        /* Category Filter */
-        .category-filter {
+        /* Filter tabs */
+        .filters {
             background: #17212b;
-            padding: 10px 16px;
+            padding: 10px 15px;
             display: flex;
             gap: 10px;
             overflow-x: auto;
-            border-bottom: 1px solid #242f3d;
-            scrollbar-width: none;
+            border-bottom: 1px solid #2b2f36;
         }
 
-        .category-filter::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-chip {
-            padding: 8px 16px;
-            background: #242f3d;
+        .filter-btn {
+            padding: 8px 20px;
+            background: #2b2f36;
+            border: none;
             border-radius: 20px;
-            font-size: 13px;
+            color: #fff;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
-            border: 1px solid transparent;
         }
 
-        .category-chip:hover {
-            background: #2b3a4a;
-        }
-
-        .category-chip.active {
+        .filter-btn.active {
             background: #2b5278;
-            border-color: #3a6d99;
         }
 
-        /* Feed Container */
+        /* Feed items - Telegram message style */
         .feed-container {
-            padding: 16px;
-            max-width: 800px;
-            margin: 0 auto;
+            padding: 10px;
         }
 
-        /* Post Card - Telegram Style */
-        .post-card {
-            background: #17212b;
+        .feed-item {
+            background: #1e2a36;
             border-radius: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 15px;
             overflow: hidden;
-            border: 1px solid #242f3d;
-            animation: slideIn 0.3s ease;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .post-header {
-            padding: 12px 16px;
+        .feed-header {
+            padding: 15px;
             display: flex;
             align-items: center;
             gap: 12px;
+            border-bottom: 1px solid #2b2f36;
         }
 
-        .post-avatar {
-            width: 44px;
-            height: 44px;
+        .feed-avatar {
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #2b5278;
+            background: #2b2f36;
         }
 
-        .post-meta {
+        .feed-info {
             flex: 1;
         }
 
-        .post-author {
+        .feed-title {
             font-weight: 600;
-            font-size: 15px;
-            color: #fff;
+            margin-bottom: 4px;
         }
 
-        .post-time {
+        .feed-type {
             font-size: 12px;
-            color: #8a9aa8;
+            color: #7e8c9e;
         }
 
-        .post-category-badge {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 500;
-            text-transform: uppercase;
+        .feed-content {
+            padding: 15px;
         }
 
-        .badge-event { background: #ff6b6b; }
-        .badge-notice { background: #4ecdc4; }
-        .badge-post { background: #45b7d1; }
-        .badge-minutes { background: #96ceb4; }
-        .badge-plan { background: #feca57; color: #000; }
-
-        .post-content {
-            padding: 0 16px 12px;
-        }
-
-        .post-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .post-text {
-            font-size: 14px;
-            line-height: 1.5;
-            color: #b0c4de;
-            margin-bottom: 12px;
-        }
-
-        .post-media {
+        .feed-media {
             width: 100%;
-            max-height: 400px;
+            border-radius: 8px;
+            margin: 10px 0;
+            max-height: 300px;
             object-fit: cover;
-            margin-bottom: 12px;
-            border-radius: 8px;
         }
 
-        .post-video {
-            width: 100%;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        .countdown-timer {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 10px 16px;
-            border-radius: 8px;
+        .feed-actions {
             display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .countdown-timer i {
-            font-size: 18px;
-        }
-
-        .countdown-text {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .post-actions {
-            display: flex;
-            align-items: center;
-            padding: 8px 16px;
-            border-top: 1px solid #242f3d;
+            gap: 20px;
+            padding: 10px 15px;
+            border-top: 1px solid #2b2f36;
         }
 
         .action-btn {
+            background: none;
+            border: none;
+            color: #7e8c9e;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #8a9aa8;
+            gap: 5px;
             font-size: 14px;
-            transition: all 0.2s;
-            margin-right: 8px;
         }
 
         .action-btn:hover {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
+            color: #2b5278;
         }
 
-        .action-btn.liked {
-            color: #ff6b6b;
-        }
-
-        .action-btn i {
-            font-size: 18px;
-        }
-
-        .action-spacer {
-            flex: 1;
-        }
-
-        /* Comments Section */
         .comments-section {
-            background: #0f1419;
-            border-top: 1px solid #242f3d;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
+            padding: 15px;
+            background: #16212b;
+            display: none;
         }
 
-        .comments-section.expanded {
-            max-height: 500px;
-            overflow-y: auto;
+        .comments-section.active {
+            display: block;
         }
 
         .comment {
-            padding: 12px 16px;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .comment-header {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 15px;
+            padding-left: 40px;
+            position: relative;
         }
 
         .comment-avatar {
+            position: absolute;
+            left: 0;
+            top: 0;
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .comment-author {
-            font-weight: 600;
-            font-size: 13px;
-        }
-
-        .comment-time {
-            font-size: 11px;
-            color: #8a9aa8;
+            background: #2b2f36;
         }
 
         .comment-text {
-            font-size: 13px;
-            color: #b0c4de;
-            margin-left: 40px;
-            line-height: 1.4;
-        }
-
-        .comment-input-area {
-            padding: 12px 16px;
-            display: flex;
-            gap: 10px;
-            background: #17212b;
+            background: #1e2a36;
+            padding: 8px 12px;
+            border-radius: 12px;
         }
 
         .comment-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .comment-input input {
             flex: 1;
-            background: #242f3d;
+            padding: 10px;
+            background: #2b2f36;
             border: none;
-            padding: 10px 14px;
             border-radius: 20px;
             color: #fff;
-            font-size: 14px;
         }
 
-        .comment-input:focus {
-            outline: none;
-            background: #2b3a4a;
-        }
-
-        .send-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #2b5278;
-            border: none;
-            color: #fff;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Bottom Navigation */
+        /* Bottom navigation - Telegram style */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: #17212b;
-            border-top: 1px solid #242f3d;
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
-            z-index: 100;
+            padding: 10px 0;
+            border-top: 1px solid #2b2f36;
         }
 
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 20px;
-            cursor: pointer;
-            color: #8a9aa8;
-            transition: all 0.2s;
+            text-align: center;
+            color: #7e8c9e;
             text-decoration: none;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: #3a6d99;
-        }
-
-        .nav-item i {
-            font-size: 22px;
-        }
-
-        .nav-item span {
-            font-size: 11px;
-        }
-
-        /* Loading */
-        .loading-posts {
-            text-align: center;
-            padding: 40px;
-            color: #8a9aa8;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #242f3d;
-            border-top-color: #3a6d99;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #8a9aa8;
-        }
-
-        .empty-state i {
-            font-size: 60px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        /* Share Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #17212b;
-            border-radius: 16px;
-            padding: 24px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .share-options {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .share-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .share-option:hover {
-            background: #242f3d;
-        }
-
-        .share-option i {
-            font-size: 28px;
-        }
-
-        .share-option span {
             font-size: 12px;
         }
 
-        /* Error message */
-        .error-message {
-            text-align: center;
-            padding: 40px;
-            color: #ff6b6b;
+        .nav-item.active {
+            color: #2b5278;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-left">
-            <div class="menu-btn" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div>
-                <div class="header-title">AYF GWARIMPA</div>
-                <div class="header-subtitle" id="onlineCount">Loading...</div>
-            </div>
-        </div>
-        <div class="header-actions">
-            <div class="icon-btn" onclick="openSearch()">
-                <i class="fas fa-search"></i>
-            </div>
-            <div class="icon-btn" onclick="goToProfile()">
-                <i class="fas fa-user"></i>
-            </div>
-        </div>
-    </header>
-
-    <!-- Category Filter -->
-    <div class="category-filter">
-        <div class="category-chip active" data-category="all">All</div>
-        <div class="category-chip" data-category="event">Events</div>
-        <div class="category-chip" data-category="notice">Notices</div>
-        <div class="category-chip" data-category="post">Posts</div>
-        <div class="category-chip" data-category="minutes">Minutes</div>
-        <div class="category-chip" data-category="plan">Plans</div>
+    <div class="header">
+        <h1>AYF GWARIMPA</h1>
     </div>
 
-    <!-- Feed Container -->
-    <div class="feed-container" id="feedContainer">
-        <div class="loading-posts">
-            <div class="spinner"></div>
-            <p>Loading updates...</p>
-        </div>
+    <div class="filters" id="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="notice">Notices</button>
+        <button class="filter-btn" data-filter="event">Events</button>
+        <button class="filter-btn" data-filter="post">Posts</button>
+        <button class="filter-btn" data-filter="minutes">Minutes</button>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
+    <div class="feed-container" id="feed-container"></div>
+
+    <div class="bottom-nav">
         <a href="home.html" class="nav-item active">
-            <i class="fas fa-home"></i>
+            <span class="nav-icon">🏠</span>
             <span>Home</span>
         </a>
         <a href="parish.html" class="nav-item">
-            <i class="fas fa-users"></i>
+            <span class="nav-icon">💬</span>
             <span>Parish</span>
         </a>
-        <a href="plan.html" class="nav-item">
-            <i class="fas fa-calendar-alt"></i>
+        <a href="#" class="nav-item" onclick="showPlans()">
+            <span class="nav-icon">📅</span>
             <span>Plan</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i>
+            <span class="nav-icon">👤</span>
             <span>Profile</span>
         </a>
-    </nav>
-
-    <!-- Share Modal -->
-    <div class="modal" id="shareModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Share Update</h3>
-            <div class="share-options">
-                <div class="share-option" onclick="shareVia('whatsapp')">
-                    <i class="fab fa-whatsapp" style="color: #25d366;"></i>
-                    <span>WhatsApp</span>
-                </div>
-                <div class="share-option" onclick="shareVia('copy')">
-                    <i class="fas fa-link" style="color: #3a6d99;"></i>
-                    <span>Copy Link</span>
-                </div>
-                <div class="share-option" onclick="shareVia('native')">
-                    <i class="fas fa-share-alt" style="color: #667eea;"></i>
-                    <span>More</span>
-                </div>
-            </div>
-        </div>
     </div>
 
+    <script src="supabase-config.js"></script>
     <script>
-    // Supabase Config
-    const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+        let currentUser = null;
+        let currentFilter = 'all';
 
-    // ✅ FIXED CLIENT NAME
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    let currentUser = null;
-    let posts = [];
-    let currentCategory = 'all';
-
-    // ================= INIT =================
-    async function init() {
-        try {
-            const { data: { session }, error } = await supabaseClient.auth.getSession();
-            if (error) throw error;
-
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            // ✅ FIXED: safe fetch
-            let { data: user, error: userError } = await supabaseClient
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
-                .maybeSingle();
-
-            if (userError) throw userError;
-
-            // ✅ AUTO CREATE USER IF MISSING
-            if (!user) {
-                console.log("Creating missing user profile...");
-
-                const { error: insertError } = await supabaseClient
-                    .from('users')
-                    .insert([{
-                        id: session.user.id,
-                        email: session.user.email,
-                        full_name: session.user.user_metadata?.full_name || 'New User',
-                        role: 'member',
-                        approval_status: 'approved'
-                    }]);
-
-                if (insertError) throw insertError;
-
-                return init(); // reload
-            }
-
-            // Approval check
-            if (user.approval_status === 'pending') {
-                await supabaseClient.auth.signOut();
-                alert('Your account is pending approval.');
-                window.location.href = 'index.html';
-                return;
-            }
-
+        async function loadUser() {
+            const { data: { user } } = await supabase.auth.getUser();
             currentUser = user;
-
-            document.getElementById('onlineCount').innerHTML =
-                '<i class="fas fa-circle" style="color:#4ecdc4;font-size:8px;"></i> Online';
-
-            loadPosts();
-            setupRealtime();
-
-        } catch (err) {
-            console.error("INIT ERROR:", err);
-
-            document.getElementById('feedContainer').innerHTML = `
-                <div class="error-message">
-                    <p>${err.message}</p>
-                </div>
-            `;
+            if(!user) window.location.href = 'index.html';
         }
-    }
 
-    // ================= LOAD POSTS =================
-    async function loadPosts() {
-        try {
-            let query = supabaseClient
-                .from('posts')
-                .select(`
-                    *,
-                    author:users(id, full_name, profile_image, parish),
-                    likes:post_likes(count),
-                    comments:comments(count)
-                `)
+        async function loadFeed() {
+            let query = supabase
+                .from('feed_items')
+                .select('*, profiles(full_name, avatar_url)')
                 .order('created_at', { ascending: false });
-
-            if (currentCategory !== 'all') {
-                query = query.eq('category', currentCategory);
+            
+            if(currentFilter !== 'all') {
+                query = query.eq('type', currentFilter);
             }
 
-            const { data, error } = await query;
-            if (error) throw error;
-
-            posts = data || [];
-            renderPosts();
-
-        } catch (err) {
-            console.error("POST LOAD ERROR:", err);
-        }
-    }
-
-    // ================= RENDER =================
-    function renderPosts() {
-        const container = document.getElementById('feedContainer');
-
-        if (!posts.length) {
-            container.innerHTML = `
-                <div class="empty-state">
-                    <p>No posts yet</p>
-                </div>
-            `;
-            return;
+            const { data } = await query;
+            renderFeed(data);
         }
 
-        container.innerHTML = posts.map(p => `
-            <div class="post-card">
-                <div class="post-header">
-                    <img src="${p.author?.profile_image || 'https://via.placeholder.com/44'}" class="post-avatar">
-                    <div>
-                        <div>${p.author?.full_name || 'User'}</div>
-                        <small>${getTimeAgo(p.created_at)}</small>
+        function renderFeed(items) {
+            const container = document.getElementById('feed-container');
+            container.innerHTML = items.map(item => `
+                <div class="feed-item" data-id="${item.id}">
+                    <div class="feed-header">
+                        <div class="feed-avatar" style="background-image: url(${item.profiles?.avatar_url || ''}); background-size: cover;"></div>
+                        <div class="feed-info">
+                            <div class="feed-title">${item.title || item.type}</div>
+                            <div class="feed-type">${item.type.toUpperCase()} • ${new Date(item.created_at).toLocaleDateString()}</div>
+                        </div>
+                    </div>
+                    <div class="feed-content">
+                        ${item.content || ''}
+                        ${item.media_url ? `<img src="${item.media_url}" class="feed-media">` : ''}
+                        ${item.pdf_url ? `<a href="${item.pdf_url}" download style="color: #2b5278;">📄 Download PDF</a>` : ''}
+                        ${item.event_date ? `<div style="margin-top: 10px;">📅 Countdown: ${getCountdown(item.event_date)}</div>` : ''}
+                    </div>
+                    <div class="feed-actions">
+                        <button class="action-btn" onclick="toggleLike('${item.id}')">❤️ <span id="like-count-${item.id}">0</span></button>
+                        <button class="action-btn" onclick="toggleComments('${item.id}')">💬 <span id="comment-count-${item.id}">0</span></button>
+                        <button class="action-btn" onclick="sharePost('${item.id}')">🔗 Share</button>
+                        ${item.pdf_url ? `<button class="action-btn" onclick="downloadFile('${item.pdf_url}')">⬇️ Download</button>` : ''}
+                    </div>
+                    <div class="comments-section" id="comments-${item.id}">
+                        <div class="comments-list" id="comments-list-${item.id}"></div>
+                        <div class="comment-input">
+                            <input type="text" id="comment-input-${item.id}" placeholder="Write a comment...">
+                            <button class="action-btn" onclick="addComment('${item.id}')">Send</button>
+                        </div>
                     </div>
                 </div>
+            `).join('');
+            
+            // Load likes and comments counts
+            items.forEach(item => loadCounts(item.id));
+        }
 
-                <div class="post-content">
-                    <div class="post-title">${escapeHtml(p.title || '')}</div>
-                    <div class="post-text">${escapeHtml(p.content || '')}</div>
-                </div>
+        function getCountdown(eventDate) {
+            const diff = new Date(eventDate) - new Date();
+            if(diff <= 0) return "Event started!";
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (86400000)) / 3600000);
+            return `${days}d ${hours}h remaining`;
+        }
 
-                <div class="post-actions">
-                    <div class="action-btn" onclick="toggleLike('${p.id}')">
-                        ❤️ ${p.likes?.[0]?.count || 0}
-                    </div>
-                    <div class="action-btn" onclick="toggleComments('${p.id}')">
-                        💬 ${p.comments?.[0]?.count || 0}
-                    </div>
-                </div>
-
-                <div class="comments-section" id="comments-${p.id}"></div>
-            </div>
-        `).join('');
-    }
-
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // ================= LIKE =================
-    async function toggleLike(postId) {
-        try {
-            const { data } = await supabaseClient
-                .from('post_likes')
-                .select('id')
-                .eq('post_id', postId)
-                .eq('user_id', currentUser.id)
-                .maybeSingle();
-
-            if (data) {
-                await supabaseClient.from('post_likes').delete().eq('id', data.id);
+        async function toggleLike(feedId) {
+            const { data: existing } = await supabase
+                .from('likes')
+                .select()
+                .eq('feed_id', feedId)
+                .eq('user_id', currentUser.id);
+            
+            if(existing.length > 0) {
+                await supabase.from('likes').delete().eq('id', existing[0].id);
             } else {
-                await supabaseClient.from('post_likes').insert([{
-                    post_id: postId,
-                    user_id: currentUser.id
-                }]);
+                await supabase.from('likes').insert([{ feed_id: feedId, user_id: currentUser.id }]);
             }
-
-            loadPosts();
-        } catch (err) {
-            console.error("LIKE ERROR:", err);
-        }
-    }
-
-    // ================= COMMENTS =================
-    async function toggleComments(postId) {
-        const box = document.getElementById(`comments-${postId}`);
-
-        if (box.innerHTML) {
-            box.innerHTML = '';
-            return;
+            loadCounts(feedId);
         }
 
-        try {
-            const { data } = await supabaseClient
+        async function loadCounts(feedId) {
+            const { count: likeCount } = await supabase
+                .from('likes')
+                .select('*', { count: 'exact', head: true })
+                .eq('feed_id', feedId);
+            
+            const { count: commentCount } = await supabase
                 .from('comments')
-                .select('*')
-                .eq('post_id', postId);
-
-            box.innerHTML = (data || [])
-                .map(c => `<p>${escapeHtml(c.content)}</p>`)
-                .join('');
-        } catch (err) {
-            console.error("COMMENT ERROR:", err);
+                .select('*', { count: 'exact', head: true })
+                .eq('feed_id', feedId);
+            
+            document.getElementById(`like-count-${feedId}`).textContent = likeCount || 0;
+            document.getElementById(`comment-count-${feedId}`).textContent = commentCount || 0;
         }
-    }
 
-    // ================= REALTIME =================
-    function setupRealtime() {
-        supabaseClient
-            .channel('posts')
-            .on('postgres_changes',
-                { event: '*', schema: 'public', table: 'posts' },
-                () => loadPosts()
-            )
-            .subscribe();
-    }
+        async function addComment(feedId) {
+            const input = document.getElementById(`comment-input-${feedId}`);
+            const comment = input.value;
+            if(!comment) return;
+            
+            await supabase.from('comments').insert([{
+                feed_id: feedId,
+                user_id: currentUser.id,
+                comment: comment
+            }]);
+            
+            input.value = '';
+            loadComments(feedId);
+        }
 
-    // ================= UTIL =================
-    function getTimeAgo(date) {
-        const diff = (new Date() - new Date(date)) / 1000;
-        if (diff < 60) return 'now';
-        if (diff < 3600) return Math.floor(diff / 60) + 'm';
-        if (diff < 86400) return Math.floor(diff / 3600) + 'h';
-        return Math.floor(diff / 86400) + 'd';
-    }
+        async function loadComments(feedId) {
+            const { data } = await supabase
+                .from('comments')
+                .select('*, profiles(full_name, avatar_url)')
+                .eq('feed_id', feedId)
+                .order('created_at', { ascending: true });
+            
+            const container = document.getElementById(`comments-list-${feedId}`);
+            if(container) {
+                container.innerHTML = data.map(c => `
+                    <div class="comment">
+                        <div class="comment-avatar" style="background-image: url(${c.profiles?.avatar_url || ''}); background-size: cover;"></div>
+                        <div class="comment-text">
+                            <strong>${c.profiles?.full_name}</strong><br>
+                            ${c.comment}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
 
-    // Category Filter
-    document.querySelectorAll('.category-chip').forEach(el => {
-        el.onclick = () => {
-            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            currentCategory = el.dataset.category;
-            loadPosts();
-        };
-    });
+        function toggleComments(feedId) {
+            const section = document.getElementById(`comments-${feedId}`);
+            section.classList.toggle('active');
+            if(section.classList.contains('active')) {
+                loadComments(feedId);
+            }
+        }
 
-    // Start App
-    init();
-</script>
-      
-    
+        function sharePost(feedId) {
+            navigator.share ? navigator.share({ title: 'AYF GWARIMPA', url: window.location.href }) : alert('Share this post!');
+        }
+
+        function downloadFile(url) {
+            window.open(url, '_blank');
+        }
+
+        function showPlans() {
+            // Load yearly plans modal
+            alert('Yearly Plans - Feature coming');
+        }
+
+        // Setup filters
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                loadFeed();
+            });
+        });
+
+        loadUser().then(() => loadFeed());
+    </script>
 </body>
-</html>  
-
-                
+</html>
