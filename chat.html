@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>AYF GWARIMPA - Chat</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0a0a;
+            color: white;
+        }
+
+        .chat-header {
+            background: #17212b;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #6ab3f3;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .chat-user-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #6ab3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .chat-user-details {
+            flex: 1;
+        }
+
+        .chat-user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .chat-user-status {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .messages-container {
+            margin-top: 60px;
+            margin-bottom: 70px;
+            padding: 16px;
+            height: calc(100vh - 130px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message {
+            max-width: 70%;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.sent {
+            align-self: flex-end;
+        }
+
+        .message.received {
+            align-self: flex-start;
+        }
+
+        .message-bubble {
+            padding: 8px 12px;
+            border-radius: 18px;
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        .message.sent .message-bubble {
+            background: #6ab3f3;
+            color: #17212b;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received .message-bubble {
+            background: #1f2c34;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message-status {
+            font-size: 10px;
+            margin-left: 4px;
+        }
+
+        .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1f2c34;
+            padding: 8px 16px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .attach-btn {
+            background: none;
+            border: none;
+            color: #6ab3f3;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .message-input {
+            flex: 1;
+            background: #2a3942;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 16px;
+            color: white;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input:focus {
+            outline: none;
+        }
+
+        .send-btn {
+            background: none;
+            border: none;
+            color: #6ab3f3;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .date-divider {
+            text-align: center;
+            margin: 16px 0;
+            font-size: 11px;
+            color: #8e9eae;
+            position: relative;
+        }
+
+        .date-divider span {
+            background: #1f2c34;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .message {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="chat-user-info" id="userInfo">
+            <div class="chat-user-avatar" id="userAvatar">U</div>
+            <div class="chat-user-details">
+                <div class="chat-user-name" id="userName">Loading...</div>
+                <div class="chat-user-status" id="userStatus">Online</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="messages-container" id="messagesContainer">
+        <!-- Messages will load here -->
+    </div>
+
+    <div class="input-area">
+        <button class="attach-btn" onclick="attachFile()">📎</button>
+        <textarea class="message-input" id="messageInput" placeholder="Type a message" rows="1"></textarea>
+        <button class="send-btn" onclick="sendMessage()">📤</button>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        let chatWith = null;
+        let messagesSubscription = null;
+        
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = JSON.parse(userStr);
+            
+            const chatWithStr = localStorage.getItem('chatWith');
+            if (!chatWithStr) {
+                window.location.href = 'profile.html';
+                return;
+            }
+            chatWith = JSON.parse(chatWithStr);
+            
+            document.getElementById('userName').textContent = chatWith.name;
+            document.getElementById('userAvatar').textContent = chatWith.name.charAt(0);
+            
+            await loadMessages();
+            subscribeToMessages();
+            markMessagesAsRead();
+        }
+        
+        async function loadMessages() {
+            const { data: messages, error } = await supabase
+                .from('private_messages')
+                .select('*')
+                .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${chatWith.id}),and(sender_id.eq.${chatWith.id},receiver_id.eq.${currentUser.id})`)
+                .order('created_at', { ascending: true });
+            
+            if (error) return;
+            
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+            
+            let lastDate = null;
+            
+            for (const message of messages) {
+                const messageDate = new Date(message.created_at).toLocaleDateString();
+                if (messageDate !== lastDate) {
+                    const dateDivider = document.createElement('div');
+                    dateDivider.className = 'date-divider';
+                    dateDivider.innerHTML = `<span>${messageDate}</span>`;
+                    container.appendChild(dateDivider);
+                    lastDate = messageDate;
+                }
+                
+                const isSent = message.sender_id === currentUser.id;
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+                messageDiv.id = `message-${message.id}`;
+                
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        <div class="message-text">${escapeHtml(message.message || '')}</div>
+                        <div class="message-time">
+                            ${new Date(message.created_at).toLocaleTimeString()}
+                            ${isSent ? `<span class="message-status">${message.is_read ? '✓✓' : '✓'}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(messageDiv);
+            }
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('private_messages')
+                    .insert([{
+                        sender_id: currentUser.id,
+                        receiver_id: chatWith.id,
+                        message: message,
+                        is_read: false
+                    }]);
+                
+                if (error) throw error;
+                
+                input.value = '';
+                await loadMessages();
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
+        }
+        
+        async function markMessagesAsRead() {
+            await supabase
+                .from('private_messages')
+                .update({ is_read: true })
+                .eq('sender_id', chatWith.id)
+                .eq('receiver_id', currentUser.id)
+                .eq('is_read', false);
+        }
+        
+        function subscribeToMessages() {
+            messagesSubscription = supabase
+                .channel('private_messages')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'private_messages',
+                    filter: `receiver_id=eq.${currentUser.id},sender_id=eq.${chatWith.id}`
+                }, (payload) => {
+                    loadMessages();
+                    markMessagesAsRead();
+                })
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'private_messages',
+                    filter: `sender_id=eq.${currentUser.id},receiver_id=eq.${chatWith.id}`
+                }, (payload) => {
+                    loadMessages();
+                })
+                .subscribe();
+        }
+        
+        window.attachFile = function() {
+            alert('File sharing coming soon!');
+        };
+        
+        window.goBack = function() {
+            if (messagesSubscription) {
+                messagesSubscription.unsubscribe();
+            }
+            localStorage.removeItem('chatWith');
+            window.location.href = 'profile.html';
+        };
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Auto-resize textarea
+        const textarea = document.getElementById('messageInput');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+        
+        // Send on Enter (Shift+Enter for new line)
+        textarea.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        checkAuth();
+    </script>
+</body>
+</html>
