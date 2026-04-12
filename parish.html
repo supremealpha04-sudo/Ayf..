@@ -1,1267 +1,446 @@
-
-html_content = '''<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AYF GWARIMPA - Parish Chat</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #0b141a;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0a0a0a;
             height: 100vh;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* WhatsApp-style Header */
+        /* WhatsApp-style header */
         .chat-header {
-            background: #202c33;
-            padding: 10px 16px;
+            background: #075e54;
+            color: white;
+            padding: 15px;
             display: flex;
             align-items: center;
             gap: 15px;
-            border-bottom: 1px solid #2a3942;
-            position: relative;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .back-btn {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
             cursor: pointer;
-            color: #aebac1;
-            border-radius: 50%;
-            transition: background 0.2s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        .chat-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #00a884;
         }
 
         .chat-info {
             flex: 1;
         }
 
-        .chat-title {
-            font-size: 16px;
+        .chat-name {
             font-weight: 600;
-            color: #e9edef;
         }
 
-        .chat-subtitle {
-            font-size: 13px;
-            color: #8696a0;
-            margin-top: 2px;
-        }
-
-        .chat-actions {
-            display: flex;
-            gap: 5px;
-        }
-
-        .action-icon {
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #aebac1;
-            border-radius: 50%;
-            transition: all 0.2s;
-        }
-
-        .action-icon:hover {
-            background: rgba(255,255,255,0.1);
-            color: #fff;
-        }
-
-        /* Suspension Banner */
-        .suspension-banner {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
-            padding: 12px 16px;
-            text-align: center;
-            display: none;
-        }
-
-        .suspension-banner.active {
-            display: block;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        .suspension-text {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .suspension-timer {
+        .chat-status {
             font-size: 12px;
-            opacity: 0.9;
-            margin-top: 4px;
+            opacity: 0.8;
         }
 
-        /* Chat Background Pattern */
-        .chat-container {
-            height: calc(100vh - 130px);
+        /* Messages container */
+        .messages-container {
+            flex: 1;
             overflow-y: auto;
             padding: 20px;
-            background: 
-                radial-gradient(circle at 50% 50%, rgba(11, 20, 26, 0.9) 0%, rgba(11, 20, 26, 1) 100%),
-                url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23202c33' fill-opacity='0.4' fill-rule='evenodd'/%3E%3C/svg%3E");
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M10,10 L90,10 M10,30 L90,30 M10,50 L90,50 M10,70 L90,70 M10,90 L90,90 M10,10 L10,90 M30,10 L30,90 M50,10 L50,90 M70,10 L70,90 M90,10 L90,90" stroke="white" stroke-width="1"/></svg>');
+            background-repeat: repeat;
         }
 
-        .chat-container::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .chat-container::-webkit-scrollbar-thumb {
-            background: #374045;
-            border-radius: 3px;
-        }
-
-        /* Messages */
         .message {
+            margin-bottom: 15px;
             display: flex;
-            margin-bottom: 12px;
-            animation: messageSlide 0.3s ease;
+            flex-direction: column;
         }
 
-        @keyframes messageSlide {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .message.sent {
+            align-items: flex-end;
         }
 
-        .message.own {
-            justify-content: flex-end;
+        .message.received {
+            align-items: flex-start;
         }
 
         .message-bubble {
             max-width: 70%;
             padding: 8px 12px;
-            border-radius: 8px;
+            border-radius: 18px;
             position: relative;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-        }
-
-        .message:not(.own) .message-bubble {
-            background: #202c33;
-            border-top-left-radius: 0;
-        }
-
-        .message.own .message-bubble {
-            background: #005c4b;
-            border-top-right-radius: 0;
-        }
-
-        .message-sender {
-            font-size: 12px;
-            color: #53bdeb;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .message-text {
-            font-size: 14px;
-            line-height: 1.4;
-            color: #e9edef;
             word-wrap: break-word;
         }
 
-        .message-media {
-            max-width: 100%;
-            border-radius: 6px;
-            margin-bottom: 4px;
-            cursor: pointer;
+        .message.sent .message-bubble {
+            background: #075e54;
+            color: white;
+            border-bottom-right-radius: 4px;
         }
 
-        .message-file {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: rgba(0,0,0,0.2);
-            padding: 10px;
-            border-radius: 6px;
-            cursor: pointer;
+        .message.received .message-bubble {
+            background: #1f2c34;
+            color: white;
+            border-bottom-left-radius: 4px;
         }
 
-        .file-icon {
-            width: 40px;
-            height: 40px;
-            background: #00a884;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .file-info {
-            flex: 1;
-        }
-
-        .file-name {
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .file-size {
+        .message-info {
             font-size: 11px;
-            color: #8696a0;
-        }
-
-        .message-meta {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
             margin-top: 4px;
-        }
-
-        .message-time {
-            font-size: 11px;
             color: #8696a0;
-        }
-
-        .message-status {
-            font-size: 12px;
-            color: #53bdeb;
-        }
-
-        /* Reply Reference */
-        .reply-reference {
-            background: rgba(0,0,0,0.2);
-            padding: 6px 10px;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            border-left: 3px solid #53bdeb;
-        }
-
-        .reply-sender {
-            font-size: 12px;
-            color: #53bdeb;
-            font-weight: 600;
-        }
-
-        .reply-text {
-            font-size: 12px;
-            color: #8696a0;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Date Divider */
-        .date-divider {
-            text-align: center;
-            margin: 20px 0;
-            position: sticky;
-            top: 10px;
-            z-index: 10;
-        }
-
-        .date-divider span {
-            background: #182229;
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #8696a0;
-            text-transform: uppercase;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-
-        /* Input Area */
-        .input-area {
-            position: fixed;
-            bottom: 70px;
-            left: 0;
-            right: 0;
-            background: #202c33;
-            padding: 10px 16px;
             display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            border-top: 1px solid #2a3942;
-        }
-
-        .input-wrapper {
-            flex: 1;
-            background: #2a3942;
-            border-radius: 24px;
-            display: flex;
-            align-items: flex-end;
-            padding: 8px 12px;
             gap: 8px;
         }
 
-        .attach-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #8696a0;
-            transition: all 0.2s;
-            flex-shrink: 0;
+        .message-media {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 5px;
         }
 
-        .attach-btn:hover {
-            color: #fff;
+        /* Input area */
+        .input-area {
+            background: #1f2c34;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .attach-btn {
+            background: none;
+            border: none;
+            color: #8696a0;
+            font-size: 24px;
+            cursor: pointer;
         }
 
         .message-input {
             flex: 1;
-            background: transparent;
+            background: #2a3942;
             border: none;
-            color: #e9edef;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: white;
             font-size: 15px;
-            max-height: 100px;
-            resize: none;
-            padding: 6px 0;
-        }
-
-        .message-input:focus {
-            outline: none;
-        }
-
-        .message-input::placeholder {
-            color: #8696a0;
         }
 
         .send-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00a884;
+            background: none;
             border: none;
-            color: #fff;
+            color: #8696a0;
+            font-size: 24px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
         }
 
-        .send-btn:hover {
-            background: #06cf9c;
+        .send-btn.active {
+            color: #075e54;
         }
 
-        .send-btn:disabled {
-            background: #374045;
-            cursor: not-allowed;
-        }
-
-        /* Reply Preview */
+        /* Reply preview */
         .reply-preview {
-            background: #202c33;
-            padding: 10px 16px;
-            display: none;
-            align-items: center;
-            gap: 10px;
+            background: #2a3942;
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 12px;
+            border-left: 3px solid #075e54;
+        }
+
+        /* Bottom nav */
+        .bottom-nav {
+            background: #1f2c34;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
             border-top: 1px solid #2a3942;
         }
 
-        .reply-preview.active {
-            display: flex;
-        }
-
-        .reply-content {
-            flex: 1;
-            border-left: 3px solid #53bdeb;
-            padding-left: 10px;
-        }
-
-        .cancel-reply {
-            cursor: pointer;
-            color: #8696a0;
-            padding: 5px;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #17212b;
-            border-top: 1px solid #242f3d;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            z-index: 100;
-        }
-
         .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            padding: 8px 20px;
-            cursor: pointer;
-            color: #8a9aa8;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            color: #00a884;
-        }
-
-        .nav-item i {
-            font-size: 22px;
-        }
-
-        .nav-item span {
-            font-size: 11px;
-        }
-
-        /* Attachment Menu */
-        .attachment-menu {
-            position: absolute;
-            bottom: 130px;
-            left: 16px;
-            background: #202c33;
-            border-radius: 16px;
-            padding: 12px;
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            animation: slideUp 0.2s ease;
-        }
-
-        .attachment-menu.active {
-            display: grid;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .attachment-option {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
-            cursor: pointer;
-        }
-
-        .attachment-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-
-        .attachment-icon.purple { background: #7b68ee; }
-        .attachment-icon.pink { background: #ff69b4; }
-        .attachment-icon.blue { background: #4169e1; }
-        .attachment-icon.orange { background: #ff8c00; }
-
-        .attachment-label {
-            font-size: 12px;
-            color: #aebac1;
-        }
-
-        /* Context Menu */
-        .context-menu {
-            position: absolute;
-            background: #202c33;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            display: none;
-            min-width: 180px;
-            z-index: 1000;
-        }
-
-        .context-menu.active {
-            display: block;
-        }
-
-        .context-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .context-item:hover {
-            background: #2a3942;
-        }
-
-        .context-item:first-child {
-            border-radius: 8px 8px 0 0;
-        }
-
-        .context-item:last-child {
-            border-radius: 0 0 8px 8px;
-        }
-
-        /* President Controls */
-        .president-controls {
-            display: none;
-            position: absolute;
-            top: 60px;
-            right: 16px;
-            background: #202c33;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            min-width: 220px;
-            z-index: 1000;
-        }
-
-        .president-controls.active {
-            display: block;
-        }
-
-        .control-header {
-            padding: 16px;
-            border-bottom: 1px solid #2a3942;
-            font-weight: 600;
-        }
-
-        .control-item {
-            padding: 12px 16px;
-            cursor: pointer;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .control-item:hover {
-            background: #2a3942;
-        }
-
-        .suspend-option {
-            color: #ff6b6b;
-        }
-
-        /* Suspension Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #202c33;
-            border-radius: 16px;
-            padding: 24px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            margin-bottom: 20px;
             text-align: center;
-        }
-
-        .suspension-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .suspension-btn {
-            padding: 14px;
-            background: #2a3942;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 15px;
-            transition: all 0.2s;
-        }
-
-        .suspension-btn:hover {
-            background: #ff6b6b;
-        }
-
-        .cancel-btn {
-            margin-top: 10px;
-            padding: 14px;
-            background: transparent;
-            border: 1px solid #374045;
-            border-radius: 10px;
             color: #8696a0;
-            cursor: pointer;
-            font-size: 15px;
-            width: 100%;
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .nav-item.active {
+            color: #075e54;
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <!-- Suspension Banner -->
-    <div class="suspension-banner" id="suspensionBanner">
-        <div class="suspension-text">
-            <i class="fas fa-ban"></i> You are suspended from this parish
-        </div>
-        <div class="suspension-timer" id="suspensionTimer"></div>
-    </div>
-
-    <!-- Chat Header -->
-    <header class="chat-header">
-        <div class="back-btn" onclick="goBack()">
-            <i class="fas fa-arrow-left"></i>
-        </div>
-        <img src="https://via.placeholder.com/40" class="chat-avatar" id="parishAvatar" alt="">
+    <div class="chat-header">
+        <button class="back-btn" onclick="window.location.href='home.html'">←</button>
         <div class="chat-info">
-            <div class="chat-title" id="parishName">Loading...</div>
-            <div class="chat-subtitle" id="memberCount">Loading members...</div>
+            <div class="chat-name" id="parish-name">Loading...</div>
+            <div class="chat-status" id="chat-status">Online</div>
         </div>
-        <div class="chat-actions">
-            <div class="action-icon" onclick="toggleAttachmentMenu()">
-                <i class="fas fa-paperclip"></i>
-            </div>
-            <div class="action-icon" onclick="togglePresidentControls()" id="presidentBtn" style="display:none;">
-                <i class="fas fa-ellipsis-v"></i>
-            </div>
-        </div>
-    </header>
-
-    <!-- President Controls -->
-    <div class="president-controls" id="presidentControls">
-        <div class="control-header">Admin Controls</div>
-        <div class="control-item" onclick="showSuspensionModal()">
-            <i class="fas fa-user-slash"></i>
-            <span>Suspend Member</span>
-        </div>
-        <div class="control-item" onclick="clearAllMessages()">
-            <i class="fas fa-trash"></i>
-            <span>Clear Messages</span>
-        </div>
-        <div class="control-item" onclick="exportChat()">
-            <i class="fas fa-file-export"></i>
-            <span>Export Chat</span>
-        </div>
+        <button class="attach-btn" onclick="showMembers()">👥</button>
     </div>
 
-    <!-- Attachment Menu -->
-    <div class="attachment-menu" id="attachmentMenu">
-        <div class="attachment-option" onclick="selectAttachment('image')">
-            <div class="attachment-icon purple">
-                <i class="fas fa-image"></i>
-            </div>
-            <span class="attachment-label">Gallery</span>
+    <div class="messages-container" id="messages-container"></div>
+
+    <div class="input-area" id="input-area">
+        <button class="attach-btn" onclick="attachFile()">📎</button>
+        <div style="flex:1">
+            <div id="reply-preview" class="reply-preview" style="display: none;"></div>
+            <input type="text" class="message-input" id="message-input" placeholder="Type a message">
         </div>
-        <div class="attachment-option" onclick="selectAttachment('camera')">
-            <div class="attachment-icon pink">
-                <i class="fas fa-camera"></i>
-            </div>
-            <span class="attachment-label">Camera</span>
-        </div>
-        <div class="attachment-option" onclick="selectAttachment('document')">
-            <div class="attachment-icon blue">
-                <i class="fas fa-file"></i>
-            </div>
-            <span class="attachment-label">Document</span>
-        </div>
-        <div class="attachment-option" onclick="selectAttachment('video')">
-            <div class="attachment-icon orange">
-                <i class="fas fa-video"></i>
-            </div>
-            <span class="attachment-label">Video</span>
-        </div>
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">📤</button>
     </div>
 
-    <!-- Chat Container -->
-    <div class="chat-container" id="chatContainer"></div>
-
-    <!-- Reply Preview -->
-    <div class="reply-preview" id="replyPreview">
-        <div class="reply-content">
-            <div style="font-size:12px;color:#53bdeb;font-weight:600;" id="replySender"></div>
-            <div style="font-size:13px;color:#8696a0;" id="replyText"></div>
-        </div>
-        <div class="cancel-reply" onclick="cancelReply()">
-            <i class="fas fa-times"></i>
-        </div>
-    </div>
-
-    <!-- Input Area -->
-    <div class="input-area" id="inputArea">
-        <div class="input-wrapper">
-            <div class="attach-btn" onclick="toggleAttachmentMenu()">
-                <i class="fas fa-plus"></i>
-            </div>
-            <textarea class="message-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
-        </div>
-        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
-        </button>
-    </div>
-
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
+    <div class="bottom-nav">
         <a href="home.html" class="nav-item">
-            <i class="fas fa-home"></i>
+            <span class="nav-icon">🏠</span>
             <span>Home</span>
         </a>
         <a href="parish.html" class="nav-item active">
-            <i class="fas fa-users"></i>
+            <span class="nav-icon">💬</span>
             <span>Parish</span>
         </a>
-        <a href="plan.html" class="nav-item">
-            <i class="fas fa-calendar-alt"></i>
+        <a href="#" class="nav-item" onclick="showPlans()">
+            <span class="nav-icon">📅</span>
             <span>Plan</span>
         </a>
         <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i>
+            <span class="nav-icon">👤</span>
             <span>Profile</span>
         </a>
-    </nav>
-
-    <!-- Suspension Modal -->
-    <div class="modal" id="suspensionModal">
-        <div class="modal-content">
-            <h3 class="modal-title">Suspend Member</h3>
-            <div class="suspension-options">
-                <button class="suspension-btn" onclick="suspendUser(7)">7 Days</button>
-                <button class="suspension-btn" onclick="suspendUser(15)">15 Days</button>
-                <button class="suspension-btn" onclick="suspendUser(30)">30 Days</button>
-                <button class="suspension-btn" onclick="suspendUser(365)">1 Year</button>
-            </div>
-            <button class="cancel-btn" onclick="closeSuspensionModal()">Cancel</button>
-        </div>
     </div>
 
-    <!-- Context Menu -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-item" onclick="replyToMessage()">
-            <i class="fas fa-reply"></i>
-            <span>Reply</span>
-        </div>
-        <div class="context-item" onclick="forwardMessage()">
-            <i class="fas fa-share"></i>
-            <span>Forward</span>
-        </div>
-        <div class="context-item" onclick="deleteMessage()">
-            <i class="fas fa-trash"></i>
-            <span>Delete</span>
-        </div>
-    </div>
-
-    <input type="file" id="fileInput" style="display:none" accept="image/*,video/*,.pdf,.doc,.docx">
-
+    <script src="supabase-config.js"></script>
     <script>
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
         let currentUser = null;
-        let parishData = null;
-        let messages = [];
-        let replyingTo = null;
-        let selectedMessage = null;
-        let isSuspended = false;
+        let currentParish = null;
+        let currentReplyTo = null;
+        let messagesSubscription = null;
 
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            const { data: user } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
+        async function loadUserAndParish() {
+            const { data: { user } } = await supabase.auth.getUser();
+            currentUser = user;
+            if(!user) window.location.href = 'index.html';
+            
+            // Get user's parish
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('parish_name')
+                .eq('id', currentUser.id)
                 .single();
             
-            currentUser = user;
-
-            // Check suspension status
-            await checkSuspension();
-
-            // Load parish data
-            await loadParish();
-
-            // Load messages
-            loadMessages();
-
-            // Setup realtime
-            setupRealtime();
-
-            // Check if president
-            if (user.role === 'exco' || user.role === 'both') {
-                document.getElementById('presidentBtn').style.display = 'flex';
-            }
-
-            // Auto-resize textarea
-            setupTextarea();
-        }
-
-        async function checkSuspension() {
+            currentParish = profile.parish_name;
+            document.getElementById('parish-name').textContent = currentParish;
+            
+            // Check if user is suspended
             const { data: suspension } = await supabase
                 .from('suspensions')
-                .select('*')
+                .select('suspended_until')
                 .eq('user_id', currentUser.id)
-                .eq('status', 'active')
-                .gt('expires_at', new Date().toISOString())
+                .eq('parish_name', currentParish)
+                .gt('suspended_until', new Date().toISOString())
                 .single();
-
-            if (suspension) {
-                isSuspended = true;
-                const banner = document.getElementById('suspensionBanner');
-                const timer = document.getElementById('suspensionTimer');
-                const inputArea = document.getElementById('inputArea');
-                
-                banner.classList.add('active');
-                inputArea.style.display = 'none';
-                
-                const expiry = new Date(suspension.expires_at);
-                const updateTimer = () => {
-                    const diff = expiry - new Date();
-                    if (diff <= 0) {
-                        location.reload();
-                        return;
-                    }
-                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    timer.textContent = `Expires in: ${days}d ${hours}h`;
-                };
-                updateTimer();
-                setInterval(updateTimer, 60000);
+            
+            if(suspension) {
+                document.getElementById('input-area').style.display = 'none';
+                document.getElementById('chat-status').textContent = `Suspended until ${new Date(suspension.suspended_until).toLocaleDateString()}`;
             }
-        }
-
-        async function loadParish() {
-            const { data: parish } = await supabase
-                .from('parishes')
-                .select('*')
-                .eq('name', currentUser.parish)
-                .single();
-
-            if (parish) {
-                parishData = parish;
-                document.getElementById('parishName').textContent = parish.name;
-                document.getElementById('parishAvatar').src = parish.image || 'https://via.placeholder.com/40';
-            }
-
-            // Count members
-            const { count } = await supabase
-                .from('users')
-                .select('*', { count: 'exact' })
-                .eq('parish', currentUser.parish);
-
-            document.getElementById('memberCount').textContent = `${count} members`;
+            
+            loadMessages();
+            setupRealtime();
         }
 
         async function loadMessages() {
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-            const { data: msgs, error } = await supabase
+            // Get parish_id first
+            const { data: parish } = await supabase
+                .from('parishes')
+                .select('id')
+                .eq('name', currentParish)
+                .single();
+            
+            const { data: messages } = await supabase
                 .from('parish_messages')
                 .select(`
                     *,
-                    sender:users(id, full_name, profile_image)
+                    profiles:user_id(full_name, avatar_url),
+                    reply_to:parish_messages(
+                        message,
+                        profiles:user_id(full_name)
+                    )
                 `)
-                .eq('parish', currentUser.parish)
-                .gte('created_at', thirtyDaysAgo.toISOString())
+                .eq('parish_id', parish.id)
                 .order('created_at', { ascending: true });
-
-            if (error) {
-                console.error('Error loading messages:', error);
-                return;
-            }
-
-            messages = msgs || [];
-            renderMessages();
+            
+            renderMessages(messages);
         }
 
-        function renderMessages() {
-            const container = document.getElementById('chatContainer');
-            let currentDate = null;
-            let html = '';
-
-            messages.forEach(msg => {
-                const msgDate = new Date(msg.created_at).toDateString();
-                if (msgDate !== currentDate) {
-                    currentDate = msgDate;
-                    html += `<div class="date-divider"><span>${formatDate(msg.created_at)}</span></div>`;
-                }
-
-                const isOwn = msg.sender_id === currentUser.id;
-                html += createMessageHTML(msg, isOwn);
-            });
-
-            container.innerHTML = html;
-            scrollToBottom();
-        }
-
-        function createMessageHTML(msg, isOwn) {
-            const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            let contentHTML = '';
-            
-            if (msg.reply_to) {
-                const replyMsg = messages.find(m => m.id === msg.reply_to);
-                if (replyMsg) {
-                    contentHTML += `
-                        <div class="reply-reference">
-                            <div class="reply-sender">${replyMsg.sender?.full_name || 'Unknown'}</div>
-                            <div class="reply-text">${replyMsg.content || 'Media'}</div>
+        function renderMessages(messages) {
+            const container = document.getElementById('messages-container');
+            container.innerHTML = messages.map(msg => `
+                <div class="message ${msg.user_id === currentUser.id ? 'sent' : 'received'}" onclick="setReplyTo('${msg.id}', '${msg.message.substring(0, 50)}')">
+                    ${msg.reply_to ? `
+                        <div class="reply-preview" style="margin-bottom: 4px; background: rgba(0,0,0,0.1)">
+                            ↪️ ${msg.reply_to.profiles?.full_name}: ${msg.reply_to.message}
                         </div>
-                    `;
-                }
-            }
-
-            if (msg.media_url) {
-                if (msg.media_type === 'image') {
-                    contentHTML += `<img src="${msg.media_url}" class="message-media" onclick="viewMedia('${msg.media_url}')">`;
-                } else if (msg.media_type === 'video') {
-                    contentHTML += `
-                        <video class="message-media" controls>
-                            <source src="${msg.media_url}" type="video/mp4">
-                        </video>
-                    `;
-                }
-            } else if (msg.file_url) {
-                contentHTML += `
-                    <div class="message-file" onclick="downloadFile('${msg.file_url}', '${msg.file_name}')">
-                        <div class="file-icon">
-                            <i class="fas fa-file"></i>
-                        </div>
-                        <div class="file-info">
-                            <div class="file-name">${msg.file_name}</div>
-                            <div class="file-size">${formatFileSize(msg.file_size)}</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            if (msg.content) {
-                contentHTML += `<div class="message-text">${msg.content}</div>`;
-            }
-
-            return `
-                <div class="message ${isOwn ? 'own' : ''}" data-message-id="${msg.id}" oncontextmenu="showContextMenu(event, '${msg.id}')">
+                    ` : ''}
                     <div class="message-bubble">
-                        ${!isOwn ? `<div class="message-sender">${msg.sender?.full_name || 'Unknown'}</div>` : ''}
-                        ${contentHTML}
-                        <div class="message-meta">
-                            <span class="message-time">${time}</span>
-                            ${isOwn ? `<span class="message-status"><i class="fas fa-check-double"></i></span>` : ''}
-                        </div>
+                        <strong style="font-size: 12px;">${msg.user_id === currentUser.id ? 'You' : msg.profiles?.full_name}</strong><br>
+                        ${msg.message || ''}
+                        ${msg.file_url ? `
+                            ${msg.file_type === 'image' ? `<img src="${msg.file_url}" class="message-media" onclick="window.open('${msg.file_url}')">` : ''}
+                            ${msg.file_type === 'video' ? `<video src="${msg.file_url}" controls class="message-media"></video>` : ''}
+                            ${msg.file_type === 'document' ? `<a href="${msg.file_url}" download style="color: #075e54;">📄 Download Document</a>` : ''}
+                        ` : ''}
+                    </div>
+                    <div class="message-info">
+                        <span>${new Date(msg.created_at).toLocaleTimeString()}</span>
+                        ${msg.user_id === currentUser.id ? '<span>✓✓</span>' : ''}
                     </div>
                 </div>
-            `;
-        }
-
-        async function sendMessage() {
-            if (isSuspended) return;
-
-            const input = document.getElementById('messageInput');
-            const content = input.value.trim();
+            `).join('');
             
-            if (!content && !window.pendingFile) return;
-
-            const sendBtn = document.getElementById('sendBtn');
-            sendBtn.disabled = true;
-
-            let mediaUrl = null;
-            let mediaType = null;
-            let fileUrl = null;
-            let fileName = null;
-            let fileSize = null;
-
-            // Handle file upload
-            if (window.pendingFile) {
-                const file = window.pendingFile;
-                const fileExt = file.name.split('.').pop();
-                const filePath = `${currentUser.parish}/${Date.now()}-${file.name}`;
-
-                const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('parish-media')
-                    .upload(filePath, file);
-
-                if (!uploadError) {
-                    const { data: urlData } = supabase.storage
-                        .from('parish-media')
-                        .getPublicUrl(filePath);
-
-                    if (file.type.startsWith('image/')) {
-                        mediaUrl = urlData.publicUrl;
-                        mediaType = 'image';
-                    } else if (file.type.startsWith('video/')) {
-                        mediaUrl = urlData.publicUrl;
-                        mediaType = 'video';
-                    } else {
-                        fileUrl = urlData.publicUrl;
-                        fileName = file.name;
-                        fileSize = file.size;
-                    }
-                }
-
-                window.pendingFile = null;
-            }
-
-            // Insert message
-            const { error } = await supabase
-                .from('parish_messages')
-                .insert([{
-                    parish: currentUser.parish,
-                    sender_id: currentUser.id,
-                    content,
-                    reply_to: replyingTo,
-                    media_url: mediaUrl,
-                    media_type: mediaType,
-                    file_url: fileUrl,
-                    file_name: fileName,
-                    file_size: fileSize,
-                    created_at: new Date().toISOString()
-                }]);
-
-            if (error) {
-                console.error('Error sending message:', error);
-            }
-
-            input.value = '';
-            cancelReply();
-            sendBtn.disabled = false;
-            input.style.height = 'auto';
-        }
-
-        function setupTextarea() {
-            const textarea = document.getElementById('messageInput');
-            textarea.addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = Math.min(this.scrollHeight, 100) + 'px';
-            });
-
-            textarea.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-        }
-
-        function toggleAttachmentMenu() {
-            if (isSuspended) return;
-            document.getElementById('attachmentMenu').classList.toggle('active');
-        }
-
-        function selectAttachment(type) {
-            if (isSuspended) return;
-            
-            const input = document.getElementById('fileInput');
-            
-            if (type === 'image') {
-                input.accept = 'image/*';
-                input.click();
-            } else if (type === 'video') {
-                input.accept = 'video/*';
-                input.click();
-            } else if (type === 'document') {
-                input.accept = '.pdf,.doc,.docx,.txt';
-                input.click();
-            } else if (type === 'camera') {
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(stream => {
-                        // Handle camera stream
-                        alert('Camera feature - capture and send');
-                    })
-                    .catch(err => {
-                        alert('Camera access denied');
-                    });
-            }
-
-            document.getElementById('attachmentMenu').classList.remove('active');
-        }
-
-        document.getElementById('fileInput').addEventListener('change', function(e) {
-            if (e.target.files[0]) {
-                window.pendingFile = e.target.files[0];
-                sendMessage();
-            }
-        });
-
-        function replyToMessage() {
-            const msg = messages.find(m => m.id === selectedMessage);
-            if (msg) {
-                replyingTo = msg.id;
-                document.getElementById('replyPreview').classList.add('active');
-                document.getElementById('replySender').textContent = msg.sender?.full_name || 'Unknown';
-                document.getElementById('replyText').textContent = msg.content || 'Media';
-                document.getElementById('messageInput').focus();
-            }
-            hideContextMenu();
-        }
-
-        function cancelReply() {
-            replyingTo = null;
-            document.getElementById('replyPreview').classList.remove('active');
-        }
-
-        function showContextMenu(e, messageId) {
-            e.preventDefault();
-            selectedMessage = messageId;
-            const menu = document.getElementById('contextMenu');
-            menu.style.left = e.pageX + 'px';
-            menu.style.top = e.pageY + 'px';
-            menu.classList.add('active');
-        }
-
-        function hideContextMenu() {
-            document.getElementById('contextMenu').classList.remove('active');
-        }
-
-        function togglePresidentControls() {
-            document.getElementById('presidentControls').classList.toggle('active');
-        }
-
-        function showSuspensionModal() {
-            document.getElementById('suspensionModal').classList.add('active');
-            document.getElementById('presidentControls').classList.remove('active');
-        }
-
-        function closeSuspensionModal() {
-            document.getElementById('suspensionModal').classList.remove('active');
-        }
-
-        async function suspendUser(days) {
-            const userId = prompt('Enter user ID to suspend:');
-            if (!userId) return;
-
-            const expiresAt = new Date();
-            expiresAt.setDate(expiresAt.getDate() + days);
-
-            const { error } = await supabase
-                .from('suspensions')
-                .insert([{
-                    user_id: userId,
-                    parish: currentUser.parish,
-                    suspended_by: currentUser.id,
-                    duration_days: days,
-                    expires_at: expiresAt.toISOString(),
-                    status: 'active',
-                    created_at: new Date().toISOString()
-                }]);
-
-            if (error) {
-                alert('Error suspending user: ' + error.message);
-            } else {
-                alert(`User suspended for ${days} days`);
-            }
-
-            closeSuspensionModal();
+            container.scrollTop = container.scrollHeight;
         }
 
         function setupRealtime() {
-            supabase
+            if(messagesSubscription) messagesSubscription.unsubscribe();
+            
+            messagesSubscription = supabase
                 .channel('parish-messages')
                 .on('postgres_changes', { 
-                    event: '*', 
+                    event: 'INSERT', 
                     schema: 'public', 
-                    table: 'parish_messages',
-                    filter: `parish=eq.${currentUser.parish}`
-                }, (payload) => {
-                    if (payload.eventType === 'INSERT') {
-                        loadMessages();
-                    }
+                    table: 'parish_messages' 
+                }, payload => {
+                    loadMessages();
                 })
                 .subscribe();
         }
 
-        function scrollToBottom() {
-            const container = document.getElementById('chatContainer');
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const today = new Date();
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
-
-            if (date.toDateString() === today.toDateString()) return 'Today';
-            if (date.toDateString() === yesterday.toDateString()) return 'Yesterday';
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes < 1024) return bytes + ' B';
-            if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
-            return Math.round(bytes / (1024 * 1024) * 10) / 10 + ' MB';
-        }
-
-        function viewMedia(url) {
-            window.open(url, '_blank');
-        }
-
-        function downloadFile(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename || 'download';
-            link.click();
-        }
-
-        function goBack() {
-            window.location.href = 'home.html';
-        }
-
-        // Close menus on outside click
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.attachment-menu') && !e.target.closest('.attach-btn')) {
-                document.getElementById('attachmentMenu').classList.remove('active');
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if(!message && !currentFile) return;
+            
+            // Check suspension again
+            const { data: suspension } = await supabase
+                .from('suspensions')
+                .select()
+                .eq('user_id', currentUser.id)
+                .gt('suspended_until', new Date().toISOString())
+                .single();
+            
+            if(suspension) {
+                alert(`You are suspended until ${new Date(suspension.suspended_until).toLocaleDateString()}`);
+                return;
             }
-            if (!e.target.closest('.context-menu')) {
-                hideContextMenu();
+            
+            const { data: parish } = await supabase
+                .from('parishes')
+                .select('id')
+                .eq('name', currentParish)
+                .single();
+            
+            const messageData = {
+                parish_id: parish.id,
+                user_id: currentUser.id,
+                message: message,
+                reply_to: currentReplyTo
+            };
+            
+            if(currentFile) {
+                // Upload file
+                const fileExt = currentFile.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const { data: uploadData } = await supabase.storage
+                    .from('parish-files')
+                    .upload(fileName, currentFile);
+                
+                if(uploadData) {
+                    messageData.file_url = supabase.storage.from('parish-files').getPublicUrl(fileName).data.publicUrl;
+                    messageData.file_type = currentFile.type.startsWith('image/') ? 'image' : 
+                                           currentFile.type.startsWith('video/') ? 'video' : 'document';
+                }
+                currentFile = null;
             }
-            if (!e.target.closest('.president-controls') && !e.target.closest('#presidentBtn')) {
-                document.getElementById('presidentControls').classList.remove('active');
-            }
+            
+            await supabase.from('parish_messages').insert([messageData]);
+            
+            input.value = '';
+            currentReplyTo = null;
+            document.getElementById('reply-preview').style.display = 'none';
+        }
+
+        let currentFile = null;
+        function attachFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*,video/*,application/pdf,.doc,.docx';
+            input.onchange = (e) => {
+                currentFile = e.target.files[0];
+                document.getElementById('message-input').placeholder = `File selected: ${currentFile.name}`;
+                document.getElementById('send-btn').classList.add('active');
+            };
+            input.click();
+        }
+
+        function setReplyTo(messageId, preview) {
+            currentReplyTo = messageId;
+            const previewDiv = document.getElementById('reply-preview');
+            previewDiv.innerHTML = `↪️ Replying to: ${preview} <button onclick="cancelReply()">❌</button>`;
+            previewDiv.style.display = 'block';
+        }
+
+        function cancelReply() {
+            currentReplyTo = null;
+            document.getElementById('reply-preview').style.display = 'none';
+        }
+
+        function showMembers() {
+            alert('Members list - Feature coming');
+        }
+
+        function showPlans() {
+            alert('Yearly Plans - Feature coming');
+        }
+
+        // Auto-delete old messages (30 days) - Run via cron or edge function
+        async function cleanupOldMessages() {
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            await supabase
+                .from('parish_messages')
+                .delete()
+                .lt('created_at', thirtyDaysAgo.toISOString());
+        }
+
+        // Enter to send
+        document.getElementById('message-input').addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') sendMessage();
         });
 
-        // Initialize
-        init();
+        loadUserAndParish();
+        
+        // Cleanup old messages daily
+        setInterval(cleanupOldMessages, 24 * 60 * 60 * 1000);
     </script>
 </body>
-</html>'''
-
+</html>
