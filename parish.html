@@ -15,21 +15,20 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #0a0a0a;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
+            color: white;
         }
 
-        /* WhatsApp-style header */
+        /* WhatsApp-like header */
         .chat-header {
             background: #075e54;
-            color: white;
-            padding: 15px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 15px;
-            position: sticky;
+            gap: 16px;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
         }
 
@@ -47,38 +46,55 @@
 
         .chat-name {
             font-weight: 600;
+            font-size: 18px;
         }
 
-        .chat-status {
+        .chat-members {
             font-size: 12px;
             opacity: 0.8;
         }
 
-        /* Messages container */
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.05"><path d="M10,10 L90,10 M10,30 L90,30 M10,50 L90,50 M10,70 L90,70 M10,90 L90,90 M10,10 L10,90 M30,10 L30,90 M50,10 L50,90 M70,10 L70,90 M90,10 L90,90" stroke="white" stroke-width="1"/></svg>');
-            background-repeat: repeat;
+        .chat-actions {
+            display: flex;
+            gap: 16px;
         }
 
+        .chat-actions button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        /* Messages container */
+        .messages-container {
+            margin-top: 60px;
+            margin-bottom: 70px;
+            padding: 16px;
+            height: calc(100vh - 130px);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Message bubbles - WhatsApp style */
         .message {
-            margin-bottom: 15px;
+            max-width: 70%;
+            margin-bottom: 12px;
             display: flex;
             flex-direction: column;
         }
 
         .message.sent {
-            align-items: flex-end;
+            align-self: flex-end;
         }
 
         .message.received {
-            align-items: flex-start;
+            align-self: flex-start;
         }
 
         .message-bubble {
-            max-width: 70%;
             padding: 8px 12px;
             border-radius: 18px;
             position: relative;
@@ -87,44 +103,69 @@
 
         .message.sent .message-bubble {
             background: #075e54;
-            color: white;
             border-bottom-right-radius: 4px;
         }
 
         .message.received .message-bubble {
             background: #1f2c34;
-            color: white;
             border-bottom-left-radius: 4px;
         }
 
-        .message-info {
-            font-size: 11px;
-            margin-top: 4px;
-            color: #8696a0;
-            display: flex;
-            gap: 8px;
+        .message-text {
+            font-size: 14px;
+            line-height: 1.4;
         }
 
+        .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .message-sender {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #6ab3f3;
+        }
+
+        /* Media in messages */
         .message-media {
             max-width: 200px;
             max-height: 200px;
             border-radius: 12px;
-            margin-top: 5px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        /* Reply indicator */
+        .reply-indicator {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 8px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 11px;
+            border-left: 3px solid #6ab3f3;
         }
 
         /* Input area */
         .input-area {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             background: #1f2c34;
-            padding: 10px;
+            padding: 8px 16px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
         }
 
         .attach-btn {
             background: none;
             border: none;
-            color: #8696a0;
+            color: #6ab3f3;
             font-size: 24px;
             cursor: pointer;
         }
@@ -133,295 +174,607 @@
             flex: 1;
             background: #2a3942;
             border: none;
-            padding: 10px 15px;
             border-radius: 20px;
+            padding: 10px 16px;
             color: white;
-            font-size: 15px;
+            font-size: 14px;
+            resize: none;
+            max-height: 100px;
+        }
+
+        .message-input:focus {
+            outline: none;
         }
 
         .send-btn {
             background: none;
             border: none;
-            color: #8696a0;
+            color: #6ab3f3;
             font-size: 24px;
             cursor: pointer;
         }
 
-        .send-btn.active {
-            color: #075e54;
-        }
-
-        /* Reply preview */
-        .reply-preview {
-            background: #2a3942;
-            padding: 8px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 12px;
-            border-left: 3px solid #075e54;
-        }
-
-        /* Bottom nav */
-        .bottom-nav {
+        /* File preview modal */
+        .file-preview {
+            position: fixed;
+            bottom: 70px;
+            left: 16px;
+            right: 16px;
             background: #1f2c34;
+            border-radius: 12px;
+            padding: 12px;
+            display: none;
+            z-index: 200;
+        }
+
+        /* Member list modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: #075e54;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: sticky;
+            top: 0;
+        }
+
+        .modal-content {
+            padding: 16px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #1f2c34;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .member-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #075e54;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 600;
+        }
+
+        .member-role {
+            font-size: 11px;
+            opacity: 0.7;
+        }
+
+        .suspend-btn {
+            padding: 6px 12px;
+            background: #e74c3c;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Footer navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #17212b;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #2a3942;
+            padding: 8px 0;
+            border-top: 1px solid #2b3b4c;
+            z-index: 100;
         }
 
         .nav-item {
-            text-align: center;
-            color: #8696a0;
-            text-decoration: none;
-            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #8e9eae;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.2s;
         }
 
         .nav-item.active {
-            color: #075e54;
+            color: #6ab3f3;
         }
 
         .nav-icon {
             font-size: 24px;
-            display: block;
+        }
+
+        .nav-label {
+            font-size: 11px;
+        }
+
+        @media (max-width: 768px) {
+            .message {
+                max-width: 85%;
+            }
         }
     </style>
 </head>
 <body>
     <div class="chat-header">
-        <button class="back-btn" onclick="window.location.href='home.html'">←</button>
+        <button class="back-btn" onclick="goBack()">←</button>
         <div class="chat-info">
-            <div class="chat-name" id="parish-name">Loading...</div>
-            <div class="chat-status" id="chat-status">Online</div>
+            <div class="chat-name" id="parishName">Loading...</div>
+            <div class="chat-members" id="memberCount">0 members</div>
         </div>
-        <button class="attach-btn" onclick="showMembers()">👥</button>
+        <div class="chat-actions">
+            <button onclick="showMembers()">👥</button>
+            <button onclick="searchMessages()">🔍</button>
+        </div>
     </div>
 
-    <div class="messages-container" id="messages-container"></div>
+    <div class="messages-container" id="messagesContainer">
+        <!-- Messages will load here -->
+    </div>
 
-    <div class="input-area" id="input-area">
+    <div class="input-area">
         <button class="attach-btn" onclick="attachFile()">📎</button>
-        <div style="flex:1">
-            <div id="reply-preview" class="reply-preview" style="display: none;"></div>
-            <input type="text" class="message-input" id="message-input" placeholder="Type a message">
+        <textarea class="message-input" id="messageInput" placeholder="Type a message" rows="1"></textarea>
+        <button class="send-btn" onclick="sendMessage()">📤</button>
+    </div>
+
+    <div class="file-preview" id="filePreview">
+        <div id="previewContent"></div>
+        <button onclick="cancelFile()">Cancel</button>
+        <button onclick="sendFile()">Send</button>
+    </div>
+
+    <div class="modal" id="membersModal" onclick="if(event.target === this) closeModal()">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeModal()">←</button>
+            <div class="chat-name">Parish Members</div>
         </div>
-        <button class="send-btn" id="send-btn" onclick="sendMessage()">📤</button>
+        <div class="modal-content" id="membersList">
+            <!-- Members will load here -->
+        </div>
     </div>
 
     <div class="bottom-nav">
-        <a href="home.html" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="parish.html" class="nav-item active">
-            <span class="nav-icon">💬</span>
-            <span>Parish</span>
-        </a>
-        <a href="#" class="nav-item" onclick="showPlans()">
-            <span class="nav-icon">📅</span>
-            <span>Plan</span>
-        </a>
-        <a href="profile.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>Profile</span>
-        </a>
+        <button class="nav-item" onclick="navigateTo('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-item active" onclick="navigateTo('parish')">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Parish</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('plan')">
+            <div class="nav-icon">📅</div>
+            <div class="nav-label">Plan</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('profile')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Profile</div>
+        </button>
     </div>
 
-    <script src="supabase-config.js"></script>
     <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let currentUser = null;
+        let currentProfile = null;
         let currentParish = null;
-        let currentReplyTo = null;
         let messagesSubscription = null;
-
-        async function loadUserAndParish() {
-            const { data: { user } } = await supabase.auth.getUser();
-            currentUser = user;
-            if(!user) window.location.href = 'index.html';
-            
-            // Get user's parish
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('parish_name')
-                .eq('id', currentUser.id)
-                .single();
-            
-            currentParish = profile.parish_name;
-            document.getElementById('parish-name').textContent = currentParish;
-            
-            // Check if user is suspended
-            const { data: suspension } = await supabase
-                .from('suspensions')
-                .select('suspended_until')
-                .eq('user_id', currentUser.id)
-                .eq('parish_name', currentParish)
-                .gt('suspended_until', new Date().toISOString())
-                .single();
-            
-            if(suspension) {
-                document.getElementById('input-area').style.display = 'none';
-                document.getElementById('chat-status').textContent = `Suspended until ${new Date(suspension.suspended_until).toLocaleDateString()}`;
-            }
-            
-            loadMessages();
-            setupRealtime();
-        }
-
-        async function loadMessages() {
-            // Get parish_id first
-            const { data: parish } = await supabase
-                .from('parishes')
-                .select('id')
-                .eq('name', currentParish)
-                .single();
-            
-            const { data: messages } = await supabase
-                .from('parish_messages')
-                .select(`
-                    *,
-                    profiles:user_id(full_name, avatar_url),
-                    reply_to:parish_messages(
-                        message,
-                        profiles:user_id(full_name)
-                    )
-                `)
-                .eq('parish_id', parish.id)
-                .order('created_at', { ascending: true });
-            
-            renderMessages(messages);
-        }
-
-        function renderMessages(messages) {
-            const container = document.getElementById('messages-container');
-            container.innerHTML = messages.map(msg => `
-                <div class="message ${msg.user_id === currentUser.id ? 'sent' : 'received'}" onclick="setReplyTo('${msg.id}', '${msg.message.substring(0, 50)}')">
-                    ${msg.reply_to ? `
-                        <div class="reply-preview" style="margin-bottom: 4px; background: rgba(0,0,0,0.1)">
-                            ↪️ ${msg.reply_to.profiles?.full_name}: ${msg.reply_to.message}
-                        </div>
-                    ` : ''}
-                    <div class="message-bubble">
-                        <strong style="font-size: 12px;">${msg.user_id === currentUser.id ? 'You' : msg.profiles?.full_name}</strong><br>
-                        ${msg.message || ''}
-                        ${msg.file_url ? `
-                            ${msg.file_type === 'image' ? `<img src="${msg.file_url}" class="message-media" onclick="window.open('${msg.file_url}')">` : ''}
-                            ${msg.file_type === 'video' ? `<video src="${msg.file_url}" controls class="message-media"></video>` : ''}
-                            ${msg.file_type === 'document' ? `<a href="${msg.file_url}" download style="color: #075e54;">📄 Download Document</a>` : ''}
-                        ` : ''}
-                    </div>
-                    <div class="message-info">
-                        <span>${new Date(msg.created_at).toLocaleTimeString()}</span>
-                        ${msg.user_id === currentUser.id ? '<span>✓✓</span>' : ''}
-                    </div>
-                </div>
-            `).join('');
-            
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function setupRealtime() {
-            if(messagesSubscription) messagesSubscription.unsubscribe();
-            
-            messagesSubscription = supabase
-                .channel('parish-messages')
-                .on('postgres_changes', { 
-                    event: 'INSERT', 
-                    schema: 'public', 
-                    table: 'parish_messages' 
-                }, payload => {
-                    loadMessages();
-                })
-                .subscribe();
-        }
-
-        async function sendMessage() {
-            const input = document.getElementById('message-input');
-            const message = input.value.trim();
-            if(!message && !currentFile) return;
-            
-            // Check suspension again
-            const { data: suspension } = await supabase
-                .from('suspensions')
-                .select()
-                .eq('user_id', currentUser.id)
-                .gt('suspended_until', new Date().toISOString())
-                .single();
-            
-            if(suspension) {
-                alert(`You are suspended until ${new Date(suspension.suspended_until).toLocaleDateString()}`);
+        let pendingFile = null;
+        let replyToMessage = null;
+        
+        // Check auth
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'index.html';
                 return;
             }
+            currentUser = JSON.parse(userStr);
+            currentProfile = JSON.parse(localStorage.getItem('profile') || '{}');
+            currentParish = currentProfile.parish_name;
             
-            const { data: parish } = await supabase
-                .from('parishes')
-                .select('id')
-                .eq('name', currentParish)
+            document.getElementById('parishName').textContent = currentParish;
+            await loadMembers();
+            await loadMessages();
+            await checkSuspension();
+            subscribeToMessages();
+        }
+        
+        // Check if user is suspended
+        async function checkSuspension() {
+            const { data: suspension, error } = await supabase
+                .from('suspensions')
+                .select('*')
+                .eq('user_id', currentUser.id)
+                .eq('parish_name', currentParish)
+                .gt('suspension_end_date', new Date().toISOString())
                 .single();
             
-            const messageData = {
-                parish_id: parish.id,
-                user_id: currentUser.id,
-                message: message,
-                reply_to: currentReplyTo
-            };
+            if (suspension && !error) {
+                const input = document.getElementById('messageInput');
+                const sendBtn = document.querySelector('.send-btn');
+                const attachBtn = document.querySelector('.attach-btn');
+                input.disabled = true;
+                input.placeholder = `You are suspended until ${new Date(suspension.suspension_end_date).toLocaleDateString()}`;
+                sendBtn.disabled = true;
+                attachBtn.disabled = true;
+            }
+        }
+        
+        // Load parish members
+        async function loadMembers() {
+            const { data: members, error } = await supabase
+                .from('parish_members')
+                .select('user_id, is_president')
+                .eq('parish_name', currentParish);
             
-            if(currentFile) {
-                // Upload file
-                const fileExt = currentFile.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                const { data: uploadData } = await supabase.storage
-                    .from('parish-files')
-                    .upload(fileName, currentFile);
+            if (error) return;
+            
+            document.getElementById('memberCount').textContent = `${members.length} members`;
+            
+            // Load member profiles
+            const memberProfiles = [];
+            for (const member of members) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, profile_image_url, is_suspended')
+                    .eq('id', member.user_id)
+                    .single();
                 
-                if(uploadData) {
-                    messageData.file_url = supabase.storage.from('parish-files').getPublicUrl(fileName).data.publicUrl;
-                    messageData.file_type = currentFile.type.startsWith('image/') ? 'image' : 
-                                           currentFile.type.startsWith('video/') ? 'video' : 'document';
+                if (profile) {
+                    memberProfiles.push({
+                        ...profile,
+                        is_president: member.is_president
+                    });
                 }
-                currentFile = null;
             }
             
-            await supabase.from('parish_messages').insert([messageData]);
+            // Render members in modal
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '';
             
-            input.value = '';
-            currentReplyTo = null;
-            document.getElementById('reply-preview').style.display = 'none';
+            for (const member of memberProfiles) {
+                const isPresident = currentProfile.is_exco_parish && member.is_president;
+                const canSuspend = currentProfile.is_exco_parish && member.id !== currentUser.id;
+                
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'member-item';
+                memberDiv.innerHTML = `
+                    <div class="member-avatar">${member.full_name.charAt(0)}</div>
+                    <div class="member-info">
+                        <div class="member-name">${escapeHtml(member.full_name)}</div>
+                        <div class="member-role">${member.is_president ? 'Parish President' : 'Member'} ${member.is_suspended ? '(Suspended)' : ''}</div>
+                    </div>
+                    ${canSuspend && !member.is_suspended ? `
+                        <button class="suspend-btn" onclick="suspendMember('${member.id}', '${member.full_name}')">Suspend</button>
+                    ` : ''}
+                    ${canSuspend && member.is_suspended ? `
+                        <button class="suspend-btn" onclick="unsuspendMember('${member.id}')">Unsuspend</button>
+                    ` : ''}
+                `;
+                membersList.appendChild(memberDiv);
+            }
         }
-
-        let currentFile = null;
-        function attachFile() {
+        
+        // Load messages
+        async function loadMessages() {
+            const { data: messages, error } = await supabase
+                .from('parish_messages')
+                .select('*')
+                .eq('parish_name', currentParish)
+                .order('created_at', { ascending: true });
+            
+            if (error) return;
+            
+            const container = document.getElementById('messagesContainer');
+            container.innerHTML = '';
+            
+            for (const message of messages) {
+                await renderMessage(message);
+            }
+            
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        // Render single message
+        async function renderMessage(message) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('full_name, profile_image_url')
+                .eq('id', message.user_id)
+                .single();
+            
+            const isSent = message.user_id === currentUser.id;
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+            messageDiv.id = `message-${message.id}`;
+            
+            let mediaHtml = '';
+            if (message.file_url) {
+                if (message.file_type === 'image') {
+                    mediaHtml = `<img src="${message.file_url}" class="message-media" onclick="viewMedia('${message.file_url}')">`;
+                } else if (message.file_type === 'video') {
+                    mediaHtml = `<video src="${message.file_url}" class="message-media" controls></video>`;
+                } else {
+                    mediaHtml = `<a href="${message.file_url}" download>📎 Download File</a>`;
+                }
+            }
+            
+            let replyHtml = '';
+            if (message.reply_to_id) {
+                const { data: repliedMessage } = await supabase
+                    .from('parish_messages')
+                    .select('message, file_url')
+                    .eq('id', message.reply_to_id)
+                    .single();
+                
+                if (repliedMessage) {
+                    replyHtml = `<div class="reply-indicator">↩️ ${repliedMessage.message?.substring(0, 50) || 'Media'}</div>`;
+                }
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble" onclick="showMessageActions('${message.id}')">
+                    ${!isSent ? `<div class="message-sender">${escapeHtml(profile?.full_name || 'User')}</div>` : ''}
+                    ${replyHtml}
+                    <div class="message-text">${escapeHtml(message.message || '')}</div>
+                    ${mediaHtml}
+                    <div class="message-time">${new Date(message.created_at).toLocaleTimeString()}</div>
+                </div>
+            `;
+            
+            document.getElementById('messagesContainer').appendChild(messageDiv);
+        }
+        
+        // Send message
+        window.sendMessage = async function() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message && !pendingFile) return;
+            
+            try {
+                const messageData = {
+                    parish_name: currentParish,
+                    user_id: currentUser.id,
+                    message: message || null,
+                    reply_to_id: replyToMessage
+                };
+                
+                const { error } = await supabase
+                    .from('parish_messages')
+                    .insert([messageData]);
+                
+                if (error) throw error;
+                
+                input.value = '';
+                replyToMessage = null;
+                await loadMessages();
+                
+                // Auto-delete old messages (30 days)
+                await cleanupOldMessages();
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
+        };
+        
+        // Attach file
+        window.attachFile = function() {
             const input = document.createElement('input');
             input.type = 'file';
-            input.accept = 'image/*,video/*,application/pdf,.doc,.docx';
-            input.onchange = (e) => {
-                currentFile = e.target.files[0];
-                document.getElementById('message-input').placeholder = `File selected: ${currentFile.name}`;
-                document.getElementById('send-btn').classList.add('active');
+            input.accept = 'image/*,video/*,.pdf,.doc,.docx';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    pendingFile = file;
+                    const preview = document.getElementById('previewContent');
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            preview.innerHTML = `<img src="${e.target.result}" style="max-width: 100%; border-radius: 8px;">`;
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        preview.innerHTML = `<p>${file.name}</p>`;
+                    }
+                    document.getElementById('filePreview').style.display = 'block';
+                }
             };
             input.click();
-        }
-
-        function setReplyTo(messageId, preview) {
-            currentReplyTo = messageId;
-            const previewDiv = document.getElementById('reply-preview');
-            previewDiv.innerHTML = `↪️ Replying to: ${preview} <button onclick="cancelReply()">❌</button>`;
-            previewDiv.style.display = 'block';
-        }
-
-        function cancelReply() {
-            currentReplyTo = null;
-            document.getElementById('reply-preview').style.display = 'none';
-        }
-
-        function showMembers() {
-            alert('Members list - Feature coming');
-        }
-
-        function showPlans() {
-            alert('Yearly Plans - Feature coming');
-        }
-
-        // Auto-delete old messages (30 days) - Run via cron or edge function
+        };
+        
+        // Send file
+        window.sendFile = async function() {
+            if (!pendingFile) return;
+            
+            try {
+                // Upload file to storage
+                const fileExt = pendingFile.name.split('.').pop();
+                const fileName = `${currentParish}/${Date.now()}_${Math.random()}.${fileExt}`;
+                const { data, error } = await supabase.storage
+                    .from('parish_files')
+                    .upload(fileName, pendingFile);
+                
+                if (error) throw error;
+                
+                const { data: { publicUrl } } = supabase.storage
+                    .from('parish_files')
+                    .getPublicUrl(fileName);
+                
+                let fileType = 'document';
+                if (pendingFile.type.startsWith('image/')) fileType = 'image';
+                if (pendingFile.type.startsWith('video/')) fileType = 'video';
+                
+                const { error: messageError } = await supabase
+                    .from('parish_messages')
+                    .insert([{
+                        parish_name: currentParish,
+                        user_id: currentUser.id,
+                        file_url: publicUrl,
+                        file_type: fileType,
+                        reply_to_id: replyToMessage
+                    }]);
+                
+                if (messageError) throw messageError;
+                
+                pendingFile = null;
+                document.getElementById('filePreview').style.display = 'none';
+                document.getElementById('previewContent').innerHTML = '';
+                await loadMessages();
+                
+            } catch (error) {
+                console.error('Error sending file:', error);
+                alert('Failed to send file');
+            }
+        };
+        
+        window.cancelFile = function() {
+            pendingFile = null;
+            document.getElementById('filePreview').style.display = 'none';
+            document.getElementById('previewContent').innerHTML = '';
+        };
+        
+        // Suspend member
+        window.suspendMember = async function(userId, userName) {
+            const duration = prompt('Select suspension duration:\n1 - 7 days\n2 - 15 days\n3 - 30 days\n4 - 1 year\nEnter number:', '1');
+            
+            let days;
+            switch(duration) {
+                case '1': days = 7; break;
+                case '2': days = 15; break;
+                case '3': days = 30; break;
+                case '4': days = 365; break;
+                default: return;
+            }
+            
+            const endDate = new Date();
+            endDate.setDate(endDate.getDate() + days);
+            
+            try {
+                // Update profile suspension
+                await supabase
+                    .from('profiles')
+                    .update({ is_suspended: true, suspension_end_date: endDate.toISOString() })
+                    .eq('id', userId);
+                
+                // Add suspension record
+                await supabase
+                    .from('suspensions')
+                    .insert([{
+                        user_id: userId,
+                        parish_name: currentParish,
+                        suspended_by: currentUser.id,
+                        duration_days: days,
+                        suspension_end_date: endDate.toISOString()
+                    }]);
+                
+                alert(`${userName} suspended for ${days} days`);
+                await loadMembers();
+                
+                // Send system message
+                await supabase
+                    .from('parish_messages')
+                    .insert([{
+                        parish_name: currentParish,
+                        user_id: currentUser.id,
+                        message: `⚠️ ${userName} has been suspended for ${days} days`
+                    }]);
+                
+            } catch (error) {
+                console.error('Error suspending member:', error);
+                alert('Failed to suspend member');
+            }
+        };
+        
+        // Unsuspend member
+        window.unsuspendMember = async function(userId) {
+            if (!confirm('Unsuspend this member?')) return;
+            
+            try {
+                await supabase
+                    .from('profiles')
+                    .update({ is_suspended: false, suspension_end_date: null })
+                    .eq('id', userId);
+                
+                await supabase
+                    .from('suspensions')
+                    .delete()
+                    .eq('user_id', userId)
+                    .eq('parish_name', currentParish);
+                
+                alert('Member unsuspended');
+                await loadMembers();
+                
+            } catch (error) {
+                console.error('Error unsuspending member:', error);
+                alert('Failed to unsuspend member');
+            }
+        };
+        
+        // Message actions (reply, copy, delete)
+        window.showMessageActions = function(messageId) {
+            const action = prompt('Choose action:\n1 - Reply\n2 - Copy\n3 - Delete (admin only)');
+            
+            switch(action) {
+                case '1':
+                    replyToMessage = messageId;
+                    document.getElementById('messageInput').placeholder = 'Replying to message...';
+                    break;
+                case '2':
+                    const messageEl = document.getElementById(`message-${messageId}`);
+                    const text = messageEl?.querySelector('.message-text')?.textContent;
+                    if (text) {
+                        navigator.clipboard.writeText(text);
+                        alert('Copied to clipboard');
+                    }
+                    break;
+                case '3':
+                    if (currentProfile.is_exco_parish) {
+                        if (confirm('Delete this message?')) {
+                            supabase.from('parish_messages').delete().eq('id', messageId);
+                        }
+                    } else {
+                        alert('Only admin can delete messages');
+                    }
+                    break;
+            }
+        };
+        
+        // Cleanup old messages (30 days)
         async function cleanupOldMessages() {
             const thirtyDaysAgo = new Date();
             thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -431,16 +784,99 @@
                 .delete()
                 .lt('created_at', thirtyDaysAgo.toISOString());
         }
-
-        // Enter to send
-        document.getElementById('message-input').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendMessage();
-        });
-
-        loadUserAndParish();
         
-        // Cleanup old messages daily
-        setInterval(cleanupOldMessages, 24 * 60 * 60 * 1000);
+        // Subscribe to real-time messages
+        function subscribeToMessages() {
+            messagesSubscription = supabase
+                .channel('parish_messages')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'parish_messages',
+                    filter: `parish_name=eq.${currentParish}`
+                }, (payload) => {
+                    renderMessage(payload.new);
+                    const container = document.getElementById('messagesContainer');
+                    container.scrollTop = container.scrollHeight;
+                })
+                .subscribe();
+        }
+        
+        window.viewMedia = function(url) {
+            window.open(url, '_blank');
+        };
+        
+        window.searchMessages = function() {
+            const searchTerm = prompt('Search messages:');
+            if (searchTerm) {
+                const messages = document.querySelectorAll('.message-text');
+                messages.forEach(msg => {
+                    if (msg.textContent.toLowerCase().includes(searchTerm.toLowerCase())) {
+                        msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        msg.style.backgroundColor = '#075e54';
+                        setTimeout(() => {
+                            msg.style.backgroundColor = '';
+                        }, 2000);
+                    }
+                });
+            }
+        };
+        
+        window.showMembers = function() {
+            document.getElementById('membersModal').style.display = 'block';
+        };
+        
+        window.closeModal = function() {
+            document.getElementById('membersModal').style.display = 'none';
+        };
+        
+        window.goBack = function() {
+            window.location.href = 'home.html';
+        };
+        
+        window.navigateTo = function(page) {
+            if (messagesSubscription) {
+                messagesSubscription.unsubscribe();
+            }
+            switch(page) {
+                case 'home':
+                    window.location.href = 'home.html';
+                    break;
+                case 'parish':
+                    window.location.href = 'parish.html';
+                    break;
+                case 'plan':
+                    window.location.href = 'plan.html';
+                    break;
+                case 'profile':
+                    window.location.href = 'profile.html';
+                    break;
+            }
+        };
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Auto-resize textarea
+        const textarea = document.getElementById('messageInput');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 100) + 'px';
+        });
+        
+        // Send on Enter (Shift+Enter for new line)
+        textarea.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+        
+        checkAuth();
     </script>
 </body>
 </html>
