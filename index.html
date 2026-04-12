@@ -175,65 +175,74 @@
     </style>
 </head>
 <body>
-
-<!-- Login/Register Container -->
-<div id="authContainer" class="container">
+  <!-- Login/Register Container -->
+  <div id="authContainer" class="container">
     <div class="header">
-        <div class="logo"><i class="fas fa-church"></i></div>
-        <h1>AYF GWARIMPA</h1>
-        <p>Anglican Youth Fellowship</p>
+      <div class="logo"><i class="fas fa-church"></i></div>
+      <h1>AYF GWARIMPA</h1>
+      <p>Anglican Youth Fellowship</p>
     </div>
 
     <div class="tabs">
-        <div class="tab active" onclick="showTab('login')">Login</div>
-        <div class="tab" onclick="showTab('register')">Register</div>
+      <div class="tab active" onclick="showTab('login')">Login</div>
+      <div class="tab" onclick="showTab('register')">Register</div>
     </div>
 
     <!-- Login Form -->
     <div id="loginPanel" class="form-panel active">
-        <div id="loginMsg" class="message"></div>
-        <input type="email" id="loginEmail" placeholder="Email" autocomplete="off">
-        <input type="password" id="loginPassword" placeholder="Password">
-        <button onclick="login()">Login</button>
+      <div id="loginMsg" class="message"></div>
+      <input type="email" id="loginEmail" placeholder="Email" autocomplete="off">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <button onclick="login()">Login</button>
     </div>
 
     <!-- Register Form -->
     <div id="registerPanel" class="form-panel">
-        <div id="registerMsg" class="message"></div>
-        <input type="text" id="regName" placeholder="Full Name">
-        <input type="email" id="regEmail" placeholder="Email">
-        <input type="password" id="regPassword" placeholder="Password (min 6 chars)">
-        <select id="regParish">
-            <option value="">Select Parish</option>
-            <option>St. Matthews</option>
-            <option>St. Pauls</option>
-            <option>St. Johns</option>
-            <option>All Saints</option>
-        </select>
-        <select id="regGender">
-            <option value="">Select Gender</option>
-            <option>Male</option>
-            <option>Female</option>
-        </select>
-        <div>
-            <label class="role-option"><input type="radio" name="role" value="member" checked> Member</label>
-            <label class="role-option"><input type="radio" name="role" value="exco"> Exco</label>
-        </div>
-        <button onclick="register()">Create Account</button>
-    </div>
-</div>
+      <div id="registerMsg" class="message"></div>
+      <input type="text" id="regName" placeholder="Full Name">
+      <input type="email" id="regEmail" placeholder="Email">
+      <input type="password" id="regPassword" placeholder="Password (min 6 chars)">
 
-<!-- Home Container -->
-<div id="homeContainer" class="home-panel">
+      <select id="regParish">
+        <option value="">Select Parish</option>
+        <option>St. Matthews</option>
+        <option>St. Pauls</option>
+        <option>St. Johns</option>
+        <option>All Saints</option>
+      </select>
+
+      <select id="regGender">
+        <option value="">Select Gender</option>
+        <option>Male</option>
+        <option>Female</option>
+      </select>
+
+      <div>
+        <label class="role-option">
+          <input type="radio" name="role" value="member" checked> Member
+        </label>
+        <label class="role-option">
+          <input type="radio" name="role" value="exco"> Exco
+        </label>
+      </div>
+
+      <button onclick="register()">Create Account</button>
+    </div>
+  </div>
+
+  <!-- Home Container -->
+  <div id="homeContainer" class="home-panel">
     <div class="home-header">
-        <div class="logo"><i class="fas fa-church"></i></div>
-        <h1>Welcome to AYF GWARIMPA</h1>
+      <div class="logo"><i class="fas fa-church"></i></div>
+      <h1>Welcome to AYF GWARIMPA</h1>
     </div>
+
     <div class="home-content">
-        <div id="homeInfo" class="info-card">Loading...</div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+      <div id="homeInfo" class="info-card">Loading...</div>
+      <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
-</div>
+  </div>
+
 
 <script>
   const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
