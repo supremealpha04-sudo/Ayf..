@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AYF GWARIMPA - Admin Dashboard</title>
+    <title>AYF GWARIMPA - Admin</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * {
@@ -66,7 +66,6 @@
             color: white;
             cursor: pointer;
             white-space: nowrap;
-            transition: all 0.2s;
         }
 
         .admin-tab.active {
@@ -121,11 +120,6 @@
             font-size: 14px;
         }
 
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #6ab3f3;
-        }
-
         button {
             padding: 12px 24px;
             background: #6ab3f3;
@@ -134,20 +128,10 @@
             color: #17212b;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        button:hover {
-            transform: translateY(-1px);
         }
 
         button.danger {
             background: #e74c3c;
-            color: white;
-        }
-
-        button.secondary {
-            background: #242f3d;
             color: white;
         }
 
@@ -163,6 +147,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .item-info {
@@ -188,47 +174,21 @@
             padding: 6px 12px;
             font-size: 12px;
         }
-
-        .media-preview {
-            max-width: 100px;
-            max-height: 100px;
-            margin-top: 8px;
-            border-radius: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .admin-tab {
-                padding: 8px 12px;
-                font-size: 12px;
-            }
-            
-            .item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
-            .item-actions {
-                width: 100%;
-                justify-content: flex-end;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="admin-header">
         <h1>🛡️ Admin Dashboard</h1>
-        <button class="logout-btn" onclick="logout()">Logout</button>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
 
-    <div class="admin-tabs">
-        <button class="admin-tab active" onclick="showPanel('posts')">Posts</button>
-        <button class="admin-tab" onclick="showPanel('events')">Events</button>
-        <button class="admin-tab" onclick="showPanel('notices')">Notices</button>
-        <button class="admin-tab" onclick="showPanel('minutes')">Minutes</button>
-        <button class="admin-tab" onclick="showPanel('plans')">Plans</button>
-        <button class="admin-tab" onclick="showPanel('quotas')">Quotas</button>
-        <button class="admin-tab" onclick="showPanel('exco')">Exco Requests</button>
+    <div class="admin-tabs" id="adminTabs">
+        <button class="admin-tab active" data-panel="posts">Posts</button>
+        <button class="admin-tab" data-panel="events">Events</button>
+        <button class="admin-tab" data-panel="notices">Notices</button>
+        <button class="admin-tab" data-panel="minutes">Minutes</button>
+        <button class="admin-tab" data-panel="plans">Plans</button>
+        <button class="admin-tab" data-panel="exco">Exco Requests</button>
     </div>
 
     <div class="admin-content">
@@ -236,7 +196,7 @@
         <div id="postsPanel" class="panel active">
             <div class="card">
                 <h3>Create New Post</h3>
-                <form id="createPostForm">
+                <form id="postForm">
                     <div class="form-group">
                         <label>Title</label>
                         <input type="text" id="postTitle" required>
@@ -247,7 +207,7 @@
                     </div>
                     <div class="form-group">
                         <label>Quote/Content</label>
-                        <textarea id="postContent" rows="3" placeholder="Inspirational quote or additional content..."></textarea>
+                        <textarea id="postContent" rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Media Type</label>
@@ -264,7 +224,6 @@
                     <button type="submit">Create Post</button>
                 </form>
             </div>
-
             <div class="card">
                 <h3>Manage Posts</h3>
                 <div id="postsList">Loading...</div>
@@ -275,7 +234,7 @@
         <div id="eventsPanel" class="panel">
             <div class="card">
                 <h3>Create New Event</h3>
-                <form id="createEventForm">
+                <form id="eventForm">
                     <div class="form-group">
                         <label>Event Title</label>
                         <input type="text" id="eventTitle" required>
@@ -288,14 +247,9 @@
                         <label>Event Date</label>
                         <input type="datetime-local" id="eventDate" required>
                     </div>
-                    <div class="form-group">
-                        <label>Location</label>
-                        <input type="text" id="eventLocation">
-                    </div>
                     <button type="submit">Create Event</button>
                 </form>
             </div>
-
             <div class="card">
                 <h3>Manage Events</h3>
                 <div id="eventsList">Loading...</div>
@@ -306,7 +260,7 @@
         <div id="noticesPanel" class="panel">
             <div class="card">
                 <h3>Create New Notice</h3>
-                <form id="createNoticeForm">
+                <form id="noticeForm">
                     <div class="form-group">
                         <label>Notice Title</label>
                         <input type="text" id="noticeTitle" required>
@@ -318,7 +272,6 @@
                     <button type="submit">Publish Notice</button>
                 </form>
             </div>
-
             <div class="card">
                 <h3>Manage Notices</h3>
                 <div id="noticesList">Loading...</div>
@@ -329,7 +282,7 @@
         <div id="minutesPanel" class="panel">
             <div class="card">
                 <h3>Upload Meeting Minutes</h3>
-                <form id="createMinutesForm">
+                <form id="minutesForm">
                     <div class="form-group">
                         <label>Title</label>
                         <input type="text" id="minutesTitle" required>
@@ -345,7 +298,6 @@
                     <button type="submit">Upload Minutes</button>
                 </form>
             </div>
-
             <div class="card">
                 <h3>Manage Minutes</h3>
                 <div id="minutesList">Loading...</div>
@@ -356,7 +308,7 @@
         <div id="plansPanel" class="panel">
             <div class="card">
                 <h3>Upload Yearly Plan</h3>
-                <form id="createPlanForm">
+                <form id="planForm">
                     <div class="form-group">
                         <label>Plan Title</label>
                         <input type="text" id="planTitle" required>
@@ -376,47 +328,9 @@
                     <button type="submit">Upload Plan</button>
                 </form>
             </div>
-
             <div class="card">
                 <h3>Manage Plans</h3>
                 <div id="plansList">Loading...</div>
-            </div>
-        </div>
-
-        <!-- Quotas Panel -->
-        <div id="quotasPanel" class="panel">
-            <div class="card">
-                <h3>Send Parish Quota</h3>
-                <form id="createQuotaForm">
-                    <div class="form-group">
-                        <label>Select Parish President</label>
-                        <select id="quotaPresident" required>
-                            <option value="">Loading presidents...</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Parish Name</label>
-                        <input type="text" id="quotaParish" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Amount (₦)</label>
-                        <input type="number" id="quotaAmount" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Description</label>
-                        <textarea id="quotaDescription" rows="3" placeholder="What this quota covers..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Due Date</label>
-                        <input type="date" id="quotaDueDate">
-                    </div>
-                    <button type="submit">Send Quota Message</button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h3>Sent Quotas</h3>
-                <div id="quotasList">Loading...</div>
             </div>
         </div>
 
@@ -435,65 +349,38 @@
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let currentUser = null;
-        let currentProfile = null;
         
         async function checkAuth() {
-            const userStr = localStorage.getItem('user');
+            const userStr = localStorage.getItem('ayf_user');
             if (!userStr) {
                 window.location.href = 'index.html';
                 return;
             }
             currentUser = JSON.parse(userStr);
             
-            // Check if user is admin (has exco position)
+            // Check admin access
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('*')
+                .select('is_exco_parish, is_exco_archediceanry')
                 .eq('id', currentUser.id)
                 .single();
             
-            currentProfile = profile;
-            
-            if (!profile.is_exco_parish && !profile.is_exco_archediceanry) {
-                alert('Access denied. Admin privileges required.');
+            if (!profile?.is_exco_parish && !profile?.is_exco_archediceanry) {
+                alert('Access denied. Admin only.');
                 window.location.href = 'home.html';
                 return;
             }
             
-            // Load all panels
-            loadPosts();
-            loadEvents();
-            loadNotices();
-            loadMinutes();
-            loadPlans();
-            loadQuotas();
-            loadExcoRequests();
-            loadPresidents();
+            loadAllData();
         }
         
-        async function loadPresidents() {
-            const { data: presidents } = await supabase
-                .from('parish_members')
-                .select('user_id, parish_name')
-                .eq('is_president', true);
-            
-            const select = document.getElementById('quotaPresident');
-            select.innerHTML = '<option value="">Select President</option>';
-            
-            for (const president of presidents) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('full_name')
-                    .eq('id', president.user_id)
-                    .single();
-                
-                if (profile) {
-                    const option = document.createElement('option');
-                    option.value = president.user_id;
-                    option.textContent = `${profile.full_name} - ${president.parish_name}`;
-                    select.appendChild(option);
-                }
-            }
+        async function loadAllData() {
+            await loadPosts();
+            await loadEvents();
+            await loadNotices();
+            await loadMinutes();
+            await loadPlans();
+            await loadExcoRequests();
         }
         
         // Media type toggle
@@ -502,10 +389,9 @@
             mediaGroup.style.display = this.value === 'none' ? 'none' : 'block';
         });
         
-        // Create Post
-        document.getElementById('createPostForm').addEventListener('submit', async (e) => {
+        // Post form
+        document.getElementById('postForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const title = document.getElementById('postTitle').value;
             const description = document.getElementById('postDescription').value;
             const content = document.getElementById('postContent').value;
@@ -517,11 +403,11 @@
             if (mediaFile && mediaType !== 'none') {
                 const fileExt = mediaFile.name.split('.').pop();
                 const fileName = `posts/${Date.now()}_${Math.random()}.${fileExt}`;
-                const { data, error } = await supabase.storage
+                const { error: uploadError } = await supabase.storage
                     .from('post_media')
                     .upload(fileName, mediaFile);
                 
-                if (!error) {
+                if (!uploadError) {
                     const { data: { publicUrl } } = supabase.storage
                         .from('post_media')
                         .getPublicUrl(fileName);
@@ -532,78 +418,67 @@
             const { error } = await supabase
                 .from('posts')
                 .insert([{
-                    title,
-                    description,
-                    content,
+                    title, description, content,
                     media_url: mediaUrl,
                     media_type: mediaType,
                     post_type: 'post'
                 }]);
             
-            if (error) {
-                alert('Error: ' + error.message);
-            } else {
-                alert('Post created successfully!');
-                document.getElementById('createPostForm').reset();
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Post created!');
+                document.getElementById('postForm').reset();
                 loadPosts();
             }
         });
         
-        // Create Event
-        document.getElementById('createEventForm').addEventListener('submit', async (e) => {
+        // Event form
+        document.getElementById('eventForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const title = document.getElementById('eventTitle').value;
             const description = document.getElementById('eventDescription').value;
             const eventDate = document.getElementById('eventDate').value;
-            const location = document.getElementById('eventLocation').value;
             
             const { error } = await supabase
                 .from('posts')
                 .insert([{
-                    title,
-                    description: `${description}\n📍 Location: ${location}`,
+                    title, description,
                     event_date: eventDate,
                     post_type: 'event'
                 }]);
             
-            if (error) {
-                alert('Error: ' + error.message);
-            } else {
-                alert('Event created successfully!');
-                document.getElementById('createEventForm').reset();
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Event created!');
+                document.getElementById('eventForm').reset();
                 loadEvents();
             }
         });
         
-        // Create Notice
-        document.getElementById('createNoticeForm').addEventListener('submit', async (e) => {
+        // Notice form
+        document.getElementById('noticeForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const title = document.getElementById('noticeTitle').value;
             const content = document.getElementById('noticeContent').value;
             
             const { error } = await supabase
                 .from('posts')
                 .insert([{
-                    title,
-                    description: content,
+                    title, description: content,
                     post_type: 'notice'
                 }]);
             
-            if (error) {
-                alert('Error: ' + error.message);
-            } else {
-                alert('Notice published successfully!');
-                document.getElementById('createNoticeForm').reset();
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Notice published!');
+                document.getElementById('noticeForm').reset();
                 loadNotices();
             }
         });
         
-        // Create Minutes
-        document.getElementById('createMinutesForm').addEventListener('submit', async (e) => {
+        // Minutes form
+        document.getElementById('minutesForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const title = document.getElementById('minutesTitle').value;
             const minutesDate = document.getElementById('minutesDate').value;
             const file = document.getElementById('minutesFile').files[0];
@@ -612,7 +487,7 @@
             
             const fileExt = file.name.split('.').pop();
             const fileName = `minutes/${Date.now()}_${Math.random()}.${fileExt}`;
-            const { data, error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('documents')
                 .upload(fileName, file);
             
@@ -631,23 +506,20 @@
                     title,
                     description: `Meeting Minutes - ${new Date(minutesDate).toLocaleDateString()}`,
                     media_url: publicUrl,
-                    media_type: 'none',
                     post_type: 'meeting_minutes'
                 }]);
             
-            if (error) {
-                alert('Error: ' + error.message);
-            } else {
-                alert('Minutes uploaded successfully!');
-                document.getElementById('createMinutesForm').reset();
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Minutes uploaded!');
+                document.getElementById('minutesForm').reset();
                 loadMinutes();
             }
         });
         
-        // Create Plan
-        document.getElementById('createPlanForm').addEventListener('submit', async (e) => {
+        // Plan form
+        document.getElementById('planForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const title = document.getElementById('planTitle').value;
             const description = document.getElementById('planDescription').value;
             const year = parseInt(document.getElementById('planYear').value);
@@ -657,7 +529,7 @@
             
             const fileExt = file.name.split('.').pop();
             const fileName = `plans/${year}_${title.replace(/\s/g, '_')}.${fileExt}`;
-            const { data, error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('documents')
                 .upload(fileName, file);
             
@@ -672,198 +544,63 @@
             
             const { error } = await supabase
                 .from('plans')
-                .insert([{
-                    title,
-                    description,
-                    year,
-                    file_url: publicUrl
-                }]);
+                .insert([{ title, description, year, file_url: publicUrl }]);
             
-            if (error) {
-                alert('Error: ' + error.message);
-            } else {
-                alert('Plan uploaded successfully!');
-                document.getElementById('createPlanForm').reset();
+            if (error) alert('Error: ' + error.message);
+            else {
+                alert('Plan uploaded!');
+                document.getElementById('planForm').reset();
                 loadPlans();
-            }
-        });
-        
-        // Create Quota
-        document.getElementById('createQuotaForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const presidentId = document.getElementById('quotaPresident').value;
-            const parishName = document.getElementById('quotaParish').value;
-            const amount = parseFloat(document.getElementById('quotaAmount').value);
-            const description = document.getElementById('quotaDescription').value;
-            const dueDate = document.getElementById('quotaDueDate').value;
-            
-            // Send private message to president
-            const message = `📋 PARISH QUOTA NOTIFICATION\n\nParish: ${parishName}\nAmount: ₦${amount.toLocaleString()}\nDescription: ${description}\nDue Date: ${dueDate ? new Date(dueDate).toLocaleDateString() : 'Not specified'}\n\nPlease ensure timely payment.`;
-            
-            const { error: messageError } = await supabase
-                .from('private_messages')
-                .insert([{
-                    sender_id: currentUser.id,
-                    receiver_id: presidentId,
-                    message: message
-                }]);
-            
-            if (messageError) {
-                alert('Error: ' + messageError.message);
-            } else {
-                // Save quota record
-                await supabase
-                    .from('quotas')
-                    .insert([{
-                        president_id: presidentId,
-                        parish_name: parishName,
-                        amount: amount,
-                        description: description,
-                        due_date: dueDate || null
-                    }]);
-                
-                alert('Quota message sent to president!');
-                document.getElementById('createQuotaForm').reset();
-                loadQuotas();
             }
         });
         
         // Load functions
         async function loadPosts() {
-            const { data: posts, error } = await supabase
+            const { data, error } = await supabase
                 .from('posts')
                 .select('*')
                 .eq('post_type', 'post')
                 .order('created_at', { ascending: false });
             
             if (error) return;
-            
-            const container = document.getElementById('postsList');
-            if (!posts.length) {
-                container.innerHTML = '<p>No posts yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            posts.forEach(post => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-title">${escapeHtml(post.title)}</div>
-                        <div class="item-meta">${new Date(post.created_at).toLocaleString()}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button onclick="editPost('${post.id}')">Edit</button>
-                        <button class="danger" onclick="deletePost('${post.id}')">Delete</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+            renderList('postsList', data, 'post');
         }
         
         async function loadEvents() {
-            const { data: events, error } = await supabase
+            const { data, error } = await supabase
                 .from('posts')
                 .select('*')
                 .eq('post_type', 'event')
                 .order('event_date', { ascending: true });
             
             if (error) return;
-            
-            const container = document.getElementById('eventsList');
-            if (!events.length) {
-                container.innerHTML = '<p>No events yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            events.forEach(event => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-title">${escapeHtml(event.title)}</div>
-                        <div class="item-meta">${event.event_date ? new Date(event.event_date).toLocaleString() : 'Date TBD'}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button onclick="editPost('${event.id}')">Edit</button>
-                        <button class="danger" onclick="deletePost('${event.id}')">Delete</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+            renderList('eventsList', data, 'event');
         }
         
         async function loadNotices() {
-            const { data: notices, error } = await supabase
+            const { data, error } = await supabase
                 .from('posts')
                 .select('*')
                 .eq('post_type', 'notice')
                 .order('created_at', { ascending: false });
             
             if (error) return;
-            
-            const container = document.getElementById('noticesList');
-            if (!notices.length) {
-                container.innerHTML = '<p>No notices yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            notices.forEach(notice => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-title">${escapeHtml(notice.title)}</div>
-                        <div class="item-meta">${new Date(notice.created_at).toLocaleString()}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button onclick="editPost('${notice.id}')">Edit</button>
-                        <button class="danger" onclick="deletePost('${notice.id}')">Delete</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+            renderList('noticesList', data, 'notice');
         }
         
         async function loadMinutes() {
-            const { data: minutes, error } = await supabase
+            const { data, error } = await supabase
                 .from('posts')
                 .select('*')
                 .eq('post_type', 'meeting_minutes')
                 .order('created_at', { ascending: false });
             
             if (error) return;
-            
-            const container = document.getElementById('minutesList');
-            if (!minutes.length) {
-                container.innerHTML = '<p>No minutes uploaded yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            minutes.forEach(minute => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-title">${escapeHtml(minute.title)}</div>
-                        <div class="item-meta">${new Date(minute.created_at).toLocaleString()}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button onclick="viewFile('${minute.media_url}')">View</button>
-                        <button class="danger" onclick="deletePost('${minute.id}')">Delete</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            });
+            renderList('minutesList', data, 'minutes');
         }
         
         async function loadPlans() {
-            const { data: plans, error } = await supabase
+            const { data, error } = await supabase
                 .from('plans')
                 .select('*')
                 .order('year', { ascending: false });
@@ -871,140 +608,97 @@
             if (error) return;
             
             const container = document.getElementById('plansList');
-            if (!plans.length) {
-                container.innerHTML = '<p>No plans uploaded yet.</p>';
+            if (!data?.length) {
+                container.innerHTML = '<p>No plans yet.</p>';
                 return;
             }
             
             container.innerHTML = '';
-            plans.forEach(plan => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
+            data.forEach(plan => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
                     <div class="item-info">
                         <div class="item-title">${escapeHtml(plan.title)} (${plan.year})</div>
                         <div class="item-meta">${plan.description?.substring(0, 100) || ''}</div>
                     </div>
                     <div class="item-actions">
-                        <button onclick="editPlan('${plan.id}')">Edit</button>
-                        <button class="danger" onclick="deletePlan('${plan.id}')">Delete</button>
+                        <button onclick="deletePlan('${plan.id}')" class="danger">Delete</button>
                     </div>
                 `;
-                container.appendChild(item);
+                container.appendChild(div);
             });
         }
         
-        async function loadQuotas() {
-            const { data: quotas, error } = await supabase
-                .from('quotas')
-                .select('*')
-                .order('created_at', { ascending: false });
-            
-            if (error) return;
-            
-            const container = document.getElementById('quotasList');
-            if (!quotas.length) {
-                container.innerHTML = '<p>No quotas sent yet.</p>';
-                return;
-            }
-            
-            container.innerHTML = '';
-            for (const quota of quotas) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('full_name')
-                    .eq('id', quota.president_id)
-                    .single();
-                
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
-                    <div class="item-info">
-                        <div class="item-title">${escapeHtml(quota.parish_name)} - ₦${quota.amount.toLocaleString()}</div>
-                        <div class="item-meta">To: ${profile?.full_name || 'Unknown'} | Due: ${quota.due_date ? new Date(quota.due_date).toLocaleDateString() : 'Not set'}</div>
-                    </div>
-                    <div class="item-actions">
-                        <button class="danger" onclick="deleteQuota('${quota.id}')">Delete</button>
-                    </div>
-                `;
-                container.appendChild(item);
-            }
-        }
-        
         async function loadExcoRequests() {
-            const { data: requests, error } = await supabase
+            const { data, error } = await supabase
                 .from('profiles')
                 .select('*')
-                .eq('exco_request_status', 'pending')
-                .neq('is_exco_parish', true)
-                .neq('is_exco_archediceanry', true);
+                .eq('exco_request_status', 'pending');
             
             if (error) return;
             
             const container = document.getElementById('excoRequestsList');
-            if (!requests.length) {
-                container.innerHTML = '<p>No pending exco requests.</p>';
+            if (!data?.length) {
+                container.innerHTML = '<p>No pending requests.</p>';
                 return;
             }
             
             container.innerHTML = '';
-            requests.forEach(request => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `
+            data.forEach(req => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
                     <div class="item-info">
-                        <div class="item-title">${escapeHtml(request.full_name)}</div>
-                        <div class="item-meta">Parish: ${request.parish_name} | Email: ${request.email}</div>
-                        <div class="item-meta">Requesting: ${request.is_exco_parish ? 'Parish Exco, ' : ''}${request.is_exco_archediceanry ? 'Archediceanry Exco' : ''}</div>
+                        <div class="item-title">${escapeHtml(req.full_name)}</div>
+                        <div class="item-meta">Parish: ${req.parish_name} | Email: ${req.email}</div>
                     </div>
                     <div class="item-actions">
-                        <button onclick="approveExco('${request.id}')">Approve</button>
-                        <button class="danger" onclick="rejectExco('${request.id}')">Reject</button>
+                        <button onclick="approveExco('${req.id}')">Approve</button>
+                        <button onclick="rejectExco('${req.id}')" class="danger">Reject</button>
                     </div>
                 `;
-                container.appendChild(item);
+                container.appendChild(div);
             });
         }
         
-        // CRUD Operations
-        window.deletePost = async function(id) {
-            if (confirm('Delete this item?')) {
-                await supabase.from('posts').delete().eq('id', id);
-                loadPosts();
-                loadEvents();
-                loadNotices();
-                loadMinutes();
+        function renderList(elementId, items, type) {
+            const container = document.getElementById(elementId);
+            if (!items?.length) {
+                container.innerHTML = '<p>No items yet.</p>';
+                return;
             }
-        };
+            
+            container.innerHTML = '';
+            items.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <div class="item-info">
+                        <div class="item-title">${escapeHtml(item.title)}</div>
+                        <div class="item-meta">${new Date(item.created_at).toLocaleString()}</div>
+                    </div>
+                    <div class="item-actions">
+                        <button onclick="deleteItem('${item.id}', '${type}')" class="danger">Delete</button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
         
-        window.editPost = function(id) {
-            const newTitle = prompt('Enter new title:');
-            if (newTitle) {
-                supabase.from('posts').update({ title: newTitle }).eq('id', id);
-                loadPosts();
-            }
+        window.deleteItem = async function(id, type) {
+            if (!confirm('Delete this item?')) return;
+            await supabase.from('posts').delete().eq('id', id);
+            if (type === 'post') loadPosts();
+            else if (type === 'event') loadEvents();
+            else if (type === 'notice') loadNotices();
+            else if (type === 'minutes') loadMinutes();
         };
         
         window.deletePlan = async function(id) {
-            if (confirm('Delete this plan?')) {
-                await supabase.from('plans').delete().eq('id', id);
-                loadPlans();
-            }
-        };
-        
-        window.editPlan = function(id) {
-            const newTitle = prompt('Enter new plan title:');
-            if (newTitle) {
-                supabase.from('plans').update({ title: newTitle }).eq('id', id);
-                loadPlans();
-            }
-        };
-        
-        window.deleteQuota = async function(id) {
-            if (confirm('Delete this quota record?')) {
-                await supabase.from('quotas').delete().eq('id', id);
-                loadQuotas();
-            }
+            if (!confirm('Delete this plan?')) return;
+            await supabase.from('plans').delete().eq('id', id);
+            loadPlans();
         };
         
         window.approveExco = async function(userId) {
@@ -1013,7 +707,7 @@
                 .update({ exco_request_status: 'approved' })
                 .eq('id', userId);
             loadExcoRequests();
-            alert('Exco request approved!');
+            alert('Request approved!');
         };
         
         window.rejectExco = async function(userId) {
@@ -1022,28 +716,24 @@
                 .update({ exco_request_status: 'rejected', is_exco_parish: false, is_exco_archediceanry: false })
                 .eq('id', userId);
             loadExcoRequests();
-            alert('Exco request rejected.');
+            alert('Request rejected.');
         };
         
-        window.viewFile = function(url) {
-            window.open(url, '_blank');
-        };
+        // Tab switching
+        document.querySelectorAll('.admin-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                document.getElementById(this.dataset.panel + 'Panel').classList.add('active');
+            });
+        });
         
-        window.showPanel = function(panel) {
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
-            
-            document.getElementById(`${panel}Panel`).classList.add('active');
-            event.target.classList.add('active');
-        };
-        
-        window.logout = async function() {
-            if (confirm('Logout from admin dashboard?')) {
-                await supabase.auth.signOut();
-                localStorage.clear();
-                window.location.href = 'index.html';
-            }
-        };
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await supabase.auth.signOut();
+            localStorage.clear();
+            window.location.href = 'index.html';
+        });
         
         function escapeHtml(text) {
             if (!text) return '';
