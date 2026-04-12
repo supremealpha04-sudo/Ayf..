@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AYF GWARIMPA - Home</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -14,137 +14,209 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #17212b;
-            color: #fff;
-            padding-bottom: 70px;
+            background: #0f0f0f;
+            color: white;
         }
 
-        /* Telegram-style header */
+        /* Telegram-like header */
         .header {
             background: #17212b;
-            padding: 15px;
-            position: sticky;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
             top: 0;
+            left: 0;
+            right: 0;
             z-index: 100;
-            border-bottom: 1px solid #2b2f36;
+            box-shadow: 0 1px 0 rgba(0,0,0,0.3);
         }
 
         .header h1 {
-            font-size: 24px;
+            font-size: 20px;
             font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 16px;
+        }
+
+        .header-actions button {
+            background: none;
+            border: none;
+            color: #6ab3f3;
+            font-size: 20px;
+            cursor: pointer;
         }
 
         /* Filter tabs */
-        .filters {
+        .filter-tabs {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
             background: #17212b;
-            padding: 10px 15px;
             display: flex;
-            gap: 10px;
+            gap: 8px;
+            padding: 10px 16px;
             overflow-x: auto;
-            border-bottom: 1px solid #2b2f36;
+            z-index: 99;
+            border-bottom: 1px solid #2b3b4c;
         }
 
         .filter-btn {
-            padding: 8px 20px;
-            background: #2b2f36;
+            padding: 8px 16px;
+            background: #242f3d;
             border: none;
             border-radius: 20px;
-            color: #fff;
+            color: white;
+            font-size: 14px;
             cursor: pointer;
             white-space: nowrap;
+            transition: all 0.2s;
         }
 
         .filter-btn.active {
-            background: #2b5278;
+            background: #6ab3f3;
+            color: #17212b;
         }
 
-        /* Feed items - Telegram message style */
+        /* Feed container */
         .feed-container {
-            padding: 10px;
+            margin-top: 120px;
+            padding: 16px;
+            padding-bottom: 80px;
         }
 
-        .feed-item {
-            background: #1e2a36;
+        /* Post card - Telegram style */
+        .post-card {
+            background: #17212b;
             border-radius: 12px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             overflow: hidden;
         }
 
-        .feed-header {
-            padding: 15px;
+        .post-header {
+            padding: 12px 16px;
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 1px solid #2b2f36;
+            border-bottom: 1px solid #2b3b4c;
         }
 
-        .feed-avatar {
-            width: 48px;
-            height: 48px;
+        .post-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: #2b2f36;
+            background: #6ab3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
         }
 
-        .feed-info {
+        .post-info {
             flex: 1;
         }
 
-        .feed-title {
+        .post-author {
             font-weight: 600;
-            margin-bottom: 4px;
+            font-size: 14px;
         }
 
-        .feed-type {
-            font-size: 12px;
-            color: #7e8c9e;
+        .post-time {
+            font-size: 11px;
+            color: #8e9eae;
+            margin-top: 2px;
         }
 
-        .feed-content {
-            padding: 15px;
+        .post-type {
+            padding: 4px 8px;
+            background: #6ab3f3;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
         }
 
-        .feed-media {
+        .post-title {
+            padding: 12px 16px 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .post-description {
+            padding: 0 16px 8px;
+            color: #c4c9ce;
+            font-size: 14px;
+        }
+
+        .post-media {
             width: 100%;
-            border-radius: 8px;
-            margin: 10px 0;
-            max-height: 300px;
+            max-height: 400px;
             object-fit: cover;
+            cursor: pointer;
         }
 
-        .feed-actions {
+        .post-quote {
+            padding: 12px 16px;
+            background: #242f3d;
+            margin: 8px 16px;
+            border-radius: 8px;
+            font-style: italic;
+            color: #8e9eae;
+        }
+
+        .countdown {
+            padding: 8px 16px;
+            background: #2b3b4c;
+            margin: 8px 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+            color: #6ab3f3;
+        }
+
+        /* Action buttons */
+        .post-actions {
             display: flex;
-            gap: 20px;
-            padding: 10px 15px;
-            border-top: 1px solid #2b2f36;
+            justify-content: space-around;
+            padding: 8px 16px;
+            border-top: 1px solid #2b3b4c;
+            border-bottom: 1px solid #2b3b4c;
         }
 
         .action-btn {
             background: none;
             border: none;
-            color: #7e8c9e;
-            cursor: pointer;
+            color: #8e9eae;
+            padding: 8px;
             display: flex;
             align-items: center;
-            gap: 5px;
-            font-size: 14px;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 6px;
         }
 
         .action-btn:hover {
-            color: #2b5278;
+            background: #242f3d;
         }
 
+        .action-btn.liked {
+            color: #6ab3f3;
+        }
+
+        /* Comments section */
         .comments-section {
-            padding: 15px;
-            background: #16212b;
-            display: none;
-        }
-
-        .comments-section.active {
-            display: block;
+            padding: 12px 16px;
+            background: #0f0f0f;
         }
 
         .comment {
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             padding-left: 40px;
             position: relative;
         }
@@ -156,31 +228,69 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: #2b2f36;
+            background: #6ab3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
         }
 
-        .comment-text {
-            background: #1e2a36;
+        .comment-content {
+            background: #242f3d;
             padding: 8px 12px;
             border-radius: 12px;
         }
 
+        .comment-author {
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .comment-text {
+            font-size: 13px;
+            color: #c4c9ce;
+        }
+
+        .comment-actions {
+            margin-top: 4px;
+            font-size: 11px;
+            color: #6ab3f3;
+            cursor: pointer;
+        }
+
+        .reply {
+            margin-left: 40px;
+            margin-top: 8px;
+        }
+
         .comment-input {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .comment-input input {
             flex: 1;
-            padding: 10px;
-            background: #2b2f36;
+            padding: 8px 12px;
+            background: #242f3d;
             border: none;
             border-radius: 20px;
-            color: #fff;
+            color: white;
+            font-size: 14px;
         }
 
-        /* Bottom navigation - Telegram style */
+        .comment-input button {
+            padding: 8px 16px;
+            background: #6ab3f3;
+            border: none;
+            border-radius: 20px;
+            color: #17212b;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Footer navigation - Telegram style */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -189,229 +299,580 @@
             background: #17212b;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #2b2f36;
+            padding: 8px 0;
+            border-top: 1px solid #2b3b4c;
+            z-index: 100;
         }
 
         .nav-item {
-            text-align: center;
-            color: #7e8c9e;
-            text-decoration: none;
-            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #8e9eae;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.2s;
         }
 
         .nav-item.active {
-            color: #2b5278;
+            color: #6ab3f3;
         }
 
         .nav-icon {
             font-size: 24px;
-            display: block;
+        }
+
+        .nav-label {
+            font-size: 11px;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        @media (max-width: 768px) {
+            .feed-container {
+                margin-top: 110px;
+            }
+            
+            .post-title {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>AYF GWARIMPA</h1>
+        <div class="header-actions">
+            <button onclick="searchPosts()">🔍</button>
+            <button onclick="refreshFeed()">🔄</button>
+        </div>
     </div>
 
-    <div class="filters" id="filters">
-        <button class="filter-btn active" data-filter="all">All</button>
-        <button class="filter-btn" data-filter="notice">Notices</button>
-        <button class="filter-btn" data-filter="event">Events</button>
-        <button class="filter-btn" data-filter="post">Posts</button>
-        <button class="filter-btn" data-filter="minutes">Minutes</button>
+    <div class="filter-tabs" id="filterTabs">
+        <button class="filter-btn active" onclick="filterFeed('all')">All</button>
+        <button class="filter-btn" onclick="filterFeed('notice')">Notices</button>
+        <button class="filter-btn" onclick="filterFeed('event')">Events</button>
+        <button class="filter-btn" onclick="filterFeed('post')">Posts</button>
+        <button class="filter-btn" onclick="filterFeed('minutes')">Minutes</button>
     </div>
 
-    <div class="feed-container" id="feed-container"></div>
+    <div class="feed-container" id="feedContainer">
+        <!-- Posts will be loaded here -->
+    </div>
 
     <div class="bottom-nav">
-        <a href="home.html" class="nav-item active">
-            <span class="nav-icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="parish.html" class="nav-item">
-            <span class="nav-icon">💬</span>
-            <span>Parish</span>
-        </a>
-        <a href="#" class="nav-item" onclick="showPlans()">
-            <span class="nav-icon">📅</span>
-            <span>Plan</span>
-        </a>
-        <a href="profile.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>Profile</span>
-        </a>
+        <button class="nav-item active" onclick="navigateTo('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('parish')">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Parish</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('plan')">
+            <div class="nav-icon">📅</div>
+            <div class="nav-label">Plan</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('profile')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Profile</div>
+        </button>
     </div>
 
-    <script src="supabase-config.js"></script>
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <img id="modalImage" alt="Full size">
+    </div>
+
     <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let currentUser = null;
+        let currentProfile = null;
         let currentFilter = 'all';
-
-        async function loadUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            currentUser = user;
-            if(!user) window.location.href = 'index.html';
+        let allPosts = [];
+        
+        // Check authentication
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = JSON.parse(userStr);
+            currentProfile = JSON.parse(localStorage.getItem('profile') || '{}');
+            loadPosts();
         }
-
-        async function loadFeed() {
-            let query = supabase
-                .from('feed_items')
-                .select('*, profiles(full_name, avatar_url)')
+        
+        // Load posts
+        async function loadPosts() {
+            try {
+                let query = supabase
+                    .from('posts')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (currentFilter !== 'all') {
+                    query = query.eq('post_type', currentFilter);
+                }
+                
+                const { data, error } = await query;
+                if (error) throw error;
+                
+                allPosts = data;
+                renderPosts();
+            } catch (error) {
+                console.error('Error loading posts:', error);
+            }
+        }
+        
+        // Render posts
+        async function renderPosts() {
+            const container = document.getElementById('feedContainer');
+            container.innerHTML = '';
+            
+            for (const post of allPosts) {
+                // Get like count and user like status
+                const { count: likeCount } = await supabase
+                    .from('likes')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+                
+                const { data: userLike } = await supabase
+                    .from('likes')
+                    .select('*')
+                    .eq('post_id', post.id)
+                    .eq('user_id', currentUser.id)
+                    .single();
+                
+                const { count: commentCount } = await supabase
+                    .from('comments')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+                
+                const { count: shareCount } = await supabase
+                    .from('shares')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', post.id);
+                
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card';
+                
+                let mediaHtml = '';
+                if (post.media_url && post.media_type !== 'none') {
+                    if (post.media_type === 'image') {
+                        mediaHtml = `<img src="${post.media_url}" class="post-media" onclick="viewImage('${post.media_url}')">`;
+                    } else if (post.media_type === 'video') {
+                        mediaHtml = `<video src="${post.media_url}" class="post-media" controls></video>`;
+                    }
+                }
+                
+                let countdownHtml = '';
+                if (post.post_type === 'event' && post.event_date) {
+                    const eventDate = new Date(post.event_date);
+                    countdownHtml = `<div class="countdown" id="countdown-${post.id}" data-date="${post.event_date}"></div>`;
+                }
+                
+                let quoteHtml = '';
+                if (post.content) {
+                    quoteHtml = `<div class="post-quote">"${post.content}"</div>`;
+                }
+                
+                postCard.innerHTML = `
+                    <div class="post-header">
+                        <div class="post-avatar">AYF</div>
+                        <div class="post-info">
+                            <div class="post-author">AYF Administration</div>
+                            <div class="post-time">${new Date(post.created_at).toLocaleString()}</div>
+                        </div>
+                        <div class="post-type">${post.post_type.toUpperCase()}</div>
+                    </div>
+                    <div class="post-title">${escapeHtml(post.title)}</div>
+                    ${post.description ? `<div class="post-description">${escapeHtml(post.description)}</div>` : ''}
+                    ${mediaHtml}
+                    ${quoteHtml}
+                    ${countdownHtml}
+                    <div class="post-actions">
+                        <button class="action-btn ${userLike ? 'liked' : ''}" onclick="toggleLike('${post.id}', this)">
+                            ❤️ <span class="like-count">${likeCount || 0}</span>
+                        </button>
+                        <button class="action-btn" onclick="toggleComments('${post.id}')">
+                            💬 <span>${commentCount || 0}</span>
+                        </button>
+                        <button class="action-btn" onclick="sharePost('${post.id}')">
+                            📤 <span>${shareCount || 0}</span>
+                        </button>
+                        ${post.media_url ? `<button class="action-btn" onclick="downloadMedia('${post.media_url}', '${post.title}')">📥 Download</button>` : ''}
+                    </div>
+                    <div class="comments-section" id="comments-${post.id}" style="display: none;">
+                        <div id="comments-list-${post.id}"></div>
+                        <div class="comment-input">
+                            <input type="text" id="comment-input-${post.id}" placeholder="Write a comment...">
+                            <button onclick="addComment('${post.id}', null)">Post</button>
+                        </div>
+                    </div>
+                `;
+                
+                container.appendChild(postCard);
+                
+                // Load comments for this post
+                await loadComments(post.id);
+                
+                // Start countdown for events
+                if (post.post_type === 'event' && post.event_date) {
+                    startCountdown(post.id, post.event_date);
+                }
+            }
+        }
+        
+        // Load comments
+        async function loadComments(postId) {
+            const { data: comments, error } = await supabase
+                .from('comments')
+                .select('*')
+                .eq('post_id', postId)
+                .is('parent_comment_id', null)
                 .order('created_at', { ascending: false });
             
-            if(currentFilter !== 'all') {
-                query = query.eq('type', currentFilter);
-            }
-
-            const { data } = await query;
-            renderFeed(data);
-        }
-
-        function renderFeed(items) {
-            const container = document.getElementById('feed-container');
-            container.innerHTML = items.map(item => `
-                <div class="feed-item" data-id="${item.id}">
-                    <div class="feed-header">
-                        <div class="feed-avatar" style="background-image: url(${item.profiles?.avatar_url || ''}); background-size: cover;"></div>
-                        <div class="feed-info">
-                            <div class="feed-title">${item.title || item.type}</div>
-                            <div class="feed-type">${item.type.toUpperCase()} • ${new Date(item.created_at).toLocaleDateString()}</div>
-                        </div>
+            if (error) return;
+            
+            const commentsList = document.getElementById(`comments-list-${postId}`);
+            if (!commentsList) return;
+            
+            commentsList.innerHTML = '';
+            for (const comment of comments) {
+                // Get user profile for comment
+                const { data: userProfile } = await supabase
+                    .from('profiles')
+                    .select('full_name, profile_image_url')
+                    .eq('id', comment.user_id)
+                    .single();
+                
+                // Load replies
+                const { data: replies } = await supabase
+                    .from('comments')
+                    .select('*')
+                    .eq('parent_comment_id', comment.id)
+                    .order('created_at', { ascending: true });
+                
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                commentDiv.innerHTML = `
+                    <div class="comment-avatar">${(userProfile?.full_name?.charAt(0) || 'U')}</div>
+                    <div class="comment-content">
+                        <div class="comment-author">${escapeHtml(userProfile?.full_name || 'User')}</div>
+                        <div class="comment-text">${escapeHtml(comment.comment)}</div>
+                        <div class="comment-actions" onclick="showReplyInput('${postId}', '${comment.id}')">Reply</div>
                     </div>
-                    <div class="feed-content">
-                        ${item.content || ''}
-                        ${item.media_url ? `<img src="${item.media_url}" class="feed-media">` : ''}
-                        ${item.pdf_url ? `<a href="${item.pdf_url}" download style="color: #2b5278;">📄 Download PDF</a>` : ''}
-                        ${item.event_date ? `<div style="margin-top: 10px;">📅 Countdown: ${getCountdown(item.event_date)}</div>` : ''}
-                    </div>
-                    <div class="feed-actions">
-                        <button class="action-btn" onclick="toggleLike('${item.id}')">❤️ <span id="like-count-${item.id}">0</span></button>
-                        <button class="action-btn" onclick="toggleComments('${item.id}')">💬 <span id="comment-count-${item.id}">0</span></button>
-                        <button class="action-btn" onclick="sharePost('${item.id}')">🔗 Share</button>
-                        ${item.pdf_url ? `<button class="action-btn" onclick="downloadFile('${item.pdf_url}')">⬇️ Download</button>` : ''}
-                    </div>
-                    <div class="comments-section" id="comments-${item.id}">
-                        <div class="comments-list" id="comments-list-${item.id}"></div>
+                    <div id="replies-${comment.id}"></div>
+                    <div id="reply-input-${comment.id}" style="display: none;" class="reply">
                         <div class="comment-input">
-                            <input type="text" id="comment-input-${item.id}" placeholder="Write a comment...">
-                            <button class="action-btn" onclick="addComment('${item.id}')">Send</button>
+                            <input type="text" id="reply-text-${comment.id}" placeholder="Write a reply...">
+                            <button onclick="addComment('${postId}', '${comment.id}')">Reply</button>
                         </div>
                     </div>
-                </div>
-            `).join('');
-            
-            // Load likes and comments counts
-            items.forEach(item => loadCounts(item.id));
+                `;
+                
+                commentsList.appendChild(commentDiv);
+                
+                // Load replies
+                const repliesDiv = document.getElementById(`replies-${comment.id}`);
+                if (replies && replies.length > 0) {
+                    for (const reply of replies) {
+                        const { data: replyUser } = await supabase
+                            .from('profiles')
+                            .select('full_name')
+                            .eq('id', reply.user_id)
+                            .single();
+                        
+                        const replyDiv = document.createElement('div');
+                        replyDiv.className = 'comment reply';
+                        replyDiv.innerHTML = `
+                            <div class="comment-avatar">${(replyUser?.full_name?.charAt(0) || 'U')}</div>
+                            <div class="comment-content">
+                                <div class="comment-author">${escapeHtml(replyUser?.full_name || 'User')}</div>
+                                <div class="comment-text">${escapeHtml(reply.comment)}</div>
+                            </div>
+                        `;
+                        repliesDiv.appendChild(replyDiv);
+                    }
+                }
+            }
         }
-
-        function getCountdown(eventDate) {
-            const diff = new Date(eventDate) - new Date();
-            if(diff <= 0) return "Event started!";
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (86400000)) / 3600000);
-            return `${days}d ${hours}h remaining`;
-        }
-
-        async function toggleLike(feedId) {
-            const { data: existing } = await supabase
-                .from('likes')
-                .select()
-                .eq('feed_id', feedId)
-                .eq('user_id', currentUser.id);
+        
+        // Add comment
+        window.addComment = async function(postId, parentCommentId) {
+            const inputId = parentCommentId ? `reply-text-${parentCommentId}` : `comment-input-${postId}`;
+            const commentText = document.getElementById(inputId)?.value;
             
-            if(existing.length > 0) {
-                await supabase.from('likes').delete().eq('id', existing[0].id);
+            if (!commentText || !commentText.trim()) return;
+            
+            try {
+                const { error } = await supabase
+                    .from('comments')
+                    .insert([{
+                        post_id: postId,
+                        user_id: currentUser.id,
+                        parent_comment_id: parentCommentId,
+                        comment: commentText.trim()
+                    }]);
+                
+                if (error) throw error;
+                
+                document.getElementById(inputId).value = '';
+                await loadComments(postId);
+            } catch (error) {
+                console.error('Error adding comment:', error);
+                alert('Failed to add comment');
+            }
+        };
+        
+        // Toggle like
+        window.toggleLike = async function(postId, button) {
+            try {
+                const { data: existingLike } = await supabase
+                    .from('likes')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .eq('user_id', currentUser.id)
+                    .single();
+                
+                if (existingLike) {
+                    await supabase
+                        .from('likes')
+                        .delete()
+                        .eq('post_id', postId)
+                        .eq('user_id', currentUser.id);
+                    button.classList.remove('liked');
+                } else {
+                    await supabase
+                        .from('likes')
+                        .insert([{
+                            post_id: postId,
+                            user_id: currentUser.id
+                        }]);
+                    button.classList.add('liked');
+                }
+                
+                // Update like count
+                const { count } = await supabase
+                    .from('likes')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('post_id', postId);
+                
+                const likeSpan = button.querySelector('.like-count');
+                if (likeSpan) likeSpan.textContent = count || 0;
+                
+            } catch (error) {
+                console.error('Error toggling like:', error);
+            }
+        };
+        
+        // Share post
+        window.sharePost = async function(postId) {
+            try {
+                // Check if already shared
+                const { data: existingShare } = await supabase
+                    .from('shares')
+                    .select('*')
+                    .eq('post_id', postId)
+                    .eq('user_id', currentUser.id)
+                    .single();
+                
+                if (!existingShare) {
+                    await supabase
+                        .from('shares')
+                        .insert([{
+                            post_id: postId,
+                            user_id: currentUser.id
+                        }]);
+                }
+                
+                // Get post URL (simulated)
+                const shareUrl = `${window.location.origin}/post/${postId}`;
+                
+                if (navigator.share) {
+                    await navigator.share({
+                        title: 'AYF GWARIMPA Post',
+                        text: 'Check out this post on AYF GWARIMPA',
+                        url: shareUrl
+                    });
+                } else {
+                    await navigator.clipboard.writeText(shareUrl);
+                    alert('Link copied to clipboard!');
+                }
+                
+                // Refresh to update share count
+                await loadPosts();
+                
+            } catch (error) {
+                console.error('Error sharing:', error);
+            }
+        };
+        
+        // Download media
+        window.downloadMedia = async function(url, filename) {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const downloadUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename || 'download';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                // Track download
+                const post = allPosts.find(p => p.media_url === url);
+                if (post) {
+                    await supabase
+                        .from('downloads')
+                        .insert([{
+                            post_id: post.id,
+                            user_id: currentUser.id
+                        }]);
+                }
+            } catch (error) {
+                console.error('Error downloading:', error);
+            }
+        };
+        
+        // View image
+        window.viewImage = function(url) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = 'flex';
+            modalImg.src = url;
+        };
+        
+        window.closeModal = function() {
+            document.getElementById('imageModal').style.display = 'none';
+        };
+        
+        // Toggle comments visibility
+        window.toggleComments = function(postId) {
+            const commentsDiv = document.getElementById(`comments-${postId}`);
+            if (commentsDiv.style.display === 'none') {
+                commentsDiv.style.display = 'block';
             } else {
-                await supabase.from('likes').insert([{ feed_id: feedId, user_id: currentUser.id }]);
+                commentsDiv.style.display = 'none';
             }
-            loadCounts(feedId);
-        }
-
-        async function loadCounts(feedId) {
-            const { count: likeCount } = await supabase
-                .from('likes')
-                .select('*', { count: 'exact', head: true })
-                .eq('feed_id', feedId);
-            
-            const { count: commentCount } = await supabase
-                .from('comments')
-                .select('*', { count: 'exact', head: true })
-                .eq('feed_id', feedId);
-            
-            document.getElementById(`like-count-${feedId}`).textContent = likeCount || 0;
-            document.getElementById(`comment-count-${feedId}`).textContent = commentCount || 0;
-        }
-
-        async function addComment(feedId) {
-            const input = document.getElementById(`comment-input-${feedId}`);
-            const comment = input.value;
-            if(!comment) return;
-            
-            await supabase.from('comments').insert([{
-                feed_id: feedId,
-                user_id: currentUser.id,
-                comment: comment
-            }]);
-            
-            input.value = '';
-            loadComments(feedId);
-        }
-
-        async function loadComments(feedId) {
-            const { data } = await supabase
-                .from('comments')
-                .select('*, profiles(full_name, avatar_url)')
-                .eq('feed_id', feedId)
-                .order('created_at', { ascending: true });
-            
-            const container = document.getElementById(`comments-list-${feedId}`);
-            if(container) {
-                container.innerHTML = data.map(c => `
-                    <div class="comment">
-                        <div class="comment-avatar" style="background-image: url(${c.profiles?.avatar_url || ''}); background-size: cover;"></div>
-                        <div class="comment-text">
-                            <strong>${c.profiles?.full_name}</strong><br>
-                            ${c.comment}
-                        </div>
-                    </div>
-                `).join('');
+        };
+        
+        window.showReplyInput = function(postId, commentId) {
+            const replyInput = document.getElementById(`reply-input-${commentId}`);
+            if (replyInput.style.display === 'none') {
+                replyInput.style.display = 'block';
+            } else {
+                replyInput.style.display = 'none';
             }
-        }
-
-        function toggleComments(feedId) {
-            const section = document.getElementById(`comments-${feedId}`);
-            section.classList.toggle('active');
-            if(section.classList.contains('active')) {
-                loadComments(feedId);
+        };
+        
+        // Filter feed
+        window.filterFeed = function(filter) {
+            currentFilter = filter;
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadPosts();
+        };
+        
+        // Countdown timer
+        function startCountdown(postId, eventDate) {
+            const countdownElement = document.getElementById(`countdown-${postId}`);
+            if (!countdownElement) return;
+            
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const eventTime = new Date(eventDate).getTime();
+                const distance = eventTime - now;
+                
+                if (distance < 0) {
+                    countdownElement.innerHTML = 'Event has passed';
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                countdownElement.innerHTML = `⏰ ${days}d ${hours}h ${minutes}m ${seconds}s until event`;
             }
+            
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
         }
-
-        function sharePost(feedId) {
-            navigator.share ? navigator.share({ title: 'AYF GWARIMPA', url: window.location.href }) : alert('Share this post!');
+        
+        // Search posts
+        window.searchPosts = function() {
+            const searchTerm = prompt('Search posts:');
+            if (searchTerm) {
+                const filtered = allPosts.filter(post => 
+                    post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    (post.description && post.description.toLowerCase().includes(searchTerm.toLowerCase()))
+                );
+                allPosts = filtered;
+                renderPosts();
+            } else {
+                loadPosts();
+            }
+        };
+        
+        // Refresh feed
+        window.refreshFeed = function() {
+            loadPosts();
+        };
+        
+        // Navigation
+        window.navigateTo = function(page) {
+            switch(page) {
+                case 'home':
+                    window.location.href = 'home.html';
+                    break;
+                case 'parish':
+                    window.location.href = 'parish.html';
+                    break;
+                case 'plan':
+                    window.location.href = 'plan.html';
+                    break;
+                case 'profile':
+                    window.location.href = 'profile.html';
+                    break;
+            }
+        };
+        
+        // Escape HTML
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        function downloadFile(url) {
-            window.open(url, '_blank');
-        }
-
-        function showPlans() {
-            // Load yearly plans modal
-            alert('Yearly Plans - Feature coming');
-        }
-
-        // Setup filters
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                loadFeed();
-            });
-        });
-
-        loadUser().then(() => loadFeed());
+        
+        // Initialize
+        checkAuth();
     </script>
 </body>
 </html>
