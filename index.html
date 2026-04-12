@@ -437,11 +437,11 @@
 
 <script>
 const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
+const SUPABASE_ANON_KEY = 'YOUR_REAL_ANON_KEY_HERE';
 
-// ✅ Prevent double initialization
-window.supabaseClient = window.supabaseClient ||
-    window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ✅ Create ONE global client (NO duplication)
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 
 // =====================
 // TAB SWITCHING
@@ -464,34 +464,37 @@ function switchTab(tab) {
     }
 }
 
+
 // =====================
 // IMAGE PREVIEW
 // =====================
 document.getElementById('profileImage')?.addEventListener('change', (e) => {
     const file = e.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const previewImg = document.getElementById('previewImage');
-            previewImg.src = event.target.result;
-            document.getElementById('uploadLabel').classList.add('has-image');
-        };
-        reader.readAsDataURL(file);
-    }
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+        document.getElementById('previewImage').src = event.target.result;
+        document.getElementById('uploadLabel').classList.add('has-image');
+    };
+    reader.readAsDataURL(file);
 });
 
+
 // =====================
-// ALERT HELPER
+// ALERT
 // =====================
-function showAlert(type, message, elementId) {
-    const alert = document.getElementById(elementId);
-    alert.textContent = message;
-    alert.className = `alert ${type}`;
-    alert.style.display = 'block';
+function showAlert(type, message, id) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.className = `alert ${type}`;
+    el.style.display = 'block';
+
     setTimeout(() => {
-        alert.style.display = 'none';
-    }, 5000);
+        el.style.display = 'none';
+    }, 4000);
 }
+
 
 // =====================
 // SIGN UP
@@ -500,53 +503,38 @@ async function signUp(email, password, full_name, parish, gender, role) {
     try {
         document.getElementById('loading').classList.add('active');
 
-        // 1. Create Auth User
-        const { data: authData, error: authError } = await supabase.auth.signUp({
+        // 1. AUTH SIGNUP
+        const { data, error } = await supabase.auth.signUp({
             email,
             password
         });
 
-        if (authError) {
-            console.error("Auth error:", authError);
-            showAlert('error', authError.message, 'registerAlert');
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
+        if (error) throw error;
 
-        const user = authData.user;
+        const user = data.user;
 
-        if (!user) {
-            showAlert('error', 'Signup failed - no user returned', 'registerAlert');
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
+        if (!user) throw new Error("User not returned");
 
-        // 2. Determine approval status based on role
-        const approval_status = (role !== 'member') ? 'pending_approval' : 'approved';
+        // 2. PROFILE INSERT
+        const approval_status = role === 'member' ? 'approved' : 'pending';
 
-        // 3. Insert into public.users table
         const { error: insertError } = await supabase
             .from('users')
-            .insert([{
+            .insert({
                 id: user.id,
-                email: user.email,
+                email,
                 full_name,
                 parish,
                 gender,
-                role: role,
-                approval_status: approval_status
-            }]);
+                role,
+                approval_status
+            });
 
-        if (insertError) {
-            console.error("Profile insert error:", insertError);
-            showAlert('error', 'Account created but profile failed to save', 'registerAlert');
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
+        if (insertError) throw insertError;
 
         document.getElementById('loading').classList.remove('active');
 
-        // Show appropriate message based on role
+        // 3. UI RESPONSE
         if (role !== 'member') {
             document.getElementById('registerForm').classList.remove('active');
             document.getElementById('pendingApproval').classList.add('active');
@@ -554,15 +542,17 @@ async function signUp(email, password, full_name, parish, gender, role) {
             showAlert('success', 'Account created successfully!', 'registerAlert');
             document.getElementById('registerForm').reset();
             document.getElementById('uploadLabel').classList.remove('has-image');
+
             setTimeout(() => switchTab('login'), 2000);
         }
 
     } catch (err) {
-        console.error("Signup crash:", err);
-        showAlert('error', 'Something went wrong: ' + err.message, 'registerAlert');
+        console.error(err);
+        showAlert('error', err.message, 'registerAlert');
         document.getElementById('loading').classList.remove('active');
     }
 }
+
 
 // =====================
 // LOGIN
@@ -576,85 +566,68 @@ async function login(email, password) {
             password
         });
 
-        if (error) {
-            console.error(error);
-            showAlert('error', error.message, 'loginAlert');
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
+        if (error) throw error;
 
         const user = data.user;
 
-        // Fetch profile
-        const { data: profile, error: profileError } = await supabase
+        // GET PROFILE
+        const { data: profile, error: pError } = await supabase
             .from('users')
             .select('*')
             .eq('id', user.id)
-            .maybeSingle();
+            .single();
 
-        if (profileError || !profile) {
-            console.error(profileError);
-            showAlert('error', 'Profile not found', 'loginAlert');
-            await supabase.auth.signOut();
-            document.getElementById('loading').classList.remove('active');
-            return;
-        }
+        if (pError) throw pError;
 
-        if (profile.approval_status === "pending_approval") {
+        if (profile.approval_status === 'pending') {
             await supabase.auth.signOut();
-            showAlert('error', 'Your account is pending admin approval', 'loginAlert');
-            document.getElementById('loading').classList.remove('active');
-            return;
+            throw new Error('Account pending approval');
         }
 
         document.getElementById('loading').classList.remove('active');
         window.location.href = "home.html";
 
     } catch (err) {
-        console.error("Login error:", err);
-        showAlert('error', 'Login failed: ' + err.message, 'loginAlert');
+        console.error(err);
+        showAlert('error', err.message, 'loginAlert');
         document.getElementById('loading').classList.remove('active');
     }
 }
 
+
 // =====================
-// CHECK SESSION (AUTO LOGIN)
+// SESSION CHECK
 // =====================
 async function checkSession() {
-    try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            window.location.href = "home.html";
-        }
-    } catch (err) {
-        console.error("Session check failed:", err);
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        window.location.href = "home.html";
     }
 }
-
-// Run on page load
 checkSession();
 
-// =====================
-// FORM SUBMISSION HANDLERS
-// =====================
 
-// LOGIN FORM
-document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+// =====================
+// FORM HANDLERS
+// =====================
+document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
+
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value;
 
     if (!email || !password) {
-        showAlert('error', 'Please fill in all fields', 'loginAlert');
+        showAlert('error', 'Fill all fields', 'loginAlert');
         return;
     }
 
     login(email, password);
 });
 
-// REGISTER FORM
-document.getElementById('registerForm')?.addEventListener('submit', (e) => {
+
+document.getElementById('registerForm').addEventListener('submit', (e) => {
     e.preventDefault();
+
     const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
     const full_name = document.getElementById('fullName').value.trim();
@@ -663,7 +636,7 @@ document.getElementById('registerForm')?.addEventListener('submit', (e) => {
     const role = document.querySelector('input[name="role"]:checked').value;
 
     if (!email || !password || !full_name || !parish || !gender) {
-        showAlert('error', 'Please fill in all fields', 'registerAlert');
+        showAlert('error', 'Fill all fields', 'registerAlert');
         return;
     }
 
