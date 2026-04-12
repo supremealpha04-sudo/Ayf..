@@ -5,1305 +5,375 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AYF GWARIMPA - Admin Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #0f1419;
-            color: #fff;
-            min-height: 100vh;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 260px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: #17212b;
-            border-right: 1px solid #242f3d;
-            z-index: 100;
-            overflow-y: auto;
-        }
-
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .admin-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-logo-icon {
-            width: 44px;
-            height: 44px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .admin-logo-text {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .admin-role {
-            font-size: 12px;
-            color: #8a9aa8;
-        }
-
-        .nav-menu {
-            padding: 16px 0;
-        }
-
-        .nav-section {
-            padding: 8px 20px;
-            font-size: 12px;
-            color: #8a9aa8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 3px solid transparent;
-        }
-
-        .nav-item:hover {
-            background: #1e2a35;
-        }
-
-        .nav-item.active {
-            background: #1e2a35;
-            border-left-color: #3a6d99;
-            color: #3a6d99;
-        }
-
-        .nav-item i {
-            width: 24px;
-            text-align: center;
-            font-size: 18px;
-        }
-
-        .nav-badge {
-            margin-left: auto;
-            background: #ff6b6b;
-            color: #fff;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 11px;
-        }
-
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            min-height: 100vh;
-        }
-
-        .top-bar {
-            background: #17212b;
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #242f3d;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 600;
-        }
-
-        .top-actions {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #2b5278;
             color: #fff;
         }
 
-        .btn-primary:hover {
-            background: #3a6d99;
-        }
-
-        .btn-danger {
-            background: #ff6b6b;
-            color: #fff;
-        }
-
-        .btn-secondary {
-            background: #242f3d;
-            color: #fff;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            padding: 24px;
-        }
-
-        .stat-card {
-            background: #17212b;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid #242f3d;
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-
-        .stat-title {
-            font-size: 14px;
-            color: #8a9aa8;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .stat-icon.blue { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-        .stat-icon.green { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-        .stat-icon.orange { background: rgba(249, 115, 22, 0.2); color: #f97316; }
-        .stat-icon.purple { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            margin-bottom: 4px;
-        }
-
-        .stat-change {
-            font-size: 12px;
-            color: #4cd964;
-        }
-
-        /* Content Area */
-        .content-area {
-            padding: 0 24px 24px;
-        }
-
-        .section-card {
-            background: #17212b;
-            border-radius: 12px;
-            border: 1px solid #242f3d;
-            margin-bottom: 24px;
-        }
-
-        .section-header {
-            padding: 20px;
-            border-bottom: 1px solid #242f3d;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .section-title {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .section-body {
+        .dashboard {
+            max-width: 1200px;
+            margin: 0 auto;
             padding: 20px;
         }
 
-        /* Table */
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .data-table th {
-            text-align: left;
-            padding: 12px;
-            font-size: 12px;
-            color: #8a9aa8;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .data-table td {
-            padding: 16px 12px;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .user-cell {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .user-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-name {
-            font-weight: 500;
-        }
-
-        .user-email {
-            font-size: 12px;
-            color: #8a9aa8;
-        }
-
-        .status-badge {
-            padding: 4px 12px;
+        .admin-header {
+            background: #1e2a36;
+            padding: 20px;
             border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-approved {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
-
-        .status-pending {
-            background: rgba(249, 115, 22, 0.2);
-            color: #f97316;
-        }
-
-        .status-suspended {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        .action-btns {
-            display: flex;
-            gap: 8px;
-        }
-
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-        }
-
-        .action-btn.approve {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-        }
-
-        .action-btn.reject {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        /* Form Elements */
-        .form-group {
             margin-bottom: 20px;
         }
 
-        .form-label {
-            display: block;
-            font-size: 14px;
-            color: #8a9aa8;
-            margin-bottom: 8px;
-        }
-
-        .form-input, .form-textarea, .form-select {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0f1419;
-            border: 1px solid #242f3d;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-        }
-
-        .form-input:focus, .form-textarea:focus, .form-select:focus {
-            outline: none;
-            border-color: #3a6d99;
-        }
-
-        .form-textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .file-upload {
-            border: 2px dashed #242f3d;
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .file-upload:hover {
-            border-color: #3a6d99;
-            background: rgba(58, 109, 153, 0.1);
-        }
-
-        .file-upload i {
-            font-size: 40px;
-            color: #3a6d99;
-            margin-bottom: 12px;
-        }
-
-        /* Grid Layout for Forms */
-        .form-grid {
+        .admin-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
         }
 
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.8);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
+        .admin-card {
+            background: #1e2a36;
+            border-radius: 12px;
+            padding: 20px;
         }
 
-        .modal.active {
-            display: flex;
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2b2f36;
         }
 
-        .modal-content {
-            background: #17212b;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #7e8c9e;
+            font-size: 12px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            background: #2b2f36;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+        }
+
+        button {
+            background: #2b5278;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button.danger {
+            background: #dc3545;
+        }
+
+        .item-list {
+            max-height: 300px;
             overflow-y: auto;
         }
 
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid #242f3d;
+        .list-item {
+            padding: 10px;
+            border-bottom: 1px solid #2b2f36;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .modal-title {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #8a9aa8;
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: #242f3d;
-            color: #fff;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .modal-footer {
-            padding: 20px 24px;
-            border-top: 1px solid #242f3d;
-            display: flex;
-            justify-content: flex-end;
-            gap: 12px;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #2b5278;
-            padding: 16px 24px;
-            border-radius: 12px;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            z-index: 2000;
-            animation: slideIn 0.3s ease;
-        }
-
-        .toast.show {
-            display: flex;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .list-item button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            font-size: 12px;
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="admin-logo">
-                <div class="admin-logo-icon">
-                    <i class="fas fa-church"></i>
-                </div>
-                <div>
-                    <div class="admin-logo-text">AYF Admin</div>
-                    <div class="admin-role" id="adminRole">Administrator</div>
-                </div>
-            </div>
+    <div class="dashboard">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <p>Manage AYF GWARIMPA Platform</p>
         </div>
 
-        <nav class="nav-menu">
-            <div class="nav-section">Dashboard</div>
-            <div class="nav-item active" onclick="showSection('dashboard')">
-                <i class="fas fa-home"></i>
-                <span>Overview</span>
-            </div>
-
-            <div class="nav-section">Content</div>
-            <div class="nav-item" onclick="showSection('posts')">
-                <i class="fas fa-newspaper"></i>
-                <span>Posts</span>
-            </div>
-            <div class="nav-item" onclick="showSection('events')">
-                <i class="fas fa-calendar"></i>
-                <span>Events</span>
-            </div>
-            <div class="nav-item" onclick="showSection('notices')">
-                <i class="fas fa-bell"></i>
-                <span>Notices</span>
-            </div>
-            <div class="nav-item" onclick="showSection('minutes')">
-                <i class="fas fa-file-alt"></i>
-                <span>Minutes</span>
-            </div>
-            <div class="nav-item" onclick="showSection('plans')">
-                <i class="fas fa-calendar-alt"></i>
-                <span>Plans</span>
-            </div>
-
-            <div class="nav-section">Management</div>
-            <div class="nav-item" onclick="showSection('quotas')">
-                <i class="fas fa-money-bill"></i>
-                <span>Quotas</span>
-            </div>
-            <div class="nav-item" onclick="showSection('approvals')">
-                <i class="fas fa-user-check"></i>
-                <span>Approvals</span>
-                <span class="nav-badge" id="approvalCount">0</span>
-            </div>
-            <div class="nav-item" onclick="showSection('users')">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </div>
-
-            <div class="nav-section">System</div>
-            <div class="nav-item" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Logout</span>
-            </div>
-        </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Top Bar -->
-        <div class="top-bar">
-            <h1 class="page-title" id="pageTitle">Dashboard Overview</h1>
-            <div class="top-actions">
-                <button class="btn btn-secondary" onclick="refreshData()">
-                    <i class="fas fa-sync-alt"></i> Refresh
-                </button>
-                <button class="btn btn-primary" id="createBtn" onclick="openCreateModal()">
-                    <i class="fas fa-plus"></i> Create New
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard Stats -->
-        <div class="stats-grid" id="statsSection">
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-title">Total Users</span>
-                    <div class="stat-icon blue">
-                        <i class="fas fa-users"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="totalUsers">0</div>
-                <div class="stat-change">+12% from last month</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-title">Pending Approvals</span>
-                    <div class="stat-icon orange">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="pendingApprovals">0</div>
-                <div class="stat-change">Requires attention</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-title">Total Posts</span>
-                    <div class="stat-icon purple">
-                        <i class="fas fa-newspaper"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="totalPosts">0</div>
-                <div class="stat-change">+5 this week</div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-header">
-                    <span class="stat-title">Events</span>
-                    <div class="stat-icon green">
-                        <i class="fas fa-calendar"></i>
-                    </div>
-                </div>
-                <div class="stat-value" id="totalEvents">0</div>
-                <div class="stat-change">Upcoming</div>
-            </div>
-        </div>
-
-        <!-- Content Area -->
-        <div class="content-area" id="contentArea">
-            <!-- Dynamic content loaded here -->
-        </div>
-    </main>
-
-    <!-- Create Modal -->
-    <div class="modal" id="createModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Create New</h3>
-                <div class="modal-close" onclick="closeModal()">
-                    <i class="fas fa-times"></i>
-                </div>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Dynamic form content -->
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-                <button class="btn btn-primary" onclick="saveItem()">Save</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast -->
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span id="toastMessage">Operation successful</span>
-    </div>
-
-    <script>
-        const SUPABASE_URL = 'https://your-project.supabase.co';
-        const SUPABASE_KEY = 'your-anon-key';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        let currentUser = null;
-        let currentSection = 'dashboard';
-        let stats = {};
-
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                window.location.href = 'index.html';
-                return;
-            }
-
-            const { data: user } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-
-            if (!user || (user.role !== 'exco' && user.role !== 'archediceanry' && user.role !== 'both')) {
-                alert('Access denied. Admin only.');
-                window.location.href = 'home.html';
-                return;
-            }
-
-            currentUser = user;
-            document.getElementById('adminRole').textContent = user.role === 'both' ? 'Exco & Archediceanry' : 
-                                                               user.role === 'archediceanry' ? 'Archediceanry' : 'Parish Exco';
-
-            loadDashboardStats();
-            showSection('dashboard');
-        }
-
-        async function loadDashboardStats() {
-            // Total users
-            const { count: usersCount } = await supabase
-                .from('users')
-                .select('*', { count: 'exact' });
-
-            // Pending approvals
-            const { count: approvalsCount } = await supabase
-                .from('role_requests')
-                .select('*', { count: 'exact' })
-                .eq('status', 'pending');
-
-            // Total posts
-            const { count: postsCount } = await supabase
-                .from('posts')
-                .select('*', { count: 'exact' });
-
-            // Total events
-            const { count: eventsCount } = await supabase
-                .from('posts')
-                .select('*', { count: 'exact' })
-                .eq('category', 'event');
-
-            document.getElementById('totalUsers').textContent = usersCount || 0;
-            document.getElementById('pendingApprovals').textContent = approvalsCount || 0;
-            document.getElementById('totalPosts').textContent = postsCount || 0;
-            document.getElementById('totalEvents').textContent = eventsCount || 0;
-            document.getElementById('approvalCount').textContent = approvalsCount || 0;
-        }
-
-        function showSection(section) {
-            currentSection = section;
-            
-            // Update nav
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event?.target?.classList.add('active');
-
-            // Update title
-            const titles = {
-                dashboard: 'Dashboard Overview',
-                posts: 'Manage Posts',
-                events: 'Manage Events',
-                notices: 'Manage Notices',
-                minutes: 'Meeting Minutes',
-                plans: 'Yearly Plans',
-                quotas: 'Parish Quotas',
-                approvals: 'Role Approvals',
-                users: 'User Management'
-            };
-            document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
-
-            // Show/hide stats
-            document.getElementById('statsSection').style.display = section === 'dashboard' ? 'grid' : 'none';
-
-            // Load section content
-            loadSectionContent(section);
-        }
-
-        async function loadSectionContent(section) {
-            const container = document.getElementById('contentArea');
-            
-            switch(section) {
-                case 'dashboard':
-                    container.innerHTML = '';
-                    break;
-                case 'approvals':
-                    await loadApprovals(container);
-                    break;
-                case 'posts':
-                case 'events':
-                case 'notices':
-                case 'minutes':
-                    await loadPosts(container, section);
-                    break;
-                case 'plans':
-                    await loadPlans(container);
-                    break;
-                case 'quotas':
-                    await loadQuotas(container);
-                    break;
-                case 'users':
-                    await loadUsers(container);
-                    break;
-            }
-        }
-
-        async function loadApprovals(container) {
-            const { data: requests } = await supabase
-                .from('role_requests')
-                .select(`
-                    *,
-                    user:users(id, full_name, email, profile_image, parish, role)
-                `)
-                .eq('status', 'pending')
-                .order('created_at', { ascending: false });
-
-            let html = `
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3 class="section-title">Pending Role Approvals</h3>
-                    </div>
-                    <div class="section-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Parish</th>
-                                    <th>Requested Role</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            if (requests && requests.length > 0) {
-                requests.forEach(req => {
-                    html += `
-                        <tr>
-                            <td>
-                                <div class="user-cell">
-                                    <img src="${req.user?.profile_image || 'https://via.placeholder.com/40'}" class="user-avatar">
-                                    <div class="user-info">
-                                        <span class="user-name">${req.user?.full_name}</span>
-                                        <span class="user-email">${req.user?.email}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${req.user?.parish}</td>
-                            <td><span class="status-badge status-pending">${req.requested_role}</span></td>
-                            <td>${new Date(req.created_at).toLocaleDateString()}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="action-btn approve" onclick="approveRequest('${req.id}', '${req.user_id}')">
-                                        <i class="fas fa-check"></i>
-                                    </button>
-                                    <button class="action-btn reject" onclick="rejectRequest('${req.id}')">
-                                        <i class="fas fa-times"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                html += '<tr><td colspan="5" style="text-align:center;padding:40px;">No pending approvals</td></tr>';
-            }
-
-            html += '</tbody></table></div></div>';
-            container.innerHTML = html;
-        }
-
-        async function loadPosts(container, type) {
-            const category = type === 'minutes' ? 'minutes' : type === 'events' ? 'event' : type === 'notices' ? 'notice' : 'post';
-            
-            const { data: posts } = await supabase
-                .from('posts')
-                .select(`
-                    *,
-                    author:users(full_name)
-                `)
-                .eq('category', category)
-                .order('created_at', { ascending: false });
-
-            let html = `
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3 class="section-title">${type.charAt(0).toUpperCase() + type.slice(1)}</h3>
-                    </div>
-                    <div class="section-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Title</th>
-                                    <th>Author</th>
-                                    <th>Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            if (posts && posts.length > 0) {
-                posts.forEach(post => {
-                    html += `
-                        <tr>
-                            <td>${post.title}</td>
-                            <td>${post.author?.full_name || 'Unknown'}</td>
-                            <td>${new Date(post.created_at).toLocaleDateString()}</td>
-                            <td><span class="status-badge status-approved">Active</span></td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="action-btn approve" onclick="editPost('${post.id}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn reject" onclick="deletePost('${post.id}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                html += `<tr><td colspan="5" style="text-align:center;padding:40px;">No ${type} found</td></tr>`;
-            }
-
-            html += '</tbody></table></div></div>';
-            container.innerHTML = html;
-        }
-
-        async function loadPlans(container) {
-            const { data: plans } = await supabase
-                .from('yearly_plans')
-                .select('*')
-                .order('month', { ascending: true });
-
-            let html = `
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3 class="section-title">Yearly Plans</h3>
-                    </div>
-                    <div class="section-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Month</th>
-                                    <th>Title</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            if (plans && plans.length > 0) {
-                plans.forEach(plan => {
-                    html += `
-                        <tr>
-                            <td>${plan.month}</td>
-                            <td>${plan.title}</td>
-                            <td>${new Date(plan.date).toLocaleDateString()}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="action-btn approve" onclick="editPlan('${plan.id}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn reject" onclick="deletePlan('${plan.id}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                html += '<tr><td colspan="4" style="text-align:center;padding:40px;">No plans found</td></tr>';
-            }
-
-            html += '</tbody></table></div></div>';
-            container.innerHTML = html;
-        }
-
-        async function loadQuotas(container) {
-            const { data: quotas } = await supabase
-                .from('quotas')
-                .select(`
-                    *,
-                    parish:parishes(name)
-                `)
-                .order('created_at', { ascending: false });
-
-            let html = `
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3 class="section-title">Parish Quotas</h3>
-                    </div>
-                    <div class="section-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Parish</th>
-                                    <th>Amount</th>
-                                    <th>Description</th>
-                                    <th>Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            if (quotas && quotas.length > 0) {
-                quotas.forEach(quota => {
-                    html += `
-                        <tr>
-                            <td>${quota.parish?.name}</td>
-                            <td>₦${quota.amount?.toLocaleString()}</td>
-                            <td>${quota.description}</td>
-                            <td>${new Date(quota.created_at).toLocaleDateString()}</td>
-                            <td>
-                                <div class="action-btns">
-                                    <button class="action-btn approve" onclick="editQuota('${quota.id}')">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="action-btn reject" onclick="deleteQuota('${quota.id}')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-            } else {
-                html += '<tr><td colspan="5" style="text-align:center;padding:40px;">No quotas found</td></tr>';
-            }
-
-            html += '</tbody></table></div></div>';
-            container.innerHTML = html;
-        }
-
-        async function loadUsers(container) {
-            const { data: users } = await supabase
-                .from('users')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            let html = `
-                <div class="section-card">
-                    <div class="section-header">
-                        <h3 class="section-title">All Users</h3>
-                    </div>
-                    <div class="section-body">
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>User</th>
-                                    <th>Parish</th>
-                                    <th>Role</th>
-                                    <th>Status</th>
-                                    <th>Joined</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-            `;
-
-            if (users && users.length > 0) {
-                users.forEach(user => {
-                    const statusClass = user.approval_status === 'approved' ? 'status-approved' : 
-                                       user.approval_status === 'pending' ? 'status-pending' : 'status-suspended';
-                    html += `
-                        <tr>
-                            <td>
-                                <div class="user-cell">
-                                    <img src="${user.profile_image || 'https://via.placeholder.com/40'}" class="user-avatar">
-                                    <div class="user-info">
-                                        <span class="user-name">${user.full_name}</span>
-                                        <span class="user-email">${user.email}</span>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${user.parish}</td>
-                            <td>${user.role}</td>
-                            <td><span class="status-badge ${statusClass}">${user.approval_status}</span></td>
-                            <td>${new Date(user.created_at).toLocaleDateString()}</td>
-                        </tr>
-                    `;
-                });
-            }
-
-            html += '</tbody></table></div></div>';
-            container.innerHTML = html;
-        }
-
-        async function approveRequest(requestId, userId) {
-            const { error: updateError } = await supabase
-                .from('users')
-                .update({ role: 'exco', approval_status: 'approved', is_approved: true })
-                .eq('id', userId);
-
-            if (!updateError) {
-                await supabase
-                    .from('role_requests')
-                    .update({ status: 'approved' })
-                    .eq('id', requestId);
-
-                showToast('Request approved successfully');
-                loadApprovals(document.getElementById('contentArea'));
-                loadDashboardStats();
-            }
-        }
-
-        async function rejectRequest(requestId) {
-            await supabase
-                .from('role_requests')
-                .update({ status: 'rejected' })
-                .eq('id', requestId);
-
-            showToast('Request rejected');
-            loadApprovals(document.getElementById('contentArea'));
-        }
-
-        function openCreateModal() {
-            const modal = document.getElementById('createModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-
-            const forms = {
-                posts: createPostForm(),
-                events: createEventForm(),
-                notices: createNoticeForm(),
-                minutes: createMinutesForm(),
-                plans: createPlanForm(),
-                quotas: createQuotaForm()
-            };
-
-            title.textContent = 'Create New ' + currentSection.charAt(0).toUpperCase() + currentSection.slice(1);
-            body.innerHTML = forms[currentSection] || '<p>Select a section first</p>';
-            modal.classList.add('active');
-        }
-
-        function createPostForm() {
-            return `
-                <div class="form-group">
-                    <label class="form-label">Title</label>
-                    <input type="text" class="form-input" id="postTitle" placeholder="Enter post title">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Content</label>
-                    <textarea class="form-textarea" id="postContent" placeholder="Write your content..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Category</label>
-                    <select class="form-select" id="postCategory">
-                        <option value="post">General Post</option>
-                        <option value="event">Event</option>
-                        <option value="notice">Notice</option>
-                        <option value="minutes">Meeting Minutes</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Media (Optional)</label>
-                    <div class="file-upload" onclick="document.getElementById('postMedia').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Click to upload image or video</p>
-                    </div>
-                    <input type="file" id="postMedia" accept="image/*,video/*" style="display:none">
-                </div>
-            `;
-        }
-
-        function createEventForm() {
-            return `
-                <div class="form-grid">
+        <div class="admin-grid">
+            <!-- Notices Panel -->
+            <div class="admin-card">
+                <div class="card-title">📢 Notices</div>
+                <form onsubmit="createNotice(event)">
                     <div class="form-group">
-                        <label class="form-label">Event Title</label>
-                        <input type="text" class="form-input" id="eventTitle" placeholder="Event name">
+                        <label>Title</label>
+                        <input type="text" id="notice-title" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Event Date</label>
-                        <input type="datetime-local" class="form-input" id="eventDate">
+                        <label>Content</label>
+                        <textarea id="notice-content" rows="3" required></textarea>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="eventDescription" placeholder="Event details..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Location</label>
-                    <input type="text" class="form-input" id="eventLocation" placeholder="Event location">
-                </div>
-            `;
-        }
+                    <button type="submit">Create Notice</button>
+                </form>
+                <div class="item-list" id="notices-list"></div>
+            </div>
 
-        function createPlanForm() {
-            return `
-                <div class="form-grid">
+            <!-- Events Panel -->
+            <div class="admin-card">
+                <div class="card-title">🎉 Events</div>
+                <form onsubmit="createEvent(event)">
                     <div class="form-group">
-                        <label class="form-label">Month</label>
-                        <select class="form-select" id="planMonth">
-                            ${[1,2,3,4,5,6,7,8,9,10,11,12].map(m => `<option value="${m}">${new Date(2024, m-1).toLocaleString('default', {month:'long'})}</option>`).join('')}
+                        <label>Title</label>
+                        <input type="text" id="event-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="event-desc" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Event Date</label>
+                        <input type="datetime-local" id="event-date" required>
+                    </div>
+                    <button type="submit">Create Event</button>
+                </form>
+                <div class="item-list" id="events-list"></div>
+            </div>
+
+            <!-- Posts Panel -->
+            <div class="admin-card">
+                <div class="card-title">📝 Posts</div>
+                <form onsubmit="createPost(event)">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="post-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Content</label>
+                        <textarea id="post-content" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Media (Image/Video)</label>
+                        <input type="file" id="post-media" accept="image/*,video/*">
+                    </div>
+                    <button type="submit">Create Post</button>
+                </form>
+                <div class="item-list" id="posts-list"></div>
+            </div>
+
+            <!-- Plans Panel -->
+            <div class="admin-card">
+                <div class="card-title">📅 Yearly Plans</div>
+                <form onsubmit="createPlan(event)">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="plan-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="plan-desc" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <input type="number" id="plan-year" required>
+                    </div>
+                    <div class="form-group">
+                        <label>PDF File</label>
+                        <input type="file" id="plan-pdf" accept=".pdf" required>
+                    </div>
+                    <button type="submit">Upload Plan</button>
+                </form>
+                <div class="item-list" id="plans-list"></div>
+            </div>
+
+            <!-- Minutes Panel -->
+            <div class="admin-card">
+                <div class="card-title">📄 Meeting Minutes</div>
+                <form onsubmit="createMinutes(event)">
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" id="minutes-title" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="minutes-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>PDF/DOCX File</label>
+                        <input type="file" id="minutes-file" accept=".pdf,.docx" required>
+                    </div>
+                    <button type="submit">Upload Minutes</button>
+                </form>
+                <div class="item-list" id="minutes-list"></div>
+            </div>
+
+            <!-- Quotas Panel -->
+            <div class="admin-card">
+                <div class="card-title">💰 Parish Quotas</div>
+                <form onsubmit="sendQuota(event)">
+                    <div class="form-group">
+                        <label>Parish Name</label>
+                        <input type="text" id="quota-parish" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount</label>
+                        <input type="number" id="quota-amount" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="quota-desc" rows="2"></textarea>
+                    </div>
+                    <button type="submit">Send Quota to President</button>
+                </form>
+            </div>
+
+            <!-- Suspensions Panel -->
+            <div class="admin-card">
+                <div class="card-title">⛔ Suspend Member</div>
+                <form onsubmit="suspendMember(event)">
+                    <div class="form-group">
+                        <label>User Email</label>
+                        <input type="email" id="suspend-email" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <select id="suspend-duration">
+                            <option value="7">7 Days</option>
+                            <option value="15">15 Days</option>
+                            <option value="30">30 Days</option>
+                            <option value="365">1 Year</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Date</label>
-                        <input type="date" class="form-input" id="planDate">
+                        <label>Reason</label>
+                        <input type="text" id="suspend-reason">
                     </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Activity Title</label>
-                    <input type="text" class="form-input" id="planTitle" placeholder="Activity name">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="planDescription" placeholder="Activity details..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Upload PDF (Optional)</label>
-                    <div class="file-upload" onclick="document.getElementById('planFile').click()">
-                        <i class="fas fa-file-pdf"></i>
-                        <p>Click to upload PDF document</p>
-                    </div>
-                    <input type="file" id="planFile" accept=".pdf" style="display:none">
-                </div>
-            `;
+                    <button type="submit">Suspend Member</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script>
+        let currentUser = null;
+
+        async function checkAdmin() {
+            const { data: { user } } = await supabase.auth.getUser();
+            if(!user) window.location.href = 'index.html';
+            
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('user_role')
+                .eq('id', user.id)
+                .single();
+            
+            if(profile.user_role !== 'admin') {
+                alert('Admin access only');
+                window.location.href = 'home.html';
+            }
+            
+            currentUser = user;
+            loadAllItems();
         }
 
-        function createQuotaForm() {
-            return `
-                <div class="form-group">
-                    <label class="form-label">Select Parish</label>
-                    <select class="form-select" id="quotaParish">
-                        <option value="St. Matthews">St. Matthews</option>
-                        <option value="St. Pauls">St. Paul's</option>
-                        <option value="St. Johns">St. John's</option>
-                        <option value="All Saints">All Saints</option>
-                        <option value="St. Peters">St. Peter's</option>
-                        <option value="Holy Trinity">Holy Trinity</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Amount (₦)</label>
-                    <input type="number" class="form-input" id="quotaAmount" placeholder="Enter amount">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Description</label>
-                    <textarea class="form-textarea" id="quotaDescription" placeholder="Purpose of quota..."></textarea>
-                </div>
-            `;
+        async function createNotice(e) {
+            e.preventDefault();
+            const title = document.getElementById('notice-title').value;
+            const content = document.getElementById('notice-content').value;
+            
+            await supabase.from('feed_items').insert([{
+                type: 'notice',
+                title: title,
+                content: content,
+                created_by: currentUser.id
+            }]);
+            
+            alert('Notice created!');
+            e.target.reset();
+            loadNotices();
         }
 
-        function createNoticeForm() { return createPostForm(); }
-        function createMinutesForm() { return createPostForm(); }
-
-        async function saveItem() {
-            // Implementation based on current section
-            showToast('Item created successfully');
-            closeModal();
-            loadSectionContent(currentSection);
+        async function createEvent(e) {
+            e.preventDefault();
+            const title = document.getElementById('event-title').value;
+            const content = document.getElementById('event-desc').value;
+            const eventDate = document.getElementById('event-date').value;
+            
+            await supabase.from('feed_items').insert([{
+                type: 'event',
+                title: title,
+                content: content,
+                event_date: eventDate,
+                created_by: currentUser.id
+            }]);
+            
+            alert('Event created!');
+            e.target.reset();
+            loadEvents();
         }
 
-        function closeModal() {
-            document.getElementById('createModal').classList.remove('active');
+        async function createPost(e) {
+            e.preventDefault();
+            const title = document.getElementById('post-title').value;
+            const content = document.getElementById('post-content').value;
+            const mediaFile = document.getElementById('post-media').files[0];
+            
+            let mediaUrl = null;
+            let mediaType = null;
+            
+            if(mediaFile) {
+                const fileExt = mediaFile.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const { error } = await supabase.storage
+                    .from('feed-media')
+                    .upload(fileName, mediaFile);
+                
+                if(!error) {
+                    mediaUrl = supabase.storage.from('feed-media').getPublicUrl(fileName).data.publicUrl;
+                    mediaType = mediaFile.type.startsWith('image/') ? 'image' : 'video';
+                }
+            }
+            
+            await supabase.from('feed_items').insert([{
+                type: 'post',
+                title: title,
+                content: content,
+                media_url: mediaUrl,
+                media_type: mediaType,
+                created_by: currentUser.id
+            }]);
+            
+            alert('Post created!');
+            e.target.reset();
+            loadPosts();
         }
 
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toastMessage').textContent = message;
-            toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function refreshData() {
-            loadDashboardStats();
-            loadSectionContent(currentSection);
-            showToast('Data refreshed');
-        }
-
-        async function logout() {
-            await supabase.auth.signOut();
-            window.location.href = 'index.html';
-        }
-
-        // Close modal on outside click
-        document.getElementById('createModal').addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) closeModal();
-        });
-
-        // Initialize
-        init();
-    </script>
-</body>
-</html>'''
+        async function createPlan(e) {
+            e.preventDefault();
+            const title = document.getElementById('plan-title').value;
+            const description = document.getElementById('plan-desc').value;
+            const year = document.getElementById('plan-year').value;
+            const pdfFile = document.getElementById('plan-pdf').files[0];
+            
+            if(pdfFile) {
+                const fileName = `plan_${year}_${Date.now()}.pdf`;
+                const { error } = await supabase.storage
+                    .from('plans')
+                    .upload(fileName, pdfFile);
+                
+                if(!error) {
+                    const pdfUrl = supabase.storage.from('plans').getPublicUrl(fileName).data.publicUrl;
+                    
+                   
