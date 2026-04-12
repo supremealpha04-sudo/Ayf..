@@ -434,16 +434,15 @@
         </div>
     </div>
 
-
 <script>
 const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
-// ✅ Create ONE global client (NO duplication)
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+
+// ✅ SINGLE SAFE CLIENT (NO DUPLICATE)
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-
 // =====================
-// TAB SWITCHING
+// TAB SWITCH
 // =====================
 function switchTab(tab) {
     const loginForm = document.getElementById('loginForm');
@@ -463,11 +462,10 @@ function switchTab(tab) {
     }
 }
 
-
 // =====================
 // IMAGE PREVIEW
 // =====================
-document.getElementById('profileImage')?.addEventListener('change', (e) => {
+document.getElementById('profileImage').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
@@ -478,7 +476,6 @@ document.getElementById('profileImage')?.addEventListener('change', (e) => {
     };
     reader.readAsDataURL(file);
 });
-
 
 // =====================
 // ALERT
@@ -494,7 +491,6 @@ function showAlert(type, message, id) {
     }, 4000);
 }
 
-
 // =====================
 // SIGN UP
 // =====================
@@ -502,7 +498,6 @@ async function signUp(email, password, full_name, parish, gender, role) {
     try {
         document.getElementById('loading').classList.add('active');
 
-        // 1. AUTH SIGNUP
         const { data, error } = await supabase.auth.signUp({
             email,
             password
@@ -511,38 +506,32 @@ async function signUp(email, password, full_name, parish, gender, role) {
         if (error) throw error;
 
         const user = data.user;
-
         if (!user) throw new Error("User not returned");
 
-        // 2. PROFILE INSERT
         const approval_status = role === 'member' ? 'approved' : 'pending';
 
-        const { error: insertError } = await supabase
+        const { error: dbError } = await supabase
             .from('users')
-            .insert({
+            .insert([{
                 id: user.id,
-                email,
+                email: user.email,
                 full_name,
                 parish,
                 gender,
                 role,
                 approval_status
-            });
+            }]);
 
-        if (insertError) throw insertError;
+        if (dbError) throw dbError;
 
         document.getElementById('loading').classList.remove('active');
 
-        // 3. UI RESPONSE
         if (role !== 'member') {
             document.getElementById('registerForm').classList.remove('active');
             document.getElementById('pendingApproval').classList.add('active');
         } else {
-            showAlert('success', 'Account created successfully!', 'registerAlert');
-            document.getElementById('registerForm').reset();
-            document.getElementById('uploadLabel').classList.remove('has-image');
-
-            setTimeout(() => switchTab('login'), 2000);
+            showAlert('success', 'Account created successfully', 'registerAlert');
+            setTimeout(() => switchTab('login'), 1500);
         }
 
     } catch (err) {
@@ -551,7 +540,6 @@ async function signUp(email, password, full_name, parish, gender, role) {
         document.getElementById('loading').classList.remove('active');
     }
 }
-
 
 // =====================
 // LOGIN
@@ -569,30 +557,28 @@ async function login(email, password) {
 
         const user = data.user;
 
-        // GET PROFILE
-        const { data: profile, error: pError } = await supabase
+        const { data: profile, error: profileError } = await supabase
             .from('users')
             .select('*')
             .eq('id', user.id)
             .single();
 
-        if (pError) throw pError;
+        if (profileError) throw profileError;
 
         if (profile.approval_status === 'pending') {
             await supabase.auth.signOut();
-            throw new Error('Account pending approval');
+            throw new Error('Account awaiting approval');
         }
 
-        document.getElementById('loading').classList.remove('active');
         window.location.href = "home.html";
 
     } catch (err) {
         console.error(err);
         showAlert('error', err.message, 'loginAlert');
+    } finally {
         document.getElementById('loading').classList.remove('active');
     }
 }
-
 
 // =====================
 // SESSION CHECK
@@ -605,10 +591,11 @@ async function checkSession() {
 }
 checkSession();
 
-
 // =====================
 // FORM HANDLERS
 // =====================
+
+// LOGIN
 document.getElementById('loginForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -623,7 +610,7 @@ document.getElementById('loginForm').addEventListener('submit', (e) => {
     login(email, password);
 });
 
-
+// REGISTER
 document.getElementById('registerForm').addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -640,14 +627,12 @@ document.getElementById('registerForm').addEventListener('submit', (e) => {
     }
 
     if (password.length < 6) {
-        showAlert('error', 'Password must be at least 6 characters', 'registerAlert');
+        showAlert('error', 'Password too short', 'registerAlert');
         return;
     }
 
     signUp(email, password, full_name, parish, gender, role);
 });
 </script>
-     </body>
+</body>
 </html>
-
-                
