@@ -171,13 +171,6 @@
             display: none;
         }
 
-        .success-message {
-            color: #27ae60;
-            font-size: 12px;
-            margin-top: 5px;
-            display: none;
-        }
-
         .parishes {
             max-height: 200px;
             overflow-y: auto;
@@ -202,14 +195,14 @@
         </div>
         
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('login')">Login</button>
-            <button class="tab" onclick="switchTab('register')">Register</button>
+            <button class="tab active" id="loginTab">Login</button>
+            <button class="tab" id="registerTab">Register</button>
         </div>
         
         <div class="form-container">
             <!-- Login Form -->
             <div id="loginForm" class="form active">
-                <form id="login">
+                <form id="loginFormElement">
                     <div class="form-group">
                         <label>Email</label>
                         <input type="email" id="loginEmail" required>
@@ -224,7 +217,7 @@
             
             <!-- Register Form -->
             <div id="registerForm" class="form">
-                <form id="register">
+                <form id="registerFormElement">
                     <div class="form-group">
                         <label>Full Name</label>
                         <input type="text" id="regName" required>
@@ -263,7 +256,7 @@
                     </div>
                     <div class="form-group">
                         <label>Profile Image</label>
-                        <div class="image-upload" onclick="document.getElementById('profileImage').click()">
+                        <div class="image-upload" id="imageUploadBtn">
                             <img id="imagePreview" class="image-preview" alt="Preview">
                             <p>Click to upload profile image</p>
                         </div>
@@ -287,28 +280,33 @@
     </div>
 
     <script>
-        // Supabase configuration
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
- const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Supabase configuration - UPDATE THESE WITH YOUR VALUES
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let profileImageFile = null;
         
         // Tab switching
-        window.switchTab = function(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
-            
-            if (tab === 'login') {
-                document.querySelector('.tab:first-child').classList.add('active');
-                document.getElementById('loginForm').classList.add('active');
-            } else {
-                document.querySelector('.tab:last-child').classList.add('active');
-                document.getElementById('registerForm').classList.add('active');
-            }
-        }
+        document.getElementById('loginTab').addEventListener('click', function() {
+            document.getElementById('loginTab').classList.add('active');
+            document.getElementById('registerTab').classList.remove('active');
+            document.getElementById('loginForm').classList.add('active');
+            document.getElementById('registerForm').classList.remove('active');
+        });
         
-        // Image upload preview
+        document.getElementById('registerTab').addEventListener('click', function() {
+            document.getElementById('registerTab').classList.add('active');
+            document.getElementById('loginTab').classList.remove('active');
+            document.getElementById('registerForm').classList.add('active');
+            document.getElementById('loginForm').classList.remove('active');
+        });
+        
+        // Image upload
+        document.getElementById('imageUploadBtn').addEventListener('click', function() {
+            document.getElementById('profileImage').click();
+        });
+        
         document.getElementById('profileImage').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -318,30 +316,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                     const preview = document.getElementById('imagePreview');
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                }
+                    document.querySelector('#imageUploadBtn p').style.display = 'none';
+                };
                 reader.readAsDataURL(file);
             }
         });
         
-        // Upload image to Supabase storage
-        async function uploadImage(userId, file) {
-            const fileExt = file.name.split('.').pop();
-            const fileName = `${userId}/profile.${fileExt}`;
-            const { data, error } = await supabase.storage
-                .from('profiles')
-                .upload(fileName, file);
-            
-            if (error) throw error;
-            
-            const { data: { publicUrl } } = supabase.storage
-                .from('profiles')
-                .getPublicUrl(fileName);
-                
-            return publicUrl;
-        }
-        
         // Register handler
-        document.getElementById('register').addEventListener('submit', async (e) => {
+        document.getElementById('registerFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const name = document.getElementById('regName').value;
@@ -358,9 +340,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 return;
             }
             
+            if (password.length < 6) {
+                alert('Password must be at least 6 characters');
+                return;
+            }
+            
             try {
                 // Register user with Supabase Auth
-                const { data: authData, error: authError } = await supabase.auth.signUp({
+                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
                     email: email,
                     password: password
                 });
@@ -369,11 +356,22 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 
                 let profileImageUrl = null;
                 if (profileImageFile) {
-                    profileImageUrl = await uploadImage(authData.user.id, profileImageFile);
+                    const fileExt = profileImageFile.name.split('.').pop();
+                    const fileName = `${authData.user.id}/profile.${fileExt}`;
+                    const { error: uploadError } = await supabaseClient.storage
+                        .from('profiles')
+                        .upload(fileName, profileImageFile);
+                    
+                    if (!uploadError) {
+                        const { data: { publicUrl } } = supabaseClient.storage
+                            .from('profiles')
+                            .getPublicUrl(fileName);
+                        profileImageUrl = publicUrl;
+                    }
                 }
                 
                 // Create profile
-                const { error: profileError } = await supabase
+                const { error: profileError } = await supabaseClient
                     .from('profiles')
                     .insert([{
                         id: authData.user.id,
@@ -390,7 +388,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 if (profileError) throw profileError;
                 
                 // Add to parish members
-                const { error: memberError } = await supabase
+                const { error: memberError } = await supabaseClient
                     .from('parish_members')
                     .insert([{
                         user_id: authData.user.id,
@@ -401,7 +399,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 if (memberError) throw memberError;
                 
                 alert('Registration successful! Please login.');
-                switchTab('login');
+                document.getElementById('loginTab').click();
                 
             } catch (error) {
                 console.error('Registration error:', error);
@@ -410,35 +408,38 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
         });
         
         // Login handler
-        document.getElementById('login').addEventListener('submit', async (e) => {
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
             e.preventDefault();
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             try {
-                const { data, error } = await supabase.auth.signInWithPassword({
+                const { data, error } = await supabaseClient.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
                 if (error) throw error;
                 
-                // Check if user is suspended
-                const { data: profile } = await supabase
+                // Get user profile
+                const { data: profile, error: profileError } = await supabaseClient
                     .from('profiles')
                     .select('*')
                     .eq('id', data.user.id)
                     .single();
                 
-                if (profile.is_suspended && new Date(profile.suspension_end_date) > new Date()) {
+                if (profileError) throw profileError;
+                
+                // Check if user is suspended
+                if (profile.is_suspended && profile.suspension_end_date && new Date(profile.suspension_end_date) > new Date()) {
                     alert(`Your account is suspended until ${new Date(profile.suspension_end_date).toLocaleDateString()}`);
                     return;
                 }
                 
                 // Store user session
-                localStorage.setItem('user', JSON.stringify(data.user));
-                localStorage.setItem('profile', JSON.stringify(profile));
+                localStorage.setItem('ayf_user', JSON.stringify(data.user));
+                localStorage.setItem('ayf_profile', JSON.stringify(profile));
                 
                 // Redirect to home page
                 window.location.href = 'home.html';
