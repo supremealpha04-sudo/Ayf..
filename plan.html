@@ -1,244 +1,133 @@
-à<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AYF GWARIMPA - Yearly Plan</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
-            background: #0f1419;
-            color: #fff;
-            min-height: 100vh;
-            padding-bottom: 80px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #0f0f0f;
+            color: white;
         }
 
-        /* Header */
         .header {
             background: #17212b;
-            padding: 16px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .header-title {
-            font-size: 20px;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .year-selector {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 12px;
-        }
-
-        .year-btn {
-            padding: 8px 20px;
-            background: #242f3d;
-            border: none;
-            border-radius: 20px;
-            color: #8a9aa8;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .year-btn.active {
-            background: #2b5278;
-            color: #fff;
-        }
-
-        /* Plan Container */
-        .plan-container {
-            padding: 16px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* Month Section */
-        .month-section {
-            margin-bottom: 24px;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .month-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
             padding: 12px 16px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 12px;
-        }
-
-        .month-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 50%;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-
-        .month-name {
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        /* Activity Card */
-        .activity-card {
-            background: #17212b;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid #242f3d;
-            transition: all 0.2s;
-        }
-
-        .activity-card:hover {
-            border-color: #3a6d99;
-            transform: translateX(4px);
-        }
-
-        .activity-date {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #3a6d99;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 8px;
-        }
-
-        .activity-title {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .activity-description {
-            font-size: 14px;
-            color: #8a9aa8;
-            line-height: 1.5;
-            margin-bottom: 12px;
-        }
-
-        .activity-actions {
-            display: flex;
-            gap: 12px;
-            padding-top: 12px;
-            border-top: 1px solid #242f3d;
-        }
-
-        .activity-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            background: #242f3d;
-            border: none;
-            border-radius: 8px;
-            color: #8a9aa8;
-            font-size: 13px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-
-        .activity-btn:hover {
-            background: #2b5278;
-            color: #fff;
-        }
-
-        .activity-btn i {
-            font-size: 14px;
-        }
-
-        /* PDF Preview Modal */
-        .modal {
-            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            flex-direction: column;
+            z-index: 100;
         }
 
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-header {
-            background: #17212b;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #242f3d;
-        }
-
-        .modal-title {
-            font-size: 16px;
+        .header h1 {
+            font-size: 20px;
             font-weight: 600;
         }
 
-        .modal-close {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+        .refresh-btn {
+            background: none;
+            border: none;
+            color: #6ab3f3;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .plans-container {
+            margin-top: 60px;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .plan-card {
+            background: #17212b;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .plan-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .plan-year {
+            background: #6ab3f3;
+            padding: 8px 16px;
+            font-weight: 600;
+            color: #17212b;
+        }
+
+        .plan-title {
+            padding: 16px 16px 8px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .plan-description {
+            padding: 0 16px 16px;
+            color: #c4c9ce;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .plan-actions {
+            display: flex;
+            gap: 12px;
+            padding: 12px 16px;
+            border-top: 1px solid #2b3b4c;
+        }
+
+        .plan-btn {
+            flex: 1;
+            padding: 10px;
+            background: #242f3d;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            color: #8a9aa8;
+            gap: 8px;
             transition: all 0.2s;
         }
 
-        .modal-close:hover {
-            background: #242f3d;
-            color: #fff;
+        .plan-btn:hover {
+            background: #6ab3f3;
+            color: #17212b;
         }
 
-        .pdf-viewer {
-            flex: 1;
-            width: 100%;
-            border: none;
+        .plan-btn.download {
+            background: #075e54;
         }
 
-        /* Bottom Navigation */
+        .plan-btn.share {
+            background: #128c7e;
+        }
+
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: #17212b;
-            border-top: 1px solid #242f3d;
             display: flex;
             justify-content: space-around;
             padding: 8px 0;
+            border-top: 1px solid #2b3b4c;
             z-index: 100;
         }
 
@@ -247,330 +136,213 @@
             flex-direction: column;
             align-items: center;
             gap: 4px;
-            padding: 8px 20px;
+            background: none;
+            border: none;
+            color: #8e9eae;
             cursor: pointer;
-            color: #8a9aa8;
+            padding: 8px;
             transition: all 0.2s;
-            text-decoration: none;
         }
 
-        .nav-item:hover, .nav-item.active {
-            color: #3a6d99;
+        .nav-item.active {
+            color: #6ab3f3;
         }
 
-        .nav-item i {
-            font-size: 22px;
+        .nav-icon {
+            font-size: 24px;
         }
 
-        .nav-item span {
+        .nav-label {
             font-size: 11px;
         }
 
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #8a9aa8;
-        }
-
-        .empty-state i {
-            font-size: 60px;
-            margin-bottom: 16px;
-            opacity: 0.5;
-        }
-
-        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
+            color: #8e9eae;
         }
 
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #242f3d;
-            border-top-color: #3a6d99;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Admin Button */
-        .admin-btn {
-            position: fixed;
-            bottom: 100px;
-            right: 20px;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: #fff;
-            font-size: 24px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s;
-            display: none;
-            z-index: 50;
-        }
-
-        .admin-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .admin-btn.visible {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        @media (max-width: 768px) {
+            .plan-title {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <h1 class="header-title">Yearly Fellowship Plan</h1>
-        <div class="year-selector">
-            <button class="year-btn active" data-year="2026">2026</button>
-            <button class="year-btn" data-year="2025">2025</button>
-        </div>
-    </header>
-
-    <!-- Plan Container -->
-    <div class="plan-container" id="planContainer">
-        <div class="loading">
-            <div class="spinner"></div>
-            <p>Loading yearly plan...</p>
-        </div>
+    <div class="header">
+        <h1>📅 AYF Yearly Plan</h1>
+        <button class="refresh-btn" onclick="loadPlans()">🔄</button>
     </div>
 
-    <!-- Admin Button -->
-    <button class="admin-btn" id="adminBtn" onclick="goToAdmin()">
-        <i class="fas fa-cog"></i>
-    </button>
-
-    <!-- PDF Modal -->
-    <div class="modal" id="pdfModal">
-        <div class="modal-header">
-            <span class="modal-title" id="pdfTitle">Document Preview</span>
-            <div class="modal-close" onclick="closePdfModal()">
-                <i class="fas fa-times"></i>
-            </div>
-        </div>
-        <iframe class="pdf-viewer" id="pdfViewer"></iframe>
+    <div class="plans-container" id="plansContainer">
+        <div class="loading">Loading plans...</div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a href="home.html" class="nav-item">
-            <i class="fas fa-home"></i>
-            <span>Home</span>
-        </a>
-        <a href="parish.html" class="nav-item">
-            <i class="fas fa-users"></i>
-            <span>Parish</span>
-        </a>
-        <a href="plan.html" class="nav-item active">
-            <i class="fas fa-calendar-alt"></i>
-            <span>Plan</span>
-        </a>
-        <a href="profile.html" class="nav-item">
-            <i class="fas fa-user-circle"></i>
-            <span>Profile</span>
-        </a>
-    </nav>
+    <div class="bottom-nav">
+        <button class="nav-item" onclick="navigateTo('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('parish')">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Parish</div>
+        </button>
+        <button class="nav-item active" onclick="navigateTo('plan')">
+            <div class="nav-icon">📅</div>
+            <div class="nav-label">Plan</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('profile')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Profile</div>
+        </button>
+    </div>
 
     <script>
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         let currentUser = null;
-        let currentYear = 2026;
-        let plans = [];
-
-        const months = [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
-        ];
-
-        const monthIcons = [
-            'fa-snowflake', 'fa-heart', 'fa-seedling', 'fa-umbrella',
-            'fa-sun', 'fa-fire', 'fa-flag-usa', 'fa-beach-ball',
-            'fa-leaf', 'fa-pumpkin', 'fa-corn', 'fa-gift'
-        ];
-
-        async function init() {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
+        
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
                 window.location.href = 'index.html';
                 return;
             }
-
-            const { data: user } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-            
-            currentUser = user;
-
-            // Show admin button for exco/archediceanry
-            if (user.role === 'exco' || user.role === 'archediceanry' || user.role === 'both') {
-                document.getElementById('adminBtn').classList.add('visible');
-            }
-
+            currentUser = JSON.parse(userStr);
             loadPlans();
         }
-
+        
         async function loadPlans() {
-            const { data, error } = await supabase
-                .from('yearly_plans')
-                .select('*')
-                .eq('year', currentYear)
-                .order('month', { ascending: true })
-                .order('date', { ascending: true });
-
-            if (error) {
-                console.error('Error loading plans:', error);
-                return;
-            }
-
-            plans = data || [];
-            renderPlans();
-        }
-
-        function renderPlans() {
-            const container = document.getElementById('planContainer');
-
-            if (plans.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <i class="fas fa-calendar-times"></i>
-                        <p>No plans available for ${currentYear}</p>
-                    </div>
-                `;
-                return;
-            }
-
-            // Group by month
-            const grouped = {};
-            plans.forEach(plan => {
-                if (!grouped[plan.month]) grouped[plan.month] = [];
-                grouped[plan.month].push(plan);
-            });
-
-            let html = '';
-            Object.keys(grouped).sort((a, b) => a - b).forEach(monthIndex => {
-                const monthPlans = grouped[monthIndex];
-                html += `
-                    <div class="month-section">
-                        <div class="month-header">
-                            <div class="month-icon">
-                                <i class="fas ${monthIcons[monthIndex - 1]}"></i>
-                            </div>
-                            <span class="month-name">${months[monthIndex - 1]}</span>
+            const container = document.getElementById('plansContainer');
+            container.innerHTML = '<div class="loading">Loading plans...</div>';
+            
+            try {
+                const { data: plans, error } = await supabase
+                    .from('plans')
+                    .select('*')
+                    .order('year', { ascending: false });
+                
+                if (error) throw error;
+                
+                if (!plans || plans.length === 0) {
+                    container.innerHTML = '<div class="loading">No plans available yet.</div>';
+                    return;
+                }
+                
+                container.innerHTML = '';
+                
+                for (const plan of plans) {
+                    const planCard = document.createElement('div');
+                    planCard.className = 'plan-card';
+                    
+                    planCard.innerHTML = `
+                        <div class="plan-year">Year ${plan.year}</div>
+                        <div class="plan-title">${escapeHtml(plan.title)}</div>
+                        <div class="plan-description">${escapeHtml(plan.description || 'No description provided.')}</div>
+                        <div class="plan-actions">
+                            <button class="plan-btn download" onclick="downloadPlan('${plan.file_url}', '${plan.title}_${plan.year}')">
+                                📥 Download PDF
+                            </button>
+                            <button class="plan-btn share" onclick="sharePlan('${plan.title}', '${plan.year}')">
+                                📤 Share
+                            </button>
                         </div>
-                `;
-
-                monthPlans.forEach(plan => {
-                    html += createActivityCard(plan);
-                });
-
-                html += '</div>';
-            });
-
-            container.innerHTML = html;
-        }
-
-        function createActivityCard(plan) {
-            const date = new Date(plan.date);
-            const formattedDate = date.toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                day: 'numeric' 
-            });
-
-            return `
-                <div class="activity-card">
-                    <div class="activity-date">
-                        <i class="fas fa-calendar-day"></i>
-                        <span>${formattedDate}</span>
-                    </div>
-                    <div class="activity-title">${plan.title}</div>
-                    <div class="activity-description">${plan.description || ''}</div>
-                    <div class="activity-actions">
-                        ${plan.file_url ? `
-                            <button class="activity-btn" onclick="viewPdf('${plan.file_url}', '${plan.title}')">
-                                <i class="fas fa-eye"></i> View
-                            </button>
-                            <button class="activity-btn" onclick="downloadFile('${plan.file_url}', '${plan.file_name || plan.title + '.pdf'}')">
-                                <i class="fas fa-download"></i> Download
-                            </button>
-                        ` : ''}
-                        <button class="activity-btn" onclick="sharePlan('${plan.id}')">
-                            <i class="fas fa-share-alt"></i> Share
-                        </button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function viewPdf(url, title) {
-            document.getElementById('pdfTitle').textContent = title;
-            document.getElementById('pdfViewer').src = url;
-            document.getElementById('pdfModal').classList.add('active');
-        }
-
-        function closePdfModal() {
-            document.getElementById('pdfModal').classList.remove('active');
-            document.getElementById('pdfViewer').src = '';
-        }
-
-        function downloadFile(url, filename) {
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.target = '_blank';
-            link.click();
-        }
-
-        function sharePlan(planId) {
-            const plan = plans.find(p => p.id === planId);
-            if (!plan) return;
-
-            const shareData = {
-                title: plan.title,
-                text: `AYF GWARIMPA - ${plan.title}\n${plan.description}`,
-                url: window.location.href
-            };
-
-            if (navigator.share) {
-                navigator.share(shareData);
-            } else {
-                navigator.clipboard.writeText(`${plan.title} - ${window.location.href}`);
-                alert('Plan details copied to clipboard!');
+                    `;
+                    
+                    container.appendChild(planCard);
+                }
+                
+            } catch (error) {
+                console.error('Error loading plans:', error);
+                container.innerHTML = '<div class="loading">Error loading plans. Please try again.</div>';
             }
         }
-
-        function goToAdmin() {
-            window.location.href = 'admin-plans.html';
+        
+        window.downloadPlan = async function(url, filename) {
+            try {
+                // Track download
+                const { data: plan } = await supabase
+                    .from('plans')
+                    .select('id')
+                    .eq('file_url', url)
+                    .single();
+                
+                if (plan) {
+                    await supabase
+                        .from('downloads')
+                        .insert([{
+                            post_id: plan.id,
+                            user_id: currentUser.id
+                        }]);
+                }
+                
+                // Download file
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const downloadUrl = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = `${filename}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(downloadUrl);
+                
+                alert('Download started!');
+                
+            } catch (error) {
+                console.error('Error downloading:', error);
+                alert('Failed to download. Please try again.');
+            }
+        };
+        
+        window.sharePlan = async function(title, year) {
+            const shareText = `Check out AYF GWARIMPA ${year} Plan: ${title}`;
+            
+            if (navigator.share) {
+                try {
+                    await navigator.share({
+                        title: `AYF Plan ${year}`,
+                        text: shareText,
+                        url: window.location.href
+                    });
+                } catch (error) {
+                    console.log('Share cancelled');
+                }
+            } else {
+                await navigator.clipboard.writeText(shareText);
+                alert('Plan info copied to clipboard!');
+            }
+        };
+        
+        window.navigateTo = function(page) {
+            switch(page) {
+                case 'home':
+                    window.location.href = 'home.html';
+                    break;
+                case 'parish':
+                    window.location.href = 'parish.html';
+                    break;
+                case 'plan':
+                    window.location.href = 'plan.html';
+                    break;
+                case 'profile':
+                    window.location.href = 'profile.html';
+                    break;
+            }
+        };
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        // Year selector
-        document.querySelectorAll('.year-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.year-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentYear = parseInt(btn.dataset.year);
-                loadPlans();
-            });
-        });
-
-        // Initialize
-        init();
+        
+        checkAuth();
     </script>
 </body>
 </html>
