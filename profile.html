@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AYF GWARIMPA - Profile</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -14,16 +14,22 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #17212b;
-            color: #fff;
-            padding-bottom: 70px;
+            background: #0f0f0f;
+            color: white;
         }
 
-        /* Telegram-style profile header */
         .profile-header {
-            background: #1e2a36;
-            padding: 30px 20px;
-            text-align: center;
+            background: #17212b;
+            position: relative;
+        }
+
+        .cover-photo {
+            height: 150px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .profile-info {
+            padding: 0 20px 20px;
             position: relative;
         }
 
@@ -31,42 +37,75 @@
             width: 100px;
             height: 100px;
             border-radius: 50%;
-            margin: 0 auto 15px;
-            background-size: cover;
-            background-position: center;
-            border: 3px solid #2b5278;
+            border: 4px solid #17212b;
+            margin-top: -50px;
+            background: #6ab3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .profile-name {
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: 5px;
+            margin-top: 12px;
         }
 
         .profile-username {
-            color: #7e8c9e;
+            color: #6ab3f3;
             font-size: 14px;
+            margin-top: 4px;
         }
 
-        .edit-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: #2b5278;
+        .profile-bio {
+            color: #c4c9ce;
+            font-size: 14px;
+            margin-top: 12px;
+            line-height: 1.4;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            background: #242f3d;
             border: none;
+            border-radius: 8px;
             color: white;
-            padding: 8px 15px;
-            border-radius: 20px;
+            font-size: 14px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        /* Stats */
+        .action-btn.primary {
+            background: #6ab3f3;
+            color: #17212b;
+        }
+
         .stats {
             display: flex;
             justify-content: space-around;
             padding: 20px;
-            background: #1e2a36;
-            margin-top: 10px;
+            background: #17212b;
+            margin: 16px;
+            border-radius: 12px;
         }
 
         .stat-item {
@@ -80,97 +119,48 @@
 
         .stat-label {
             font-size: 12px;
-            color: #7e8c9e;
+            color: #8e9eae;
+            margin-top: 4px;
         }
 
-        /* Info sections */
-        .info-section {
-            background: #1e2a36;
-            margin-top: 10px;
-            padding: 15px 20px;
+        .section {
+            margin: 16px;
+            background: #17212b;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .info-row {
+        .section-header {
+            padding: 16px;
+            font-weight: 600;
+            border-bottom: 1px solid #2b3b4c;
+        }
+
+        .section-item {
+            padding: 12px 16px;
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #2b2f36;
-        }
-
-        .info-label {
-            color: #7e8c9e;
-        }
-
-        .info-value {
-            font-weight: 500;
-        }
-
-        /* Message button */
-        .message-btn {
-            background: #2b5278;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: calc(100% - 40px);
-            margin: 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        /* Chats list (Telegram style) */
-        .chats-section {
-            background: #1e2a36;
-            margin-top: 10px;
-        }
-
-        .section-title {
-            padding: 15px 20px;
-            font-weight: 600;
-            border-bottom: 1px solid #2b2f36;
-        }
-
-        .chat-item {
-            display: flex;
             align-items: center;
-            padding: 12px 20px;
+            border-bottom: 1px solid #2b3b4c;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .chat-item:hover {
-            background: #2b2f36;
+        .section-item:last-child {
+            border-bottom: none;
         }
 
-        .chat-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-size: cover;
-            margin-right: 15px;
+        .section-item:hover {
+            background: #242f3d;
         }
 
-        .chat-info {
-            flex: 1;
+        .item-label {
+            color: #c4c9ce;
         }
 
-        .chat-name {
-            font-weight: 600;
-            margin-bottom: 4px;
+        .item-value {
+            color: #6ab3f3;
         }
 
-        .chat-last-message {
-            font-size: 13px;
-            color: #7e8c9e;
-        }
-
-        .chat-time {
-            font-size: 11px;
-            color: #7e8c9e;
-        }
-
-        /* Bottom nav */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -179,27 +169,36 @@
             background: #17212b;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid #2b2f36;
+            padding: 8px 0;
+            border-top: 1px solid #2b3b4c;
+            z-index: 100;
         }
 
         .nav-item {
-            text-align: center;
-            color: #7e8c9e;
-            text-decoration: none;
-            font-size: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            background: none;
+            border: none;
+            color: #8e9eae;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.2s;
         }
 
         .nav-item.active {
-            color: #2b5278;
+            color: #6ab3f3;
         }
 
         .nav-icon {
             font-size: 24px;
-            display: block;
         }
 
-        /* Modal */
+        .nav-label {
+            font-size: 11px;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -207,262 +206,490 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
-            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            background: #17212b;
+            padding: 16px;
+            display: flex;
             align-items: center;
+            gap: 16px;
+            position: sticky;
+            top: 0;
         }
 
         .modal-content {
-            background: #1e2a36;
-            border-radius: 20px;
             padding: 20px;
-            width: 90%;
-            max-width: 400px;
         }
 
-        .chat-window {
-            height: 400px;
+        .chat-list-item {
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #17212b;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
         }
 
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            margin-bottom: 10px;
+        .chat-list-item:hover {
+            background: #242f3d;
         }
 
-        .chat-input-area {
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #6ab3f3;
             display: flex;
-            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
         }
 
-        .chat-input {
+        .chat-info {
             flex: 1;
-            padding: 10px;
-            background: #2b2f36;
+        }
+
+        .chat-name {
+            font-weight: 600;
+        }
+
+        .chat-last-message {
+            font-size: 12px;
+            color: #8e9eae;
+        }
+
+        .back-btn {
+            background: none;
             border: none;
-            border-radius: 20px;
             color: white;
+            font-size: 24px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="profile-header">
-        <div class="profile-avatar" id="profile-avatar"></div>
-        <div class="profile-name" id="profile-name"></div>
-        <div class="profile-username" id="profile-username"></div>
-        <button class="edit-btn" onclick="editProfile()">Edit</button>
+        <div class="cover-photo"></div>
+        <div class="profile-info">
+            <div class="profile-avatar" id="profileAvatar">
+                <span id="avatarLetter">U</span>
+            </div>
+            <div class="profile-name" id="profileName">Loading...</div>
+            <div class="profile-username" id="profileUsername">@username</div>
+            <div class="profile-bio" id="profileBio">Anglican Youth Fellowship Member</div>
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="editProfile()">✏️ Edit Profile</button>
+                <button class="action-btn" onclick="showChats()">💬 Messages</button>
+            </div>
+        </div>
     </div>
 
     <div class="stats">
         <div class="stat-item">
-            <div class="stat-number" id="posts-count">0</div>
+            <div class="stat-number" id="postCount">0</div>
             <div class="stat-label">Posts</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number" id="followers-count">0</div>
-            <div class="stat-label">Followers</div>
+            <div class="stat-number" id="likeCount">0</div>
+            <div class="stat-label">Likes</div>
         </div>
         <div class="stat-item">
-            <div class="stat-number" id="following-count">0</div>
-            <div class="stat-label">Following</div>
+            <div class="stat-number" id="commentCount">0</div>
+            <div class="stat-label">Comments</div>
         </div>
     </div>
 
-    <div class="info-section">
-        <div class="info-row">
-            <span class="info-label">Parish</span>
-            <span class="info-value" id="profile-parish"></span>
+    <div class="section">
+        <div class="section-header">Account Information</div>
+        <div class="section-item">
+            <span class="item-label">Parish</span>
+            <span class="item-value" id="parishName">-</span>
         </div>
-        <div class="info-row">
-            <span class="info-label">Gender</span>
-            <span class="info-value" id="profile-gender"></span>
+        <div class="section-item">
+            <span class="item-label">Gender</span>
+            <span class="item-value" id="gender">-</span>
         </div>
-        <div class="info-row">
-            <span class="info-label">Member Since</span>
-            <span class="info-value" id="profile-joined"></span>
+        <div class="section-item">
+            <span class="item-label">Email</span>
+            <span class="item-value" id="email">-</span>
+        </div>
+        <div class="section-item">
+            <span class="item-label">Member Since</span>
+            <span class="item-value" id="memberSince">-</span>
         </div>
     </div>
 
-    <div class="chats-section">
-        <div class="section-title">Messages</div>
-        <div id="chats-list"></div>
+    <div class="section">
+        <div class="section-header">Position</div>
+        <div class="section-item">
+            <span class="item-label">Parish Exco</span>
+            <span class="item-value" id="excoParish">No</span>
+        </div>
+        <div class="section-item">
+            <span class="item-label">Archediceanry Exco</span>
+            <span class="item-value" id="excoArchediceanry">No</span>
+        </div>
+        <div class="section-item" id="excoStatusItem" style="display: none;">
+            <span class="item-label">Exco Request Status</span>
+            <span class="item-value" id="excoStatus">-</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="section-header">Settings</div>
+        <div class="section-item" onclick="logout()">
+            <span class="item-label">🚪 Logout</span>
+            <span class="item-value">→</span>
+        </div>
+        <div class="section-item" onclick="changePassword()">
+            <span class="item-label">🔒 Change Password</span>
+            <span class="item-value">→</span>
+        </div>
+        <div class="section-item" onclick="clearCache()">
+            <span class="item-label">🗑️ Clear Cache</span>
+            <span class="item-value">→</span>
+        </div>
     </div>
 
     <div class="bottom-nav">
-        <a href="home.html" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span>Home</span>
-        </a>
-        <a href="parish.html" class="nav-item">
-            <span class="nav-icon">💬</span>
-            <span>Parish</span>
-        </a>
-        <a href="#" class="nav-item" onclick="showPlans()">
-            <span class="nav-icon">📅</span>
-            <span>Plan</span>
-        </a>
-        <a href="profile.html" class="nav-item active">
-            <span class="nav-icon">👤</span>
-            <span>Profile</span>
-        </a>
+        <button class="nav-item" onclick="navigateTo('home')">
+            <div class="nav-icon">🏠</div>
+            <div class="nav-label">Home</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('parish')">
+            <div class="nav-icon">💬</div>
+            <div class="nav-label">Parish</div>
+        </button>
+        <button class="nav-item" onclick="navigateTo('plan')">
+            <div class="nav-icon">📅</div>
+            <div class="nav-label">Plan</div>
+        </button>
+        <button class="nav-item active" onclick="navigateTo('profile')">
+            <div class="nav-icon">👤</div>
+            <div class="nav-label">Profile</div>
+        </button>
     </div>
 
-    <!-- Chat Modal -->
-    <div id="chat-modal" class="modal">
-        <div class="modal-content chat-window">
-            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                <h3 id="chat-with-name"></h3>
-                <button onclick="closeChat()" style="background: none; border: none; color: white; font-size: 20px;">✕</button>
-            </div>
-            <div id="private-messages" class="chat-messages"></div>
-            <div class="chat-input-area">
-                <input type="text" id="private-message-input" class="chat-input" placeholder="Type a message...">
-                <button onclick="sendPrivateMessage()" style="background: #2b5278; border: none; color: white; padding: 10px 15px; border-radius: 20px;">Send</button>
-            </div>
+    <!-- Chats Modal -->
+    <div class="modal" id="chatsModal" onclick="if(event.target === this) closeChats()">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeChats()">←</button>
+            <div class="chat-name">Messages</div>
+        </div>
+        <div class="modal-content" id="chatsList">
+            <!-- Chats will load here -->
         </div>
     </div>
 
-    <script src="supabase-config.js"></script>
-    <script>
-        let currentUser = null;
-        let currentChatUser = null;
-        let messagesSubscription = null;
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editModal" onclick="if(event.target === this) closeEditModal()">
+        <div class="modal-header">
+            <button class="back-btn" onclick="closeEditModal()">←</button>
+            <div class="chat-name">Edit Profile</div>
+        </div>
+        <div class="modal-content">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <div id="editAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #6ab3f3; margin: 0 auto; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;" onclick="document.getElementById('editProfileImage').click()">
+                    <img id="editAvatarImg" style="width: 100%; height: 100%; object-fit: cover;">
+                    <span id="editAvatarText" style="font-size: 40px;">U</span>
+                </div>
+                <input type="file" id="editProfileImage" accept="image/*" style="display: none;">
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; color: #c4c9ce;">Full Name</label>
+                <input type="text" id="editName" style="width: 100%; padding: 12px; background: #242f3d; border: none; border-radius: 8px; color: white;">
+            </div>
+            <div class="form-group" style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; color: #c4c9ce;">Bio</label>
+                <textarea id="editBio" rows="3" style="width: 100%; padding: 12px; background: #242f3d; border: none; border-radius: 8px; color: white;"></textarea>
+            </div>
+            <button class="action-btn primary" onclick="saveProfile()" style="width: 100%;">Save Changes</button>
+        </div>
+    </div>
 
+    <script>
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentUser = null;
+        let currentProfile = null;
+        let chatsSubscription = null;
+        
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'index.html';
+                return;
+            }
+            currentUser = JSON.parse(userStr);
+            await loadProfile();
+            await loadStats();
+        }
+        
         async function loadProfile() {
-            const { data: { user } } = await supabase.auth.getUser();
-            currentUser = user;
-            if(!user) window.location.href = 'index.html';
-            
-            const { data: profile } = await supabase
+            const { data: profile, error } = await supabase
                 .from('profiles')
                 .select('*')
                 .eq('id', currentUser.id)
                 .single();
             
-            document.getElementById('profile-avatar').style.backgroundImage = `url(${profile.avatar_url || ''})`;
-            document.getElementById('profile-name').textContent = profile.full_name;
-            document.getElementById('profile-username').textContent = `@${profile.full_name.replace(/\s/g, '').toLowerCase()}`;
-            document.getElementById('profile-parish').textContent = profile.parish_name;
-            document.getElementById('profile-gender').textContent = profile.gender;
-            document.getElementById('profile-joined').textContent = new Date(profile.created_at).toLocaleDateString();
+            if (error) {
+                console.error('Error loading profile:', error);
+                return;
+            }
             
-            loadChats();
+            currentProfile = profile;
+            
+            // Update UI
+            document.getElementById('profileName').textContent = profile.full_name;
+            document.getElementById('profileUsername').textContent = `@${profile.full_name.toLowerCase().replace(/\s/g, '')}`;
+            document.getElementById('parishName').textContent = profile.parish_name;
+            document.getElementById('gender').textContent = profile.gender || 'Not specified';
+            document.getElementById('email').textContent = profile.email;
+            document.getElementById('memberSince').textContent = new Date(profile.created_at).toLocaleDateString();
+            document.getElementById('excoParish').textContent = profile.is_exco_parish ? 'Yes' : 'No';
+            document.getElementById('excoArchediceanry').textContent = profile.is_exco_archediceanry ? 'Yes' : 'No';
+            
+            if (profile.is_exco_parish || profile.is_exco_archediceanry) {
+                document.getElementById('excoStatusItem').style.display = 'flex';
+                document.getElementById('excoStatus').textContent = profile.exco_request_status || 'pending';
+            }
+            
+            // Avatar
+            const avatarLetter = profile.full_name.charAt(0).toUpperCase();
+            document.getElementById('avatarLetter').textContent = avatarLetter;
+            
+            if (profile.profile_image_url) {
+                const avatarDiv = document.getElementById('profileAvatar');
+                avatarDiv.innerHTML = `<img src="${profile.profile_image_url}" alt="Profile">`;
+            }
         }
-
-        async function loadChats() {
+        
+        async function loadStats() {
+            // Post count
+            const { count: postCount } = await supabase
+                .from('posts')
+                .select('*', { count: 'exact', head: true });
+            
+            // Like count (user's likes given)
+            const { count: likeCount } = await supabase
+                .from('likes')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', currentUser.id);
+            
+            // Comment count
+            const { count: commentCount } = await supabase
+                .from('comments')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', currentUser.id);
+            
+            document.getElementById('postCount').textContent = postCount || 0;
+            document.getElementById('likeCount').textContent = likeCount || 0;
+            document.getElementById('commentCount').textContent = commentCount || 0;
+        }
+        
+        window.showChats = async function() {
+            const modal = document.getElementById('chatsModal');
+            const chatsList = document.getElementById('chatsList');
+            modal.style.display = 'block';
+            chatsList.innerHTML = '<div style="text-align: center; padding: 40px;">Loading conversations...</div>';
+            
             // Get all unique users that current user has chatted with
-            const { data: sent } = await supabase
+            const { data: sentMessages } = await supabase
                 .from('private_messages')
-                .select('receiver_id, profiles:receiver_id(full_name, avatar_url)')
+                .select('receiver_id')
                 .eq('sender_id', currentUser.id);
             
-            const { data: received } = await supabase
+            const { data: receivedMessages } = await supabase
                 .from('private_messages')
-                .select('sender_id, profiles:sender_id(full_name, avatar_url)')
+                .select('sender_id')
                 .eq('receiver_id', currentUser.id);
             
-            const allChats = [...(sent || []), ...(received || [])];
-            const uniqueUsers = new Map();
+            const userIds = new Set();
+            sentMessages?.forEach(m => userIds.add(m.receiver_id));
+            receivedMessages?.forEach(m => userIds.add(m.sender_id));
             
-            allChats.forEach(chat => {
-                const userId = chat.receiver_id || chat.sender_id;
-                const profile = chat.profiles;
-                if(!uniqueUsers.has(userId)) {
-                    uniqueUsers.set(userId, profile);
+            if (userIds.size === 0) {
+                chatsList.innerHTML = '<div style="text-align: center; padding: 40px;">No conversations yet. Start a chat from someone\'s profile!</div>';
+                return;
+            }
+            
+            chatsList.innerHTML = '';
+            
+            for (const userId of userIds) {
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('id, full_name, profile_image_url')
+                    .eq('id', userId)
+                    .single();
+                
+                if (profile) {
+                    // Get last message
+                    const { data: lastMessage } = await supabase
+                        .from('private_messages')
+                        .select('message, created_at')
+                        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`)
+                        .order('created_at', { ascending: false })
+                        .limit(1);
+                    
+                    const chatItem = document.createElement('div');
+                    chatItem.className = 'chat-list-item';
+                    chatItem.onclick = () => openChat(profile.id, profile.full_name);
+                    chatItem.innerHTML = `
+                        <div class="chat-avatar">${profile.full_name.charAt(0)}</div>
+                        <div class="chat-info">
+                            <div class="chat-name">${escapeHtml(profile.full_name)}</div>
+                            <div class="chat-last-message">${lastMessage?.[0]?.message?.substring(0, 50) || 'No messages yet'}</div>
+                        </div>
+                        <div>→</div>
+                    `;
+                    chatsList.appendChild(chatItem);
                 }
-            });
+            }
+        };
+        
+        function openChat(userId, userName) {
+            // Store selected user for chat
+            localStorage.setItem('chatWith', JSON.stringify({ id: userId, name: userName }));
+            window.location.href = 'chat.html';
+        }
+        
+        window.editProfile = function() {
+            const modal = document.getElementById('editModal');
+            document.getElementById('editName').value = currentProfile.full_name || '';
+            document.getElementById('editBio').value = currentProfile.bio || '';
             
-            const chatsList = document.getElementById('chats-list');
-            chatsList.innerHTML = Array.from(uniqueUsers.entries()).map(([userId, profile]) => `
-                <div class="chat-item" onclick="openChat('${userId}', '${profile.full_name}')">
-                    <div class="chat-avatar" style="background-image: url(${profile.avatar_url || ''}); background-size: cover;"></div>
-                    <div class="chat-info">
-                        <div class="chat-name">${profile.full_name}</div>
-                        <div class="chat-last-message">Click to chat</div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function openChat(userId, userName) {
-            currentChatUser = userId;
-            document.getElementById('chat-with-name').textContent = userName;
-            document.getElementById('chat-modal').style.display = 'flex';
-            await loadPrivateMessages();
-            setupPrivateMessagesRealtime();
-        }
-
-        async function loadPrivateMessages() {
-            const { data } = await supabase
-                .from('private_messages')
-                .select('*')
-                .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${currentChatUser}),and(sender_id.eq.${currentChatUser},receiver_id.eq.${currentUser.id})`)
-                .order('created_at', { ascending: true });
+            if (currentProfile.profile_image_url) {
+                document.getElementById('editAvatarImg').src = currentProfile.profile_image_url;
+                document.getElementById('editAvatarImg').style.display = 'block';
+                document.getElementById('editAvatarText').style.display = 'none';
+            } else {
+                document.getElementById('editAvatarText').textContent = currentProfile.full_name?.charAt(0) || 'U';
+                document.getElementById('editAvatarText').style.display = 'flex';
+                document.getElementById('editAvatarImg').style.display = 'none';
+            }
             
-            const container = document.getElementById('private-messages');
-            container.innerHTML = data.map(msg => `
-                <div style="text-align: ${msg.sender_id === currentUser.id ? 'right' : 'left'}; margin-bottom: 10px;">
-                    <div style="display: inline-block; background: ${msg.sender_id === currentUser.id ? '#2b5278' : '#1e2a36'}; padding: 8px 12px; border-radius: 12px; max-width: 80%;">
-                        ${msg.message}
-                        ${msg.file_url ? `<div><a href="${msg.file_url}" download style="color: #2b5278;">📎 Download</a></div>` : ''}
-                    </div>
-                    <div style="font-size: 10px; color: #7e8c9e; margin-top: 2px;">${new Date(msg.created_at).toLocaleTimeString()}</div>
-                </div>
-            `).join('');
+            modal.style.display = 'block';
+        };
+        
+        let newProfileImage = null;
+        document.getElementById('editProfileImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                newProfileImage = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('editAvatarImg').src = e.target.result;
+                    document.getElementById('editAvatarImg').style.display = 'block';
+                    document.getElementById('editAvatarText').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        window.saveProfile = async function() {
+            const updates = {
+                full_name: document.getElementById('editName').value
+            };
             
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function setupPrivateMessagesRealtime() {
-            if(messagesSubscription) messagesSubscription.unsubscribe();
+            if (newProfileImage) {
+                // Upload new profile image
+                const fileExt = newProfileImage.name.split('.').pop();
+                const fileName = `${currentUser.id}/profile.${fileExt}`;
+                const { error: uploadError } = await supabase.storage
+                    .from('profiles')
+                    .upload(fileName, newProfileImage, { upsert: true });
+                
+                if (!uploadError) {
+                    const { data: { publicUrl } } = supabase.storage
+                        .from('profiles')
+                        .getPublicUrl(fileName);
+                    updates.profile_image_url = publicUrl;
+                }
+            }
             
-            messagesSubscription = supabase
-                .channel('private-messages')
-                .on('postgres_changes', { 
-                    event: 'INSERT', 
-                    schema: 'public', 
-                    table: 'private_messages' 
-                }, payload => {
-                    if((payload.new.sender_id === currentChatUser && payload.new.receiver_id === currentUser.id) ||
-                       (payload.new.sender_id === currentUser.id && payload.new.receiver_id === currentChatUser)) {
-                        loadPrivateMessages();
-                    }
-                })
-                .subscribe();
-        }
-
-        async function sendPrivateMessage() {
-            const input = document.getElementById('private-message-input');
-            const message = input.value.trim();
-            if(!message) return;
+            const { error } = await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('id', currentUser.id);
             
-            await supabase.from('private_messages').insert([{
-                sender_id: currentUser.id,
-                receiver_id: currentChatUser,
-                message: message
-            }]);
-            
-            input.value = '';
-            loadPrivateMessages();
+            if (error) {
+                alert('Error updating profile: ' + error.message);
+            } else {
+                alert('Profile updated successfully!');
+                closeEditModal();
+                await loadProfile();
+                localStorage.setItem('profile', JSON.stringify({ ...currentProfile, ...updates }));
+            }
+        };
+        
+        window.logout = async function() {
+            if (confirm('Are you sure you want to logout?')) {
+                await supabase.auth.signOut();
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        };
+        
+        window.changePassword = function() {
+            const newPassword = prompt('Enter new password:');
+            if (newPassword && newPassword.length >= 6) {
+                supabase.auth.updateUser({ password: newPassword })
+                    .then(() => alert('Password updated successfully!'))
+                    .catch(err => alert('Error: ' + err.message));
+            } else if (newPassword) {
+                alert('Password must be at least 6 characters');
+            }
+        };
+        
+        window.clearCache = function() {
+            if (confirm('Clear cached data? You will need to login again.')) {
+                localStorage.clear();
+                window.location.href = 'index.html';
+            }
+        };
+        
+        window.closeChats = function() {
+            document.getElementById('chatsModal').style.display = 'none';
+        };
+        
+        window.closeEditModal = function() {
+            document.getElementById('editModal').style.display = 'none';
+            newProfileImage = null;
+        };
+        
+        window.navigateTo = function(page) {
+            switch(page) {
+                case 'home':
+                    window.location.href = 'home.html';
+                    break;
+                case 'parish':
+                    window.location.href = 'parish.html';
+                    break;
+                case 'plan':
+                    window.location.href = 'plan.html';
+                    break;
+                case 'profile':
+                    window.location.href = 'profile.html';
+                    break;
+            }
+        };
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-
-        function closeChat() {
-            document.getElementById('chat-modal').style.display = 'none';
-            if(messagesSubscription) messagesSubscription.unsubscribe();
-        }
-
-        function editProfile() {
-            alert('Edit profile feature - coming soon');
-        }
-
-        function showPlans() {
-            alert('Yearly Plans - coming soon');
-        }
-
-        loadProfile();
+        
+        checkAuth();
     </script>
 </body>
 </html>
