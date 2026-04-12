@@ -236,184 +236,183 @@
 </div>
 
 <script>
-    const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // shortened for clarity
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentUser = null;
+let currentUser = null;
 
-    function showMessage(element, msg, type) {
-        const el = document.getElementById(element);
-        el.textContent = msg;
-        el.className = `message ${type}`;
-        setTimeout(() => {
-            el.style.display = 'none';
-            el.className = 'message';
-        }, 3000);
+function showMessage(element, msg, type) {
+    const el = document.getElementById(element);
+    el.textContent = msg;
+    el.className = `message ${type}`;
+    el.style.display = 'block';
+    setTimeout(() => {
+        el.style.display = 'none';
+        el.className = 'message';
+    }, 3000);
+}
+
+function showTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    
+    if (tab === 'login') {
+        document.querySelector('.tab:first-child').classList.add('active');
+        document.getElementById('loginPanel').classList.add('active');
+    } else {
+        document.querySelector('.tab:last-child').classList.add('active');
+        document.getElementById('registerPanel').classList.add('active');
     }
+}
 
-    function showTab(tab) {
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
-        
-        if (tab === 'login') {
-            document.querySelector('.tab:first-child').classList.add('active');
-            document.getElementById('loginPanel').classList.add('active');
-        } else {
-            document.querySelector('.tab:last-child').classList.add('active');
-            document.getElementById('registerPanel').classList.add('active');
-        }
+async function login(event) {
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    const btn = event.target;
+    
+    if (!email || !password) {
+        showMessage('loginMsg', 'Please enter email and password', 'error');
+        return;
     }
-
-    async function login() {
-        const email = document.getElementById('loginEmail').value;
-        const password = document.getElementById('loginPassword').value;
-        const btn = event.target;
+    
+    btn.disabled = true;
+    btn.textContent = 'Logging in...';
+    
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
         
-        if (!email || !password) {
-            showMessage('loginMsg', 'Please enter email and password', 'error');
-            return;
+        const { data: profile, error: profileError } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+        
+        if (profileError) throw new Error('Profile not found');
+        
+        if (profile.approval_status === 'pending') {
+            await supabase.auth.signOut();
+            throw new Error('Account pending approval. Please wait.');
         }
         
-        btn.disabled = true;
-        btn.textContent = 'Logging in...';
+        currentUser = profile;
+        showHome();
         
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-            if (error) throw error;
-            
-            // Check approval status
-            const { data: profile, error: profileError } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', data.user.id)
-                .single();
-            
-            if (profileError) throw new Error('Profile not found');
-            
-            if (profile.approval_status === 'pending') {
-                await supabase.auth.signOut();
-                throw new Error('Account pending approval. Please wait.');
-            }
-            
+    } catch (error) {
+        showMessage('loginMsg', error.message, 'error');
+        btn.disabled = false;
+        btn.textContent = 'Login';
+    }
+}
+
+async function register(event) {
+    const name = document.getElementById('regName').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+    const parish = document.getElementById('regParish').value;
+    const gender = document.getElementById('regGender').value;
+    const role = document.querySelector('input[name="role"]:checked').value;
+    const btn = event.target;
+    
+    if (!name || !email || !password || !parish || !gender) {
+        showMessage('registerMsg', 'Please fill all fields', 'error');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showMessage('registerMsg', 'Password must be at least 6 characters', 'error');
+        return;
+    }
+    
+    btn.disabled = true;
+    btn.textContent = 'Creating...';
+    
+    try {
+        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        if (authError) throw authError;
+        
+        const { error: profileError } = await supabase
+            .from('users')
+            .insert([{
+                id: authData.user.id,
+                email,
+                full_name: name,
+                parish,
+                gender,
+                role,
+                is_approved: role === 'member',
+                approval_status: role === 'member' ? 'approved' : 'pending'
+            }]);
+        
+        if (profileError) throw profileError;
+        
+        showMessage('registerMsg', 'Account created! Please login.', 'success');
+        
+        document.getElementById('regName').value = '';
+        document.getElementById('regEmail').value = '';
+        document.getElementById('regPassword').value = '';
+        document.getElementById('regParish').value = '';
+        document.getElementById('regGender').value = '';
+        
+        setTimeout(() => showTab('login'), 2000);
+        
+    } catch (error) {
+        showMessage('registerMsg', error.message, 'error');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+    }
+}
+
+async function showHome() {
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('homeContainer').classList.add('active');
+    
+    document.getElementById('homeInfo').innerHTML = `
+        <p><strong>👤 Name:</strong> ${currentUser.full_name}</p>
+        <p><strong>📧 Email:</strong> ${currentUser.email}</p>
+        <p><strong>⛪ Parish:</strong> ${currentUser.parish}</p>
+        <p><strong>⚥ Gender:</strong> ${currentUser.gender}</p>
+        <p><strong>🎭 Role:</strong> ${currentUser.role.toUpperCase()}</p>
+        <p><strong>✅ Status:</strong> ${currentUser.approval_status.toUpperCase()}</p>
+    `;
+}
+
+async function logout() {
+    await supabase.auth.signOut();
+    currentUser = null;
+    document.getElementById('authContainer').style.display = 'block';
+    document.getElementById('homeContainer').classList.remove('active');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    showTab('login');
+}
+
+async function checkSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+        const { data: profile } = await supabase
+            .from('users')
+            .select('*')
+            .eq('id', session.user.id)
+            .single();
+        
+        if (profile && profile.approval_status !== 'pending') {
             currentUser = profile;
             showHome();
-            
-        } catch (error) {
-            showMessage('loginMsg', error.message, 'error');
-            btn.disabled = false;
-            btn.textContent = 'Login';
         }
     }
-    
-    async function register() {
-        const name = document.getElementById('regName').value;
-        const email = document.getElementById('regEmail').value;
-        const password = document.getElementById('regPassword').value;
-        const parish = document.getElementById('regParish').value;
-        const gender = document.getElementById('regGender').value;
-        const role = document.querySelector('input[name="role"]:checked').value;
-        const btn = event.target;
-        
-        if (!name || !email || !password || !parish || !gender) {
-            showMessage('registerMsg', 'Please fill all fields', 'error');
-            return;
-        }
-        
-        if (password.length < 6) {
-            showMessage('registerMsg', 'Password must be at least 6 characters', 'error');
-            return;
-        }
-        
-        btn.disabled = true;
-        btn.textContent = 'Creating...';
-        
-        try {
-            const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
-            if (authError) throw authError;
-            
-            const { error: profileError } = await supabase
-                .from('users')
-                .insert([{
-                    id: authData.user.id,
-                    email: email,
-                    full_name: name,
-                    parish: parish,
-                    gender: gender,
-                    role: role,
-                    is_approved: role === 'member',
-                    approval_status: role === 'member' ? 'approved' : 'pending'
-                }]);
-            
-            if (profileError) throw profileError;
-            
-            showMessage('registerMsg', 'Account created! Please login.', 'success');
-            
-            // Clear form
-            document.getElementById('regName').value = '';
-            document.getElementById('regEmail').value = '';
-            document.getElementById('regPassword').value = '';
-            document.getElementById('regParish').value = '';
-            document.getElementById('regGender').value = '';
-            
-            setTimeout(() => showTab('login'), 2000);
-            
-        } catch (error) {
-            showMessage('registerMsg', error.message, 'error');
-        } finally {
-            btn.disabled = false;
-            btn.textContent = 'Create Account';
-        }
-    }
-    
-    async function showHome() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('homeContainer').classList.add('active');
-        
-        document.getElementById('homeInfo').innerHTML = `
-            <p><strong>👤 Name:</strong> ${currentUser.full_name}</p>
-            <p><strong>📧 Email:</strong> ${currentUser.email}</p>
-            <p><strong>⛪ Parish:</strong> ${currentUser.parish}</p>
-            <p><strong>⚥ Gender:</strong> ${currentUser.gender}</p>
-            <p><strong>🎭 Role:</strong> ${currentUser.role.toUpperCase()}</p>
-            <p><strong>✅ Status:</strong> ${currentUser.approval_status.toUpperCase()}</p>
-        `;
-    }
-    
-    async function logout() {
-        await supabase.auth.signOut();
-        currentUser = null;
-        document.getElementById('authContainer').style.display = 'block';
-        document.getElementById('homeContainer').classList.remove('active');
-        document.getElementById('loginEmail').value = '';
-        document.getElementById('loginPassword').value = '';
-        showTab('login');
-    }
-    
-    async function checkSession() {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
-            const { data: profile } = await supabase
-                .from('users')
-                .select('*')
-                .eq('id', session.user.id)
-                .single();
-            
-            if (profile && profile.approval_status !== 'pending') {
-                currentUser = profile;
-                showHome();
-            }
-        }
-    }
-    
-    // Make functions global
-    window.login = login;
-    window.register = register;
-    window.logout = logout;
-    window.showTab = showTab;
-    
-    // Check if already logged in
-    checkSession();
+}
+
+// Attach event listeners instead of inline onclick
+document.getElementById('loginBtn').addEventListener('click', login);
+document.getElementById('registerBtn').addEventListener('click', register);
+document.getElementById('logoutBtn').addEventListener('click', logout);
+
+// Initial session check
+checkSession();
+
 </script>
 </body>
 </html>
