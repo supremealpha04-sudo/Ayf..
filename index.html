@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>AYF GWARIMPA - Login</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
@@ -23,17 +23,34 @@
         }
 
         .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
             width: 100%;
-            max-width: 450px;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 14px;
         }
 
         .tabs {
             display: flex;
-            border-bottom: 2px solid #e0e0e0;
+            border-bottom: 2px solid #f0f0f0;
         }
 
         .tab {
@@ -41,9 +58,11 @@
             padding: 15px;
             text-align: center;
             cursor: pointer;
-            font-weight: 600;
+            background: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
             transition: all 0.3s;
-            color: #666;
         }
 
         .tab.active {
@@ -70,286 +89,364 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 500;
             color: #333;
+            font-weight: 500;
+            font-size: 14px;
         }
 
         input, select, textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             font-size: 14px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
 
-        input:focus, select:focus {
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
 
-        button {
+        .image-upload {
+            border: 2px dashed #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .image-upload:hover {
+            border-color: #667eea;
+        }
+
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            display: none;
+        }
+
+        .btn {
             width: 100%;
             padding: 14px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: transform 0.2s;
         }
 
-        button:hover {
+        .btn:hover {
             transform: translateY(-2px);
         }
 
-        .avatar-upload {
-            border: 2px dashed #ddd;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            cursor: pointer;
-            position: relative;
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
         }
 
-        .avatar-upload input {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
+        .checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
         }
 
-        .avatar-preview {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: #f0f0f0;
-            margin: 0 auto 10px;
-            background-size: cover;
-            background-position: center;
+        .checkbox-group input {
+            width: auto;
         }
 
-        .parish-list {
-            display: grid;
-            gap: 10px;
+        .error-message {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .success-message {
+            color: #27ae60;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .parishes {
             max-height: 200px;
             overflow-y: auto;
         }
 
-        .parish-option {
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .parish-option.selected {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="tabs">
-            <div class="tab active" onclick="switchTab('login')">Login</div>
-            <div class="tab" onclick="switchTab('register')">Register</div>
+        <div class="header">
+            <h1>AYF GWARIMPA</h1>
+            <p>Anglican Youth Fellowship - Gwarimpa</p>
         </div>
-
+        
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('login')">Login</button>
+            <button class="tab" onclick="switchTab('register')">Register</button>
+        </div>
+        
         <div class="form-container">
             <!-- Login Form -->
-            <div id="login-form" class="form active">
-                <form onsubmit="handleLogin(event)">
+            <div id="loginForm" class="form active">
+                <form id="login">
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="login-email" required>
+                        <input type="email" id="loginEmail" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="login-password" required>
+                        <input type="password" id="loginPassword" required>
                     </div>
-                    <button type="submit">Login</button>
+                    <button type="submit" class="btn">Login</button>
                 </form>
             </div>
-
+            
             <!-- Register Form -->
-            <div id="register-form" class="form">
-                <form onsubmit="handleRegister(event)">
+            <div id="registerForm" class="form">
+                <form id="register">
                     <div class="form-group">
                         <label>Full Name</label>
-                        <input type="text" id="reg-name" required>
+                        <input type="text" id="regName" required>
                     </div>
                     <div class="form-group">
                         <label>Email</label>
-                        <input type="email" id="reg-email" required>
+                        <input type="email" id="regEmail" required>
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" id="reg-password" required>
+                        <input type="password" id="regPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm Password</label>
+                        <input type="password" id="regConfirmPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Parish Name</label>
+                        <select id="regParish" required>
+                            <option value="">Select Parish</option>
+                            <option value="St. Peter's Anglican Church">St. Peter's Anglican Church</option>
+                            <option value="St. Paul's Anglican Church">St. Paul's Anglican Church</option>
+                            <option value="St. John's Anglican Church">St. John's Anglican Church</option>
+                            <option value="Holy Trinity Anglican Church">Holy Trinity Anglican Church</option>
+                            <option value="Christ Anglican Church">Christ Anglican Church</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Gender</label>
-                        <select id="reg-gender" required>
+                        <select id="regGender" required>
                             <option value="">Select Gender</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Parish</label>
-                        <div id="parish-list" class="parish-list"></div>
+                        <label>Profile Image</label>
+                        <div class="image-upload" onclick="document.getElementById('profileImage').click()">
+                            <img id="imagePreview" class="image-preview" alt="Preview">
+                            <p>Click to upload profile image</p>
+                        </div>
+                        <input type="file" id="profileImage" accept="image/*" style="display: none;">
                     </div>
                     <div class="form-group">
-                        <label>Position</label>
-                        <select id="reg-position">
-                            <option value="none">Member</option>
-                            <option value="exco">Parish EXCO</option>
-                            <option value="archediceanry">Archediceanry EXCO</option>
-                            <option value="both">Both</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Profile Picture</label>
-                        <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
-                            <div class="avatar-preview" id="avatar-preview"></div>
-                            <div>Click to upload profile picture</div>
-                            <input type="file" id="avatar-input" accept="image/*" style="display:none" onchange="previewAvatar(this)">
+                        <label>Position (Optional)</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="excoParish"> Parish Exco
+                            </label>
+                            <label>
+                                <input type="checkbox" id="excoArchediceanry"> Archediceanry Exco
+                            </label>
                         </div>
                     </div>
-                    <button type="submit">Register</button>
+                    <button type="submit" class="btn">Register</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <script src="supabase-config.js"></script>
     <script>
-        let selectedParish = null;
-        let avatarFile = null;
-
-        // Load parishes
-        async function loadParishes() {
-            const { data } = await supabase.from('parishes').select('name');
-            const container = document.getElementById('parish-list');
-            container.innerHTML = data.map(p => `
-                <div class="parish-option" onclick="selectParish('${p.name}')">
-                    ${p.name}
-                </div>
-            `).join('');
+        // Supabase configuration
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let profileImageFile = null;
+        
+        // Tab switching
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+            
+            if (tab === 'login') {
+                document.querySelector('.tab:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.tab:last-child').classList.add('active');
+                document.getElementById('registerForm').classList.add('active');
+            }
         }
-
-        function selectParish(name) {
-            selectedParish = name;
-            document.querySelectorAll('.parish-option').forEach(el => {
-                el.classList.remove('selected');
-                if(el.textContent === name) el.classList.add('selected');
-            });
-        }
-
-        function previewAvatar(input) {
-            if(input.files && input.files[0]) {
-                avatarFile = input.files[0];
+        
+        // Image upload preview
+        document.getElementById('profileImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                profileImageFile = file;
                 const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById('avatar-preview').style.backgroundImage = `url(${e.target.result})`;
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        async function handleRegister(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
-            const gender = document.getElementById('reg-gender').value;
-            const position = document.getElementById('reg-position').value;
-
-            if(!selectedParish) {
-                alert('Please select a parish');
-                return;
-            }
-
-            // Sign up
-            const { data: authData, error: authError } = await supabase.auth.signUp({
-                email, password
-            });
-
-            if(authError) {
-                alert(authError.message);
-                return;
-            }
-
-            // Upload avatar if exists
-            let avatarUrl = null;
-            if(avatarFile) {
-                const fileExt = avatarFile.name.split('.').pop();
-                const fileName = `${authData.user.id}.${fileExt}`;
-                const { error: uploadError } = await supabase.storage
-                    .from('avatars')
-                    .upload(fileName, avatarFile);
-                
-                if(!uploadError) {
-                    avatarUrl = supabase.storage.from('avatars').getPublicUrl(fileName).data.publicUrl;
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
                 }
+                reader.readAsDataURL(file);
             }
-
-            // Create profile
-            const { error: profileError } = await supabase
+        });
+        
+        // Upload image to Supabase storage
+        async function uploadImage(userId, file) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${userId}/profile.${fileExt}`;
+            const { data, error } = await supabase.storage
                 .from('profiles')
-                .insert([{
-                    id: authData.user.id,
-                    full_name: name,
-                    parish_name: selectedParish,
-                    gender: gender,
-                    avatar_url: avatarUrl,
-                    is_exco: position === 'exco' || position === 'both',
-                    is_archediceanry: position === 'archediceanry' || position === 'both',
-                    exco_approved: position === 'none' // Auto-approve regular members
-                }]);
-
-            if(profileError) {
-                alert(profileError.message);
-            } else {
-                alert('Registration successful! Please check your email to confirm.');
-                switchTab('login');
-            }
-        }
-
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email, password
-            });
-
-            if(error) {
-                alert(error.message);
-            } else {
-                localStorage.setItem('user', JSON.stringify(data.user));
-                window.location.href = 'home.html';
-            }
-        }
-
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach((t, i) => {
-                t.classList.toggle('active', i === (tab === 'login' ? 0 : 1));
-            });
-            document.getElementById('login-form').classList.toggle('active', tab === 'login');
-            document.getElementById('register-form').classList.toggle('active', tab === 'register');
+                .upload(fileName, file);
             
-            if(tab === 'register') loadParishes();
+            if (error) throw error;
+            
+            const { data: { publicUrl } } = supabase.storage
+                .from('profiles')
+                .getPublicUrl(fileName);
+                
+            return publicUrl;
         }
-
-        loadParishes();
+        
+        // Register handler
+        document.getElementById('register').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('regName').value;
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const parish = document.getElementById('regParish').value;
+            const gender = document.getElementById('regGender').value;
+            const isExcoParish = document.getElementById('excoParish').checked;
+            const isExcoArchediceanry = document.getElementById('excoArchediceanry').checked;
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match');
+                return;
+            }
+            
+            try {
+                // Register user with Supabase Auth
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                });
+                
+                if (authError) throw authError;
+                
+                let profileImageUrl = null;
+                if (profileImageFile) {
+                    profileImageUrl = await uploadImage(authData.user.id, profileImageFile);
+                }
+                
+                // Create profile
+                const { error: profileError } = await supabase
+                    .from('profiles')
+                    .insert([{
+                        id: authData.user.id,
+                        full_name: name,
+                        email: email,
+                        parish_name: parish,
+                        gender: gender,
+                        profile_image_url: profileImageUrl,
+                        is_exco_parish: isExcoParish,
+                        is_exco_archediceanry: isExcoArchediceanry,
+                        exco_request_status: (isExcoParish || isExcoArchediceanry) ? 'pending' : 'approved'
+                    }]);
+                
+                if (profileError) throw profileError;
+                
+                // Add to parish members
+                const { error: memberError } = await supabase
+                    .from('parish_members')
+                    .insert([{
+                        user_id: authData.user.id,
+                        parish_name: parish,
+                        is_president: false
+                    }]);
+                
+                if (memberError) throw memberError;
+                
+                alert('Registration successful! Please login.');
+                switchTab('login');
+                
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed: ' + error.message);
+            }
+        });
+        
+        // Login handler
+        document.getElementById('login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) throw error;
+                
+                // Check if user is suspended
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', data.user.id)
+                    .single();
+                
+                if (profile.is_suspended && new Date(profile.suspension_end_date) > new Date()) {
+                    alert(`Your account is suspended until ${new Date(profile.suspension_end_date).toLocaleDateString()}`);
+                    return;
+                }
+                
+                // Store user session
+                localStorage.setItem('user', JSON.stringify(data.user));
+                localStorage.setItem('profile', JSON.stringify(profile));
+                
+                // Redirect to home page
+                window.location.href = 'home.html';
+                
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
+        });
     </script>
 </body>
 </html>
