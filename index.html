@@ -1,638 +1,370 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AYF GWARIMPA - Welcome</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .auth-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 450px;
-            overflow: hidden;
-            animation: slideUp 0.5s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .auth-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px 30px;
-            text-align: center;
-            color: white;
-        }
-
-        .logo {
-            width: 80px;
-            height: 80px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 32px;
-            color: #667eea;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .auth-header h1 {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-
-        .auth-header p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .auth-tabs {
-            display: flex;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .auth-tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            background: #f5f5f5;
-            transition: all 0.3s;
-            font-weight: 500;
-            color: #666;
-        }
-
-        .auth-tab.active {
-            background: white;
-            color: #667eea;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .auth-form {
-            padding: 30px;
-            display: none;
-        }
-
-        .auth-form.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .image-upload {
-            position: relative;
-            width: 120px;
-            height: 120px;
-            margin: 0 auto 20px;
-        }
-
-        .image-upload input {
-            display: none;
-        }
-
-        .image-upload-label {
-            width: 100%;
-            height: 100%;
-            border: 3px dashed #ccc;
-            border-radius: 50%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s;
-            background: #f9f9f9;
-            overflow: hidden;
-        }
-
-        .image-upload-label:hover {
-            border-color: #667eea;
-            background: #f0f0ff;
-        }
-
-        .image-upload-label img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: none;
-        }
-
-        .image-upload-label.has-image img {
-            display: block;
-        }
-
-        .image-upload-label.has-image .upload-icon {
-            display: none;
-        }
-
-        .upload-icon {
-            font-size: 24px;
-            color: #999;
-            margin-bottom: 5px;
-        }
-
-        .upload-text {
-            font-size: 12px;
-            color: #999;
-        }
-
-        .role-selection {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .role-option {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        .role-option input {
-            display: none;
-        }
-
-        .role-option label {
-            display: block;
-            padding: 12px;
-            text-align: center;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 13px;
-        }
-
-        .role-option input:checked + label {
-            border-color: #667eea;
-            background: #f0f0ff;
-            color: #667eea;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            display: none;
-        }
-
-        .alert.error {
-            background: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-
-        .alert.success {
-            background: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .pending-approval {
-            text-align: center;
-            padding: 40px;
-            display: none;
-        }
-
-        .pending-approval.active {
-            display: block;
-        }
-
-        .pending-icon {
-            font-size: 60px;
-            color: #f0ad4e;
-            margin-bottom: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AYF GWARIMPA - Welcome</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Supabase JS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    /* Your existing CSS (unchanged) */
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .auth-container { background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); width: 100%; max-width: 450px; overflow: hidden; animation: slideUp 0.5s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .auth-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center; color: white; }
+    .logo { width: 80px; height: 80px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 32px; color: #667eea; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    .auth-header h1 { font-size: 24px; margin-bottom: 5px; }
+    .auth-header p { opacity: 0.9; font-size: 14px; }
+    .auth-tabs { display: flex; border-bottom: 1px solid #e0e0e0; }
+    .auth-tab { flex: 1; padding: 15px; text-align: center; cursor: pointer; background: #f5f5f5; transition: all 0.3s; font-weight: 500; color: #666; }
+    .auth-tab.active { background: white; color: #667eea; border-bottom: 2px solid #667eea; }
+    .auth-form { padding: 30px; display: none; }
+    .auth-form.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; font-size: 14px; }
+    .form-group input, .form-group select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; transition: all 0.3s; }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: #667eea; }
+    .image-upload { position: relative; width: 120px; height: 120px; margin: 0 auto 20px; }
+    .image-upload input { display: none; }
+    .image-upload-label { width: 100%; height: 100%; border: 3px dashed #ccc; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; background: #f9f9f9; overflow: hidden; }
+    .image-upload-label:hover { border-color: #667eea; background: #f0f0ff; }
+    .image-upload-label img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .image-upload-label.has-image img { display: block; }
+    .image-upload-label.has-image .upload-icon { display: none; }
+    .upload-icon { font-size: 24px; color: #999; margin-bottom: 5px; }
+    .upload-text { font-size: 12px; color: #999; }
+    .role-selection { display: flex; gap: 10px; flex-wrap: wrap; }
+    .role-option { flex: 1; min-width: 120px; }
+    .role-option input { display: none; }
+    .role-option label { display: block; padding: 12px; text-align: center; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; transition: all 0.3s; font-size: 13px; }
+    .role-option input:checked + label { border-color: #667eea; background: #f0f0ff; color: #667eea; }
+    .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .alert { padding: 12px; border-radius: 8px; margin-bottom: 20px; display: none; }
+    .alert.error { background: #fee; color: #c33; border: 1px solid #fcc; }
+    .alert.success { background: #efe; color: #3c3; border: 1px solid #cfc; }
+    .loading { display: none; text-align: center; padding: 20px; }
+    .loading.active { display: block; }
+    .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 10px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .pending-approval { text-align: center; padding: 40px; display: none; }
+    .pending-approval.active { display: block; }
+    .pending-icon { font-size: 60px; color: #f0ad4e; margin-bottom: 20px; }
+  </style>
 </head>
 <body>
-    <div class="auth-container">
-        <div class="auth-header">
-            <div class="logo">
-                <i class="fas fa-church"></i>
-            </div>
-            <h1>AYF GWARIMPA</h1>
-            <p>Anglican Youth Fellowship</p>
-        </div>
-
-        <div class="auth-tabs">
-            <div class="auth-tab active" onclick="switchTab('login')">Login</div>
-            <div class="auth-tab" onclick="switchTab('register')">Register</div>
-        </div>
-
-        <!-- Login Form -->
-        <form id="loginForm" class="auth-form active">
-            <div class="alert" id="loginAlert"></div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="loginEmail" required placeholder="Enter your email">
-            </div>
-
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="loginPassword" required placeholder="Enter your password">
-            </div>
-
-            <button type="submit" class="btn-primary">
-                <i class="fas fa-sign-in-alt"></i> Login
-            </button>
-        </form>
-
-        <!-- Register Form -->
-        <form id="registerForm" class="auth-form">
-            <div class="alert" id="registerAlert"></div>
-
-            <div class="image-upload">
-                <input type="file" id="profileImage" accept="image/*">
-                <label for="profileImage" class="image-upload-label" id="uploadLabel">
-                    <i class="fas fa-camera upload-icon"></i>
-                    <span class="upload-text">Add Photo</span>
-                    <img id="previewImage" alt="Preview">
-                </label>
-            </div>
-
-            <div class="form-group">
-                <label>Full Name</label>
-                <input type="text" id="fullName" required placeholder="Enter your full name">
-            </div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" id="regEmail" required placeholder="Enter your email">
-            </div>
-
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)">
-            </div>
-
-            <div class="form-group">
-                <label>Parish</label>
-                <select id="parish" required>
-                    <option value="">Select your parish</option>
-                    <option value="St. Matthews">St. Matthews</option>
-                    <option value="St. Pauls">St. Paul's</option>
-                    <option value="St. Johns">St. John's</option>
-                    <option value="All Saints">All Saints</option>
-                    <option value="St. Peters">St. Peter's</option>
-                    <option value="Holy Trinity">Holy Trinity</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Gender</label>
-                <select id="gender" required>
-                    <option value="">Select gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Role (Requires Admin Approval)</label>
-                <div class="role-selection">
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleMember" value="member" checked>
-                        <label for="roleMember">Member</label>
-                    </div>
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleExco" value="exco">
-                        <label for="roleExco">Parish Exco</label>
-                    </div>
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleArchediceanry" value="archediceanry">
-                        <label for="roleArchediceanry">Archediceanry</label>
-                    </div>
-                    <div class="role-option">
-                        <input type="radio" name="role" id="roleBoth" value="both">
-                        <label for="roleBoth">Both</label>
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-primary" id="registerBtn">
-                <i class="fas fa-user-plus"></i> Create Account
-            </button>
-        </form>
-
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Processing...</p>
-        </div>
-
-        <div class="pending-approval" id="pendingApproval">
-            <i class="fas fa-clock pending-icon"></i>
-            <h2>Approval Pending</h2>
-            <p>Your Exco/Archediceanry role request has been sent to the admin for approval. You will be notified once approved.</p>
-            <button class="btn-primary" onclick="switchTab('login')" style="margin-top: 20px;">
-                Go to Login
-            </button>
-        </div>
+  <div class="auth-container">
+    <div class="auth-header">
+      <div class="logo"><i class="fas fa-church"></i></div>
+      <h1>AYF GWARIMPA</h1>
+      <p>Anglican Youth Fellowship</p>
     </div>
 
-<script>
-const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchTab('login')">Login</div>
+      <div class="auth-tab" onclick="switchTab('register')">Register</div>
+    </div>
 
-// ✅ SINGLE SAFE CLIENT (NO DUPLICATE)
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <!-- Login Form -->
+    <form id="loginForm" class="auth-form active">
+      <div class="alert" id="loginAlert"></div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="loginEmail" required placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="loginPassword" required placeholder="Enter your password">
+      </div>
+      <button type="submit" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Login</button>
+    </form>
 
-// =====================
-// TAB SWITCH
-// =====================
-function switchTab(tab) {
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-    const tabs = document.querySelectorAll('.auth-tab');
+    <!-- Register Form -->
+    <form id="registerForm" class="auth-form">
+      <div class="alert" id="registerAlert"></div>
+      <div class="image-upload">
+        <input type="file" id="profileImage" accept="image/*">
+        <label for="profileImage" class="image-upload-label" id="uploadLabel">
+          <i class="fas fa-camera upload-icon"></i>
+          <span class="upload-text">Add Photo</span>
+          <img id="previewImage" alt="Preview">
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="fullName" required placeholder="Enter your full name">
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="regEmail" required placeholder="Enter your email">
+      </div>
+      <div class="form-group">
+        <label>Password</label>
+        <input type="password" id="regPassword" required placeholder="Create password (min 6 chars)">
+      </div>
+      <div class="form-group">
+        <label>Parish</label>
+        <select id="parish" required>
+          <option value="">Select your parish</option>
+          <option value="St. Matthews">St. Matthews</option>
+          <option value="St. Pauls">St. Paul's</option>
+          <option value="St. Johns">St. John's</option>
+          <option value="All Saints">All Saints</option>
+          <option value="St. Peters">St. Peter's</option>
+          <option value="Holy Trinity">Holy Trinity</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="gender" required>
+          <option value="">Select gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Role (Requires Admin Approval)</label>
+        <div class="role-selection">
+          <div class="role-option">
+            <input type="radio" name="role" id="roleMember" value="member" checked>
+            <label for="roleMember">Member</label>
+          </div>
+          <div class="role-option">
+            <input type="radio" name="role" id="roleExco" value="exco">
+            <label for="roleExco">Parish Exco</label>
+          </div>
+          <div class="role-option">
+            <input type="radio" name="role" id="roleArchediceanry" value="archediceanry">
+            <label for="roleArchediceanry">Archediceanry</label>
+          </div>
+          <div class="role-option">
+            <input type="radio" name="role" id="roleBoth" value="both">
+            <label for="roleBoth">Both</label>
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="btn-primary" id="registerBtn"><i class="fas fa-user-plus"></i> Create Account</button>
+    </form>
 
-    tabs.forEach(t => t.classList.remove('active'));
-    loginForm.classList.remove('active');
-    registerForm.classList.remove('active');
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Processing...</p>
+    </div>
 
-    if (tab === 'login') {
+    <div class="pending-approval" id="pendingApproval">
+      <i class="fas fa-clock pending-icon"></i>
+      <h2>Approval Pending</h2>
+      <p>Your Exco/Archediceanry role request has been sent to the admin for approval. You will be notified once approved.</p>
+      <button class="btn-primary" onclick="switchTab('login')" style="margin-top: 20px;">Go to Login</button>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg';
+
+    // Initialize Supabase (now works because library is loaded)
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // =====================
+    // TAB SWITCHING
+    // =====================
+    function switchTab(tab) {
+      const loginForm = document.getElementById('loginForm');
+      const registerForm = document.getElementById('registerForm');
+      const tabs = document.querySelectorAll('.auth-tab');
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      loginForm.classList.remove('active');
+      registerForm.classList.remove('active');
+      
+      if (tab === 'login') {
         tabs[0].classList.add('active');
         loginForm.classList.add('active');
-    } else {
+      } else {
         tabs[1].classList.add('active');
         registerForm.classList.add('active');
+      }
     }
-}
 
-// =====================
-// IMAGE PREVIEW
-// =====================
-document.getElementById('profileImage').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    // =====================
+    // IMAGE PREVIEW
+    // =====================
+    document.getElementById('profileImage')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const previewImg = document.getElementById('previewImage');
+          previewImg.src = event.target.result;
+          document.getElementById('uploadLabel').classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+      }
+    });
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-        document.getElementById('previewImage').src = event.target.result;
-        document.getElementById('uploadLabel').classList.add('has-image');
-    };
-    reader.readAsDataURL(file);
-});
+    // =====================
+    // ALERT HELPER
+    // =====================
+    function showAlert(type, message, elementId) {
+      const alert = document.getElementById(elementId);
+      alert.textContent = message;
+      alert.className = `alert ${type}`;
+      alert.style.display = 'block';
+      setTimeout(() => { alert.style.display = 'none'; }, 5000);
+    }
 
-// =====================
-// ALERT
-// =====================
-function showAlert(type, message, id) {
-    const el = document.getElementById(id);
-    el.textContent = message;
-    el.className = `alert ${type}`;
-    el.style.display = 'block';
-
-    setTimeout(() => {
-        el.style.display = 'none';
-    }, 4000);
-}
-
-// =====================
-// SIGN UP
-// =====================
-async function signUp(email, password, full_name, parish, gender, role) {
-    try {
+    // =====================
+    // SIGN UP
+    // =====================
+    async function signUp(email, password, full_name, parish, gender, role) {
+      try {
         document.getElementById('loading').classList.add('active');
+        
+        // 1. Create Auth User
+        const { data: authData, error: authError } = await supabase.auth.signUp({ email, password });
+        if (authError) {
+          console.error("Auth error:", authError);
+          showAlert('error', authError.message, 'registerAlert');
+          document.getElementById('loading').classList.remove('active');
+          return;
+        }
+        const user = authData.user;
+        if (!user) {
+          showAlert('error', 'Signup failed - no user returned', 'registerAlert');
+          document.getElementById('loading').classList.remove('active');
+          return;
+        }
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password
-        });
+        // 2. Determine approval status
+        const approval_status = (role !== 'member') ? 'pending_approval' : 'approved';
 
-        if (error) throw error;
-
-        const user = data.user;
-        if (!user) throw new Error("User not returned");
-
-        const approval_status = role === 'member' ? 'approved' : 'pending';
-
-        const { error: dbError } = await supabase
-            .from('users')
-            .insert([{
-                id: user.id,
-                email: user.email,
-                full_name,
-                parish,
-                gender,
-                role,
-                approval_status
-            }]);
-
-        if (dbError) throw dbError;
+        // 3. Insert into public.users table
+        const { error: insertError } = await supabase
+          .from('users')
+          .insert([{ id: user.id, email: user.email, full_name, parish, gender, role, approval_status }]);
+        
+        if (insertError) {
+          console.error("Profile insert error:", insertError);
+          showAlert('error', 'Account created but profile failed to save', 'registerAlert');
+          document.getElementById('loading').classList.remove('active');
+          return;
+        }
 
         document.getElementById('loading').classList.remove('active');
 
         if (role !== 'member') {
-            document.getElementById('registerForm').classList.remove('active');
-            document.getElementById('pendingApproval').classList.add('active');
+          document.getElementById('registerForm').classList.remove('active');
+          document.getElementById('pendingApproval').classList.add('active');
         } else {
-            showAlert('success', 'Account created successfully', 'registerAlert');
-            setTimeout(() => switchTab('login'), 1500);
+          showAlert('success', 'Account created successfully!', 'registerAlert');
+          document.getElementById('registerForm').reset();
+          document.getElementById('uploadLabel').classList.remove('has-image');
+          setTimeout(() => switchTab('login'), 2000);
         }
-
-    } catch (err) {
-        console.error(err);
-        showAlert('error', err.message, 'registerAlert');
+      } catch (err) {
+        console.error("Signup crash:", err);
+        showAlert('error', 'Something went wrong: ' + err.message, 'registerAlert');
         document.getElementById('loading').classList.remove('active');
+      }
     }
-}
 
-// =====================
-// LOGIN
-// =====================
-async function login(email, password) {
-    try {
+    // =====================
+    // LOGIN
+    // =====================
+    async function login(email, password) {
+      try {
         document.getElementById('loading').classList.add('active');
-
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        if (error) throw error;
-
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) {
+          console.error(error);
+          showAlert('error', error.message, 'loginAlert');
+          document.getElementById('loading').classList.remove('active');
+          return;
+        }
         const user = data.user;
 
         const { data: profile, error: profileError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', user.id)
-            .single();
-
-        if (profileError) throw profileError;
-
-        if (profile.approval_status === 'pending') {
-            await supabase.auth.signOut();
-            throw new Error('Account awaiting approval');
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .maybeSingle();
+        
+        if (profileError || !profile) {
+          console.error(profileError);
+          showAlert('error', 'Profile not found', 'loginAlert');
+          await supabase.auth.signOut();
+          document.getElementById('loading').classList.remove('active');
+          return;
         }
 
-        window.location.href = "home.html";
+        if (profile.approval_status === "pending_approval") {
+          await supabase.auth.signOut();
+          showAlert('error', 'Your account is pending admin approval', 'loginAlert');
+          document.getElementById('loading').classList.remove('active');
+          return;
+        }
 
-    } catch (err) {
-        console.error(err);
-        showAlert('error', err.message, 'loginAlert');
-    } finally {
         document.getElementById('loading').classList.remove('active');
-    }
-}
-
-// =====================
-// SESSION CHECK
-// =====================
-async function checkSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session) {
         window.location.href = "home.html";
+      } catch (err) {
+        console.error("Login error:", err);
+        showAlert('error', 'Login failed: ' + err.message, 'loginAlert');
+        document.getElementById('loading').classList.remove('active');
+      }
     }
-}
-checkSession();
 
-// =====================
-// FORM HANDLERS
-// =====================
+    // =====================
+    // CHECK SESSION (AUTO LOGIN)
+    // =====================
+    async function checkSession() {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) window.location.href = "home.html";
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    }
+    checkSession();
 
-// LOGIN
-document.getElementById('loginForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById('loginEmail').value.trim();
-    const password = document.getElementById('loginPassword').value;
-
-    if (!email || !password) {
-        showAlert('error', 'Fill all fields', 'loginAlert');
+    // =====================
+    // FORM SUBMISSION HANDLERS
+    // =====================
+    document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      if (!email || !password) {
+        showAlert('error', 'Please fill in all fields', 'loginAlert');
         return;
-    }
+      }
+      login(email, password);
+    });
 
-    login(email, password);
-});
+    document.getElementById('registerForm')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      const full_name = document.getElementById('fullName').value.trim();
+      const parish = document.getElementById('parish').value;
+      const gender = document.getElementById('gender').value;
+      const role = document.querySelector('input[name="role"]:checked').value;
 
-// REGISTER
-document.getElementById('registerForm').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const email = document.getElementById('regEmail').value.trim();
-    const password = document.getElementById('regPassword').value;
-    const full_name = document.getElementById('fullName').value.trim();
-    const parish = document.getElementById('parish').value;
-    const gender = document.getElementById('gender').value;
-    const role = document.querySelector('input[name="role"]:checked').value;
-
-    if (!email || !password || !full_name || !parish || !gender) {
-        showAlert('error', 'Fill all fields', 'registerAlert');
+      if (!email || !password || !full_name || !parish || !gender) {
+        showAlert('error', 'Please fill in all fields', 'registerAlert');
         return;
-    }
-
-    if (password.length < 6) {
-        showAlert('error', 'Password too short', 'registerAlert');
+      }
+      if (password.length < 6) {
+        showAlert('error', 'Password must be at least 6 characters', 'registerAlert');
         return;
-    }
-
-    signUp(email, password, full_name, parish, gender, role);
-});
-</script>
+      }
+      signUp(email, password, full_name, parish, gender, role);
+    });
+  </script>
 </body>
 </html>
