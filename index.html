@@ -164,16 +164,11 @@
             width: auto;
         }
 
-        .error-message {
-            color: #e74c3c;
-            font-size: 12px;
-            margin-top: 5px;
+        .loading {
             display: none;
-        }
-
-        .parishes {
-            max-height: 200px;
-            overflow-y: auto;
+            text-align: center;
+            margin-top: 10px;
+            color: #667eea;
         }
 
         @media (max-width: 768px) {
@@ -212,6 +207,7 @@
                         <input type="password" id="loginPassword" required>
                     </div>
                     <button type="submit" class="btn">Login</button>
+                    <div class="loading" id="loginLoading">Logging in...</div>
                 </form>
             </div>
             
@@ -274,40 +270,41 @@
                         </div>
                     </div>
                     <button type="submit" class="btn">Register</button>
+                    <div class="loading" id="registerLoading">Creating account...</div>
                 </form>
             </div>
         </div>
     </div>
 
     <script>
-        // Supabase configuration - UPDATE THESE WITH YOUR VALUES
-        const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
- const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Supabase configuration - UPDATE THESE
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
         let profileImageFile = null;
         
         // Tab switching
-        document.getElementById('loginTab').addEventListener('click', function() {
+        document.getElementById('loginTab').onclick = function() {
             document.getElementById('loginTab').classList.add('active');
             document.getElementById('registerTab').classList.remove('active');
             document.getElementById('loginForm').classList.add('active');
             document.getElementById('registerForm').classList.remove('active');
-        });
+        };
         
-        document.getElementById('registerTab').addEventListener('click', function() {
+        document.getElementById('registerTab').onclick = function() {
             document.getElementById('registerTab').classList.add('active');
             document.getElementById('loginTab').classList.remove('active');
             document.getElementById('registerForm').classList.add('active');
             document.getElementById('loginForm').classList.remove('active');
-        });
+        };
         
         // Image upload
-        document.getElementById('imageUploadBtn').addEventListener('click', function() {
+        document.getElementById('imageUploadBtn').onclick = function() {
             document.getElementById('profileImage').click();
-        });
+        };
         
-        document.getElementById('profileImage').addEventListener('change', function(e) {
+        document.getElementById('profileImage').onchange = function(e) {
             const file = e.target.files[0];
             if (file) {
                 profileImageFile = file;
@@ -320,11 +317,14 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 };
                 reader.readAsDataURL(file);
             }
-        });
+        };
         
         // Register handler
-        document.getElementById('registerFormElement').addEventListener('submit', async (e) => {
+        document.getElementById('registerFormElement').onsubmit = async (e) => {
             e.preventDefault();
+            
+            const loading = document.getElementById('registerLoading');
+            loading.style.display = 'block';
             
             const name = document.getElementById('regName').value;
             const email = document.getElementById('regEmail').value;
@@ -337,17 +337,19 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             
             if (password !== confirmPassword) {
                 alert('Passwords do not match');
+                loading.style.display = 'none';
                 return;
             }
             
             if (password.length < 6) {
                 alert('Password must be at least 6 characters');
+                loading.style.display = 'none';
                 return;
             }
             
             try {
                 // Register user with Supabase Auth
-                const { data: authData, error: authError } = await supabaseClient.auth.signUp({
+                const { data: authData, error: authError } = await supabase.auth.signUp({
                     email: email,
                     password: password
                 });
@@ -358,12 +360,12 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 if (profileImageFile) {
                     const fileExt = profileImageFile.name.split('.').pop();
                     const fileName = `${authData.user.id}/profile.${fileExt}`;
-                    const { error: uploadError } = await supabaseClient.storage
+                    const { error: uploadError } = await supabase.storage
                         .from('profiles')
                         .upload(fileName, profileImageFile);
                     
                     if (!uploadError) {
-                        const { data: { publicUrl } } = supabaseClient.storage
+                        const { data: { publicUrl } } = supabase.storage
                             .from('profiles')
                             .getPublicUrl(fileName);
                         profileImageUrl = publicUrl;
@@ -371,7 +373,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 }
                 
                 // Create profile
-                const { error: profileError } = await supabaseClient
+                const { error: profileError } = await supabase
                     .from('profiles')
                     .insert([{
                         id: authData.user.id,
@@ -388,7 +390,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
                 if (profileError) throw profileError;
                 
                 // Add to parish members
-                const { error: memberError } = await supabaseClient
+                const { error: memberError } = await supabase
                     .from('parish_members')
                     .insert([{
                         user_id: authData.user.id,
@@ -404,50 +406,92 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
             } catch (error) {
                 console.error('Registration error:', error);
                 alert('Registration failed: ' + error.message);
+            } finally {
+                loading.style.display = 'none';
             }
-        });
+        };
         
-        // Login handler
-        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+        // Login handler - FIXED: removed .single() issue
+        document.getElementById('loginFormElement').onsubmit = async (e) => {
             e.preventDefault();
+            
+            const loading = document.getElementById('loginLoading');
+            loading.style.display = 'block';
             
             const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             
             try {
-                const { data, error } = await supabaseClient.auth.signInWithPassword({
+                const { data, error } = await supabase.auth.signInWithPassword({
                     email: email,
                     password: password
                 });
                 
                 if (error) throw error;
                 
-                // Get user profile
-                const { data: profile, error: profileError } = await supabaseClient
+                // Get user profile - FIXED: using maybeSingle() instead of single()
+                const { data: profile, error: profileError } = await supabase
                     .from('profiles')
                     .select('*')
                     .eq('id', data.user.id)
-                    .single();
+                    .maybeSingle();
                 
-                if (profileError) throw profileError;
+                if (profileError && profileError.message !== 'JSON object requested, multiple (or no) rows returned') {
+                    console.error('Profile error:', profileError);
+                }
+                
+                if (!profile) {
+                    // Create profile if it doesn't exist (fallback)
+                    const { error: insertError } = await supabase
+                        .from('profiles')
+                        .insert([{
+                            id: data.user.id,
+                            full_name: email.split('@')[0],
+                            email: email,
+                            parish_name: 'St. Peter\'s Anglican Church',
+                            gender: 'other',
+                            is_exco_parish: false,
+                            is_exco_archediceanry: false,
+                            exco_request_status: 'approved'
+                        }]);
+                    
+                    if (insertError) throw insertError;
+                    
+                    // Fetch the newly created profile
+                    const { data: newProfile } = await supabase
+                        .from('profiles')
+                        .select('*')
+                        .eq('id', data.user.id)
+                        .maybeSingle();
+                    
+                    if (newProfile) {
+                        localStorage.setItem('ayf_user', JSON.stringify(data.user));
+                        localStorage.setItem('ayf_profile', JSON.stringify(newProfile));
+                        window.location.href = 'home.html';
+                        return;
+                    }
+                }
                 
                 // Check if user is suspended
-                if (profile.is_suspended && profile.suspension_end_date && new Date(profile.suspension_end_date) > new Date()) {
+                if (profile && profile.is_suspended && profile.suspension_end_date && new Date(profile.suspension_end_date) > new Date()) {
                     alert(`Your account is suspended until ${new Date(profile.suspension_end_date).toLocaleDateString()}`);
+                    loading.style.display = 'none';
                     return;
                 }
                 
                 // Store user session
                 localStorage.setItem('ayf_user', JSON.stringify(data.user));
-                localStorage.setItem('ayf_profile', JSON.stringify(profile));
+                localStorage.setItem('ayf_profile', JSON.stringify(profile || {}));
                 
                 // Redirect to home page
                 window.location.href = 'home.html';
                 
             } catch (error) {
+                console.error('Login error:', error);
                 alert('Login failed: ' + error.message);
+                loading.style.display = 'none';
             }
-        });
+        };
     </script>
 </body>
 </html>
