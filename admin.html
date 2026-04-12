@@ -375,5 +375,269 @@
                 
                 if(!error) {
                     const pdfUrl = supabase.storage.from('plans').getPublicUrl(fileName).data.publicUrl;
+
+        // Add this inside the <script> tag of admin.html, replacing the incomplete functions
+
+async function loadAllItems() {
+    await loadNotices();
+    await loadEvents();
+    await loadPosts();
+    await loadPlans();
+    await loadMinutes();
+}
+
+async function loadNotices() {
+    const { data } = await supabase
+        .from('feed_items')
+        .select('*')
+        .eq('type', 'notice')
+        .order('created_at', { ascending: false });
+    
+    const container = document.getElementById('notices-list');
+    if(container) {
+        container.innerHTML = data.map(item => `
+            <div class="list-item">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <small>${new Date(item.created_at).toLocaleDateString()}</small>
+                </div>
+                <div>
+                    <button onclick="editNotice('${item.id}')">Edit</button>
+                    <button class="danger" onclick="deleteItem('${item.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function loadEvents() {
+    const { data } = await supabase
+        .from('feed_items')
+        .select('*')
+        .eq('type', 'event')
+        .order('created_at', { ascending: false });
+    
+    const container = document.getElementById('events-list');
+    if(container) {
+        container.innerHTML = data.map(item => `
+            <div class="list-item">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <small>${new Date(item.event_date).toLocaleDateString()}</small>
+                </div>
+                <div>
+                    <button onclick="editEvent('${item.id}')">Edit</button>
+                    <button class="danger" onclick="deleteItem('${item.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function loadPosts() {
+    const { data } = await supabase
+        .from('feed_items')
+        .select('*')
+        .eq('type', 'post')
+        .order('created_at', { ascending: false });
+    
+    const container = document.getElementById('posts-list');
+    if(container) {
+        container.innerHTML = data.map(item => `
+            <div class="list-item">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <small>${item.media_type || 'text'} • ${new Date(item.created_at).toLocaleDateString()}</small>
+                </div>
+                <div>
+                    <button onclick="editPost('${item.id}')">Edit</button>
+                    <button class="danger" onclick="deleteItem('${item.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function loadPlans() {
+    const { data } = await supabase
+        .from('yearly_plans')
+        .select('*')
+        .order('year', { ascending: false });
+    
+    const container = document.getElementById('plans-list');
+    if(container) {
+        container.innerHTML = data.map(plan => `
+            <div class="list-item">
+                <div>
+                    <strong>${plan.title}</strong><br>
+                    <small>${plan.year}</small>
+                </div>
+                <div>
+                    <button onclick="editPlan('${plan.id}')">Edit</button>
+                    <button class="danger" onclick="deletePlan('${plan.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function loadMinutes() {
+    const { data } = await supabase
+        .from('feed_items')
+        .select('*')
+        .eq('type', 'minutes')
+        .order('created_at', { ascending: false });
+    
+    const container = document.getElementById('minutes-list');
+    if(container) {
+        container.innerHTML = data.map(item => `
+            <div class="list-item">
+                <div>
+                    <strong>${item.title}</strong><br>
+                    <small>${new Date(item.created_at).toLocaleDateString()}</small>
+                </div>
+                <div>
+                    <button onclick="editMinutes('${item.id}')">Edit</button>
+                    <button class="danger" onclick="deleteItem('${item.id}')">Delete</button>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+async function createMinutes(e) {
+    e.preventDefault();
+    const title = document.getElementById('minutes-title').value;
+    const date = document.getElementById('minutes-date').value;
+    const file = document.getElementById('minutes-file').files[0];
+    
+    if(!file) return alert('Please select a file');
+    
+    const fileName = `minutes_${Date.now()}_${file.name}`;
+    const { error: uploadError } = await supabase.storage
+        .from('minutes')
+        .upload(fileName, file);
+    
+    if(uploadError) {
+        alert(uploadError.message);
+        return;
+    }
+    
+    const pdfUrl = supabase.storage.from('minutes').getPublicUrl(fileName).data.publicUrl;
+    
+    await supabase.from('feed_items').insert([{
+        type: 'minutes',
+        title: title,
+        content: `Meeting minutes for ${date}`,
+        pdf_url: pdfUrl,
+        created_by: currentUser.id
+    }]);
+    
+    alert('Minutes uploaded!');
+    e.target.reset();
+    loadMinutes();
+}
+
+async function sendQuota(e) {
+    e.preventDefault();
+    const parishName = document.getElementById('quota-parish').value;
+    const amount = document.getElementById('quota-amount').value;
+    const description = document.getElementById('quota-desc').value;
+    
+    // Find parish president
+    const { data: president } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('parish_name', parishName)
+        .eq('is_exco', true)
+        .eq('exco_approved', true)
+        .single();
+    
+    if(!president) {
+        alert('No approved EXCO found for this parish');
+        return;
+    }
+    
+    await supabase.from('quotas').insert([{
+        parish_name: parishName,
+        amount: amount,
+        description: description,
+        sent_to: president.id
+    }]);
+    
+    // Send a private message to the president
+    await supabase.from('private_messages').insert([{
+        sender_id: currentUser.id,
+        receiver_id: president.id,
+        message: `📋 Quota Notification: Your parish quota of ₦${amount} has been set. Description: ${description}`
+    }]);
+    
+    alert(`Quota sent to ${parishName} president!`);
+    e.target.reset();
+}
+
+async function suspendMember(e) {
+    e.preventDefault();
+    const email = document.getElementById('suspend-email').value;
+    const days = parseInt(document.getElementById('suspend-duration').value);
+    const reason = document.getElementById('suspend-reason').value;
+    
+    // Get user by email
+    const { data: user } = await supabase
+        .from('profiles')
+        .select('id, parish_name')
+        .eq('email', email)
+        .single();
+    
+    if(!user) {
+        alert('User not found');
+        return;
+    }
+    
+    const suspendedUntil = new Date();
+    suspendedUntil.setDate(suspendedUntil.getDate() + days);
+    
+    await supabase.from('suspensions').insert([{
+        user_id: user.id,
+        parish_name: user.parish_name,
+        suspended_until: suspendedUntil.toISOString(),
+        reason: reason
+    }]);
+    
+    // Notify user
+    await supabase.from('private_messages').insert([{
+        sender_id: currentUser.id,
+        receiver_id: user.id,
+        message: `⚠️ You have been suspended from ${user.parish_name} for ${days} days. Reason: ${reason}`
+    }]);
+    
+    alert(`User suspended until ${suspendedUntil.toLocaleDateString()}`);
+    e.target.reset();
+}
+
+async function deleteItem(id) {
+    if(confirm('Are you sure? This will delete the item permanently.')) {
+        await supabase.from('feed_items').delete().eq('id', id);
+        loadAllItems();
+    }
+}
+
+async function deletePlan(id) {
+    if(confirm('Delete this plan?')) {
+        await supabase.from('yearly_plans').delete().eq('id', id);
+        loadPlans();
+    }
+}
+
+// Placeholder edit functions (you can implement full edit modals similarly)
+function editNotice(id) { alert('Edit feature - implement modal form'); }
+function editEvent(id) { alert('Edit feature - implement modal form'); }
+function editPost(id) { alert('Edit feature - implement modal form'); }
+function editPlan(id) { alert('Edit feature - implement modal form'); }
+function editMinutes(id) { alert('Edit feature - implement modal form'); }
+
+checkAdmin();
+    </body>
+    </html>
                     
                    
