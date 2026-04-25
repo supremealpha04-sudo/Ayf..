@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Admin Dashboard - AYF GWARIMPA</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="admin-header">
+            <h1>Admin Dashboard</h1>
+            <button id="logoutAdminBtn" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="admin-tabs">
+            <button class="admin-tab active" data-panel="notices">📢 Notices</button>
+            <button class="admin-tab" data-panel="events">🎉 Events</button>
+            <button class="admin-tab" data-panel="posts">📝 Posts</button>
+            <button class="admin-tab" data-panel="minutes">📄 Minutes</button>
+            <button class="admin-tab" data-panel="plans">📅 Plans</button>
+            <button class="admin-tab" data-panel="quotas">💰 Quotas</button>
+            <button class="admin-tab" data-panel="users">👥 Users</button>
+            <button class="admin-tab" data-panel="requests">📋 Role Requests</button>
+        </div>
+
+        <div class="admin-content">
+            <!-- Notices Panel -->
+            <div id="noticesPanel" class="admin-panel active">
+                <div class="panel-header">
+                    <h3>Manage Notices</h3>
+                    <button class="btn-primary create-btn" data-type="notice">+ Create Notice</button>
+                </div>
+                <div id="noticesList" class="admin-list"></div>
+            </div>
+
+            <!-- Events Panel -->
+            <div id="eventsPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Events</h3>
+                    <button class="btn-primary create-btn" data-type="event">+ Create Event</button>
+                </div>
+                <div id="eventsList" class="admin-list"></div>
+            </div>
+
+            <!-- Posts Panel -->
+            <div id="postsPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Posts</h3>
+                    <button class="btn-primary create-btn" data-type="post">+ Create Post</button>
+                </div>
+                <div id="postsList" class="admin-list"></div>
+            </div>
+
+            <!-- Minutes Panel -->
+            <div id="minutesPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Meeting Minutes</h3>
+                    <button class="btn-primary create-btn" data-type="minutes">+ Upload Minutes</button>
+                </div>
+                <div id="minutesList" class="admin-list"></div>
+            </div>
+
+            <!-- Plans Panel -->
+            <div id="plansPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Yearly Plans</h3>
+                    <button class="btn-primary create-btn" data-type="plan">+ Add Plan</button>
+                </div>
+                <div id="plansList" class="admin-list"></div>
+            </div>
+
+            <!-- Quotas Panel -->
+            <div id="quotasPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Quotas</h3>
+                    <button class="btn-primary create-btn" data-type="quota">+ Send Quota</button>
+                </div>
+                <div id="quotasList" class="admin-list"></div>
+            </div>
+
+            <!-- Users Panel -->
+            <div id="usersPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Manage Users</h3>
+                    <input type="text" id="searchUsersAdmin" placeholder="Search users...">
+                </div>
+                <div id="usersList" class="admin-list"></div>
+            </div>
+
+            <!-- Role Requests Panel -->
+            <div id="requestsPanel" class="admin-panel">
+                <div class="panel-header">
+                    <h3>Role Requests</h3>
+                </div>
+                <div id="requestsList" class="admin-list"></div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/home.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/parish.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Parish</span>
+            </a>
+            <a href="/plan.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Plan</span>
+            </a>
+            <a href="/profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Create/Edit Modal -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="adminModalBody"></div>
+        </div>
+    </div>
+
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/modules/admin/admin-core.js"></script>
+</body>
+</html>
