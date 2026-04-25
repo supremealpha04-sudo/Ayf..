@@ -2,694 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AYF GWARIMPA - Profile</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0f0f0f;
-            color: white;
-        }
-
-        .profile-header {
-            background: #17212b;
-            position: relative;
-        }
-
-        .cover-photo {
-            height: 150px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-
-        .profile-info {
-            padding: 0 20px 20px;
-            position: relative;
-        }
-
-        .profile-avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 4px solid #17212b;
-            margin-top: -50px;
-            background: #6ab3f3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 40px;
-            font-weight: bold;
-            overflow: hidden;
-        }
-
-        .profile-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .profile-name {
-            font-size: 24px;
-            font-weight: 600;
-            margin-top: 12px;
-        }
-
-        .profile-username {
-            color: #6ab3f3;
-            font-size: 14px;
-            margin-top: 4px;
-        }
-
-        .profile-bio {
-            color: #c4c9ce;
-            font-size: 14px;
-            margin-top: 12px;
-            line-height: 1.4;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 10px;
-            background: #242f3d;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-btn.primary {
-            background: #6ab3f3;
-            color: #17212b;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 20px;
-            background: #17212b;
-            margin: 16px;
-            border-radius: 12px;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #8e9eae;
-            margin-top: 4px;
-        }
-
-        .section {
-            margin: 16px;
-            background: #17212b;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .section-header {
-            padding: 16px;
-            font-weight: 600;
-            border-bottom: 1px solid #2b3b4c;
-        }
-
-        .section-item {
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2b3b4c;
-            cursor: pointer;
-        }
-
-        .section-item:last-child {
-            border-bottom: none;
-        }
-
-        .section-item:hover {
-            background: #242f3d;
-        }
-
-        .item-label {
-            color: #c4c9ce;
-        }
-
-        .item-value {
-            color: #6ab3f3;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #17212b;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            border-top: 1px solid #2b3b4c;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: #8e9eae;
-            cursor: pointer;
-            padding: 8px;
-            transition: all 0.2s;
-        }
-
-        .nav-item.active {
-            color: #6ab3f3;
-        }
-
-        .nav-icon {
-            font-size: 24px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            background: #17212b;
-            padding: 16px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            position: sticky;
-            top: 0;
-        }
-
-        .modal-content {
-            padding: 20px;
-        }
-
-        .chat-list-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #17212b;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .chat-list-item:hover {
-            background: #242f3d;
-        }
-
-        .chat-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: #6ab3f3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
-
-        .chat-info {
-            flex: 1;
-        }
-
-        .chat-name {
-            font-weight: 600;
-        }
-
-        .chat-last-message {
-            font-size: 12px;
-            color: #8e9eae;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Profile - AYF GWARIMPA</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/profile.css">
 </head>
 <body>
-    <div class="profile-header">
-        <div class="cover-photo"></div>
-        <div class="profile-info">
-            <div class="profile-avatar" id="profileAvatar">
-                <span id="avatarLetter">U</span>
+    <div class="app-container">
+        <div class="profile-header">
+            <div class="profile-cover"></div>
+            <div class="profile-avatar-container">
+                <img id="profileAvatar" class="profile-avatar" src="/assets/images/default-avatar.png" alt="Profile">
+                <button id="editAvatarBtn" class="edit-avatar-btn">📷</button>
             </div>
-            <div class="profile-name" id="profileName">Loading...</div>
-            <div class="profile-username" id="profileUsername">@username</div>
-            <div class="profile-bio" id="profileBio">Anglican Youth Fellowship Member</div>
-            <div class="action-buttons">
-                <button class="action-btn primary" onclick="editProfile()">✏️ Edit Profile</button>
-                <button class="action-btn" onclick="showChats()">💬 Messages</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="stats">
-        <div class="stat-item">
-            <div class="stat-number" id="postCount">0</div>
-            <div class="stat-label">Posts</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number" id="likeCount">0</div>
-            <div class="stat-label">Likes</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-number" id="commentCount">0</div>
-            <div class="stat-label">Comments</div>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-header">Account Information</div>
-        <div class="section-item">
-            <span class="item-label">Parish</span>
-            <span class="item-value" id="parishName">-</span>
-        </div>
-        <div class="section-item">
-            <span class="item-label">Gender</span>
-            <span class="item-value" id="gender">-</span>
-        </div>
-        <div class="section-item">
-            <span class="item-label">Email</span>
-            <span class="item-value" id="email">-</span>
-        </div>
-        <div class="section-item">
-            <span class="item-label">Member Since</span>
-            <span class="item-value" id="memberSince">-</span>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-header">Position</div>
-        <div class="section-item">
-            <span class="item-label">Parish Exco</span>
-            <span class="item-value" id="excoParish">No</span>
-        </div>
-        <div class="section-item">
-            <span class="item-label">Archediceanry Exco</span>
-            <span class="item-value" id="excoArchediceanry">No</span>
-        </div>
-        <div class="section-item" id="excoStatusItem" style="display: none;">
-            <span class="item-label">Exco Request Status</span>
-            <span class="item-value" id="excoStatus">-</span>
-        </div>
-    </div>
-
-    <div class="section">
-        <div class="section-header">Settings</div>
-        <div class="section-item" onclick="logout()">
-            <span class="item-label">🚪 Logout</span>
-            <span class="item-value">→</span>
-        </div>
-        <div class="section-item" onclick="changePassword()">
-            <span class="item-label">🔒 Change Password</span>
-            <span class="item-value">→</span>
-        </div>
-        <div class="section-item" onclick="clearCache()">
-            <span class="item-label">🗑️ Clear Cache</span>
-            <span class="item-value">→</span>
-        </div>
-    </div>
-
-    <div class="bottom-nav">
-        <button class="nav-item" onclick="navigateTo('home')">
-            <div class="nav-icon">🏠</div>
-            <div class="nav-label">Home</div>
-        </button>
-        <button class="nav-item" onclick="navigateTo('parish')">
-            <div class="nav-icon">💬</div>
-            <div class="nav-label">Parish</div>
-        </button>
-        <button class="nav-item" onclick="navigateTo('plan')">
-            <div class="nav-icon">📅</div>
-            <div class="nav-label">Plan</div>
-        </button>
-        <button class="nav-item active" onclick="navigateTo('profile')">
-            <div class="nav-icon">👤</div>
-            <div class="nav-label">Profile</div>
-        </button>
-    </div>
-
-    <!-- Chats Modal -->
-    <div class="modal" id="chatsModal" onclick="if(event.target === this) closeChats()">
-        <div class="modal-header">
-            <button class="back-btn" onclick="closeChats()">←</button>
-            <div class="chat-name">Messages</div>
-        </div>
-        <div class="modal-content" id="chatsList">
-            <!-- Chats will load here -->
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div class="modal" id="editModal" onclick="if(event.target === this) closeEditModal()">
-        <div class="modal-header">
-            <button class="back-btn" onclick="closeEditModal()">←</button>
-            <div class="chat-name">Edit Profile</div>
-        </div>
-        <div class="modal-content">
-            <div style="text-align: center; margin-bottom: 20px;">
-                <div id="editAvatar" style="width: 100px; height: 100px; border-radius: 50%; background: #6ab3f3; margin: 0 auto; display: flex; align-items: center; justify-content: center; overflow: hidden; cursor: pointer;" onclick="document.getElementById('editProfileImage').click()">
-                    <img id="editAvatarImg" style="width: 100%; height: 100%; object-fit: cover;">
-                    <span id="editAvatarText" style="font-size: 40px;">U</span>
+            <h2 id="profileName">Loading...</h2>
+            <p id="profileParish" class="profile-parish"></p>
+            <div class="profile-stats">
+                <div class="stat">
+                    <span class="stat-value" id="postCount">0</span>
+                    <span class="stat-label">Posts</span>
                 </div>
-                <input type="file" id="editProfileImage" accept="image/*" style="display: none;">
+                <div class="stat">
+                    <span class="stat-value" id="memberSince">-</span>
+                    <span class="stat-label">Joined</span>
+                </div>
             </div>
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; color: #c4c9ce;">Full Name</label>
-                <input type="text" id="editName" style="width: 100%; padding: 12px; background: #242f3d; border: none; border-radius: 8px; color: white;">
+        </div>
+
+        <div class="profile-tabs">
+            <button class="tab-btn active" data-tab="posts">My Posts</button>
+            <button class="tab-btn" data-tab="messages">Messages</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
+        </div>
+
+        <div class="profile-content">
+            <!-- Posts Tab -->
+            <div id="postsTab" class="tab-content active">
+                <div id="userPosts" class="user-posts"></div>
             </div>
-            <div class="form-group" style="margin-bottom: 16px;">
-                <label style="display: block; margin-bottom: 8px; color: #c4c9ce;">Bio</label>
-                <textarea id="editBio" rows="3" style="width: 100%; padding: 12px; background: #242f3d; border: none; border-radius: 8px; color: white;"></textarea>
+
+            <!-- Messages Tab -->
+            <div id="messagesTab" class="tab-content">
+                <div class="search-users">
+                    <input type="text" id="searchUsers" placeholder="Search members...">
+                </div>
+                <div id="conversationsList" class="conversations-list"></div>
             </div>
-            <button class="action-btn primary" onclick="saveProfile()" style="width: 100%;">Save Changes</button>
+
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content">
+                <div class="settings-list">
+                    <button id="editProfileBtn">✏️ Edit Profile</button>
+                    <button id="changePasswordBtn">🔒 Change Password</button>
+                    <button id="logoutBtn" class="danger-btn">🚪 Logout</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/home.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/parish.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Parish</span>
+            </a>
+            <a href="/plan.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Plan</span>
+            </a>
+            <a href="/profile.html" class="nav-item active">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Private Chat Modal -->
+    <div id="privateChatModal" class="modal">
+        <div class="modal-content chat-modal">
+            <div class="chat-modal-header">
+                <span id="chatWithName"></span>
+                <span class="close">&times;</span>
+            </div>
+            <div id="privateChatMessages" class="private-chat-messages"></div>
+            <div class="chat-input">
+                <input type="text" id="privateMessageInput" placeholder="Type a message...">
+                <button id="sendPrivateBtn">Send</button>
+            </div>
         </div>
     </div>
 
-    <script>
-       const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
-     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let currentUser = null;
-        let currentProfile = null;
-        let chatsSubscription = null;
-        
-        async function checkAuth() {
-            const userStr = localStorage.getItem('user');
-            if (!userStr) {
-                window.location.href = 'index.html';
-                return;
-            }
-            currentUser = JSON.parse(userStr);
-            await loadProfile();
-            await loadStats();
-        }
-        
-        async function loadProfile() {
-            const { data: profile, error } = await supabase
-                .from('profiles')
-                .select('*')
-                .eq('id', currentUser.id)
-                .single();
-            
-            if (error) {
-                console.error('Error loading profile:', error);
-                return;
-            }
-            
-            currentProfile = profile;
-            
-            // Update UI
-            document.getElementById('profileName').textContent = profile.full_name;
-            document.getElementById('profileUsername').textContent = `@${profile.full_name.toLowerCase().replace(/\s/g, '')}`;
-            document.getElementById('parishName').textContent = profile.parish_name;
-            document.getElementById('gender').textContent = profile.gender || 'Not specified';
-            document.getElementById('email').textContent = profile.email;
-            document.getElementById('memberSince').textContent = new Date(profile.created_at).toLocaleDateString();
-            document.getElementById('excoParish').textContent = profile.is_exco_parish ? 'Yes' : 'No';
-            document.getElementById('excoArchediceanry').textContent = profile.is_exco_archediceanry ? 'Yes' : 'No';
-            
-            if (profile.is_exco_parish || profile.is_exco_archediceanry) {
-                document.getElementById('excoStatusItem').style.display = 'flex';
-                document.getElementById('excoStatus').textContent = profile.exco_request_status || 'pending';
-            }
-            
-            // Avatar
-            const avatarLetter = profile.full_name.charAt(0).toUpperCase();
-            document.getElementById('avatarLetter').textContent = avatarLetter;
-            
-            if (profile.profile_image_url) {
-                const avatarDiv = document.getElementById('profileAvatar');
-                avatarDiv.innerHTML = `<img src="${profile.profile_image_url}" alt="Profile">`;
-            }
-        }
-        
-        async function loadStats() {
-            // Post count
-            const { count: postCount } = await supabase
-                .from('posts')
-                .select('*', { count: 'exact', head: true });
-            
-            // Like count (user's likes given)
-            const { count: likeCount } = await supabase
-                .from('likes')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', currentUser.id);
-            
-            // Comment count
-            const { count: commentCount } = await supabase
-                .from('comments')
-                .select('*', { count: 'exact', head: true })
-                .eq('user_id', currentUser.id);
-            
-            document.getElementById('postCount').textContent = postCount || 0;
-            document.getElementById('likeCount').textContent = likeCount || 0;
-            document.getElementById('commentCount').textContent = commentCount || 0;
-        }
-        
-        window.showChats = async function() {
-            const modal = document.getElementById('chatsModal');
-            const chatsList = document.getElementById('chatsList');
-            modal.style.display = 'block';
-            chatsList.innerHTML = '<div style="text-align: center; padding: 40px;">Loading conversations...</div>';
-            
-            // Get all unique users that current user has chatted with
-            const { data: sentMessages } = await supabase
-                .from('private_messages')
-                .select('receiver_id')
-                .eq('sender_id', currentUser.id);
-            
-            const { data: receivedMessages } = await supabase
-                .from('private_messages')
-                .select('sender_id')
-                .eq('receiver_id', currentUser.id);
-            
-            const userIds = new Set();
-            sentMessages?.forEach(m => userIds.add(m.receiver_id));
-            receivedMessages?.forEach(m => userIds.add(m.sender_id));
-            
-            if (userIds.size === 0) {
-                chatsList.innerHTML = '<div style="text-align: center; padding: 40px;">No conversations yet. Start a chat from someone\'s profile!</div>';
-                return;
-            }
-            
-            chatsList.innerHTML = '';
-            
-            for (const userId of userIds) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('id, full_name, profile_image_url')
-                    .eq('id', userId)
-                    .single();
-                
-                if (profile) {
-                    // Get last message
-                    const { data: lastMessage } = await supabase
-                        .from('private_messages')
-                        .select('message, created_at')
-                        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`)
-                        .order('created_at', { ascending: false })
-                        .limit(1);
-                    
-                    const chatItem = document.createElement('div');
-                    chatItem.className = 'chat-list-item';
-                    chatItem.onclick = () => openChat(profile.id, profile.full_name);
-                    chatItem.innerHTML = `
-                        <div class="chat-avatar">${profile.full_name.charAt(0)}</div>
-                        <div class="chat-info">
-                            <div class="chat-name">${escapeHtml(profile.full_name)}</div>
-                            <div class="chat-last-message">${lastMessage?.[0]?.message?.substring(0, 50) || 'No messages yet'}</div>
-                        </div>
-                        <div>→</div>
-                    `;
-                    chatsList.appendChild(chatItem);
-                }
-            }
-        };
-        
-        function openChat(userId, userName) {
-            // Store selected user for chat
-            localStorage.setItem('chatWith', JSON.stringify({ id: userId, name: userName }));
-            window.location.href = 'chat.html';
-        }
-        
-        window.editProfile = function() {
-            const modal = document.getElementById('editModal');
-            document.getElementById('editName').value = currentProfile.full_name || '';
-            document.getElementById('editBio').value = currentProfile.bio || '';
-            
-            if (currentProfile.profile_image_url) {
-                document.getElementById('editAvatarImg').src = currentProfile.profile_image_url;
-                document.getElementById('editAvatarImg').style.display = 'block';
-                document.getElementById('editAvatarText').style.display = 'none';
-            } else {
-                document.getElementById('editAvatarText').textContent = currentProfile.full_name?.charAt(0) || 'U';
-                document.getElementById('editAvatarText').style.display = 'flex';
-                document.getElementById('editAvatarImg').style.display = 'none';
-            }
-            
-            modal.style.display = 'block';
-        };
-        
-        let newProfileImage = null;
-        document.getElementById('editProfileImage').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                newProfileImage = file;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('editAvatarImg').src = e.target.result;
-                    document.getElementById('editAvatarImg').style.display = 'block';
-                    document.getElementById('editAvatarText').style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-        
-        window.saveProfile = async function() {
-            const updates = {
-                full_name: document.getElementById('editName').value
-            };
-            
-            if (newProfileImage) {
-                // Upload new profile image
-                const fileExt = newProfileImage.name.split('.').pop();
-                const fileName = `${currentUser.id}/profile.${fileExt}`;
-                const { error: uploadError } = await supabase.storage
-                    .from('profiles')
-                    .upload(fileName, newProfileImage, { upsert: true });
-                
-                if (!uploadError) {
-                    const { data: { publicUrl } } = supabase.storage
-                        .from('profiles')
-                        .getPublicUrl(fileName);
-                    updates.profile_image_url = publicUrl;
-                }
-            }
-            
-            const { error } = await supabase
-                .from('profiles')
-                .update(updates)
-                .eq('id', currentUser.id);
-            
-            if (error) {
-                alert('Error updating profile: ' + error.message);
-            } else {
-                alert('Profile updated successfully!');
-                closeEditModal();
-                await loadProfile();
-                localStorage.setItem('profile', JSON.stringify({ ...currentProfile, ...updates }));
-            }
-        };
-        
-        window.logout = async function() {
-            if (confirm('Are you sure you want to logout?')) {
-                await supabase.auth.signOut();
-                localStorage.clear();
-                window.location.href = 'index.html';
-            }
-        };
-        
-        window.changePassword = function() {
-            const newPassword = prompt('Enter new password:');
-            if (newPassword && newPassword.length >= 6) {
-                supabase.auth.updateUser({ password: newPassword })
-                    .then(() => alert('Password updated successfully!'))
-                    .catch(err => alert('Error: ' + err.message));
-            } else if (newPassword) {
-                alert('Password must be at least 6 characters');
-            }
-        };
-        
-        window.clearCache = function() {
-            if (confirm('Clear cached data? You will need to login again.')) {
-                localStorage.clear();
-                window.location.href = 'index.html';
-            }
-        };
-        
-        window.closeChats = function() {
-            document.getElementById('chatsModal').style.display = 'none';
-        };
-        
-        window.closeEditModal = function() {
-            document.getElementById('editModal').style.display = 'none';
-            newProfileImage = null;
-        };
-        
-        window.navigateTo = function(page) {
-            switch(page) {
-                case 'home':
-                    window.location.href = 'home.html';
-                    break;
-                case 'parish':
-                    window.location.href = 'parish.html';
-                    break;
-                case 'plan':
-                    window.location.href = 'plan.html';
-                    break;
-                case 'profile':
-                    window.location.href = 'profile.html';
-                    break;
-            }
-        };
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        checkAuth();
-    </script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/modules/profile.js"></script>
 </body>
 </html>
