@@ -2,347 +2,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AYF GWARIMPA - Yearly Plan</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: #0f0f0f;
-            color: white;
-        }
-
-        .header {
-            background: #17212b;
-            padding: 12px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-        }
-
-        .header h1 {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .refresh-btn {
-            background: none;
-            border: none;
-            color: #6ab3f3;
-            font-size: 20px;
-            cursor: pointer;
-        }
-
-        .plans-container {
-            margin-top: 60px;
-            padding: 16px;
-            padding-bottom: 80px;
-        }
-
-        .plan-card {
-            background: #17212b;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            transition: transform 0.2s;
-        }
-
-        .plan-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .plan-year {
-            background: #6ab3f3;
-            padding: 8px 16px;
-            font-weight: 600;
-            color: #17212b;
-        }
-
-        .plan-title {
-            padding: 16px 16px 8px;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        .plan-description {
-            padding: 0 16px 16px;
-            color: #c4c9ce;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-
-        .plan-actions {
-            display: flex;
-            gap: 12px;
-            padding: 12px 16px;
-            border-top: 1px solid #2b3b4c;
-        }
-
-        .plan-btn {
-            flex: 1;
-            padding: 10px;
-            background: #242f3d;
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .plan-btn:hover {
-            background: #6ab3f3;
-            color: #17212b;
-        }
-
-        .plan-btn.download {
-            background: #075e54;
-        }
-
-        .plan-btn.share {
-            background: #128c7e;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: #17212b;
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 0;
-            border-top: 1px solid #2b3b4c;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            background: none;
-            border: none;
-            color: #8e9eae;
-            cursor: pointer;
-            padding: 8px;
-            transition: all 0.2s;
-        }
-
-        .nav-item.active {
-            color: #6ab3f3;
-        }
-
-        .nav-icon {
-            font-size: 24px;
-        }
-
-        .nav-label {
-            font-size: 11px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #8e9eae;
-        }
-
-        @media (max-width: 768px) {
-            .plan-title {
-                font-size: 16px;
-            }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Yearly Plan - AYF GWARIMPA</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/plan.css">
 </head>
 <body>
-    <div class="header">
-        <h1>📅 AYF Yearly Plan</h1>
-        <button class="refresh-btn" onclick="loadPlans()">🔄</button>
+    <div class="app-container">
+        <div class="app-header">
+            <h2>Yearly Fellowship Plan</h2>
+            <button id="sharePlanBtn" class="icon-btn">📤</button>
+        </div>
+
+        <div class="plan-container" id="planContainer">
+            <div class="loading-spinner">
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a href="/home.html" class="nav-item">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Home</span>
+            </a>
+            <a href="/parish.html" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Parish</span>
+            </a>
+            <a href="/plan.html" class="nav-item active">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Plan</span>
+            </a>
+            <a href="/profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Profile</span>
+            </a>
+        </nav>
     </div>
 
-    <div class="plans-container" id="plansContainer">
-        <div class="loading">Loading plans...</div>
-    </div>
-
-    <div class="bottom-nav">
-        <button class="nav-item" onclick="navigateTo('home')">
-            <div class="nav-icon">🏠</div>
-            <div class="nav-label">Home</div>
-        </button>
-        <button class="nav-item" onclick="navigateTo('parish')">
-            <div class="nav-icon">💬</div>
-            <div class="nav-label">Parish</div>
-        </button>
-        <button class="nav-item active" onclick="navigateTo('plan')">
-            <div class="nav-icon">📅</div>
-            <div class="nav-label">Plan</div>
-        </button>
-        <button class="nav-item" onclick="navigateTo('profile')">
-            <div class="nav-icon">👤</div>
-            <div class="nav-label">Profile</div>
-        </button>
-    </div>
-
-    <script>
-       const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let currentUser = null;
-        
-        async function checkAuth() {
-            const userStr = localStorage.getItem('user');
-            if (!userStr) {
-                window.location.href = 'index.html';
-                return;
-            }
-            currentUser = JSON.parse(userStr);
-            loadPlans();
-        }
-        
-        async function loadPlans() {
-            const container = document.getElementById('plansContainer');
-            container.innerHTML = '<div class="loading">Loading plans...</div>';
-            
-            try {
-                const { data: plans, error } = await supabase
-                    .from('plans')
-                    .select('*')
-                    .order('year', { ascending: false });
-                
-                if (error) throw error;
-                
-                if (!plans || plans.length === 0) {
-                    container.innerHTML = '<div class="loading">No plans available yet.</div>';
-                    return;
-                }
-                
-                container.innerHTML = '';
-                
-                for (const plan of plans) {
-                    const planCard = document.createElement('div');
-                    planCard.className = 'plan-card';
-                    
-                    planCard.innerHTML = `
-                        <div class="plan-year">Year ${plan.year}</div>
-                        <div class="plan-title">${escapeHtml(plan.title)}</div>
-                        <div class="plan-description">${escapeHtml(plan.description || 'No description provided.')}</div>
-                        <div class="plan-actions">
-                            <button class="plan-btn download" onclick="downloadPlan('${plan.file_url}', '${plan.title}_${plan.year}')">
-                                📥 Download PDF
-                            </button>
-                            <button class="plan-btn share" onclick="sharePlan('${plan.title}', '${plan.year}')">
-                                📤 Share
-                            </button>
-                        </div>
-                    `;
-                    
-                    container.appendChild(planCard);
-                }
-                
-            } catch (error) {
-                console.error('Error loading plans:', error);
-                container.innerHTML = '<div class="loading">Error loading plans. Please try again.</div>';
-            }
-        }
-        
-        window.downloadPlan = async function(url, filename) {
-            try {
-                // Track download
-                const { data: plan } = await supabase
-                    .from('plans')
-                    .select('id')
-                    .eq('file_url', url)
-                    .single();
-                
-                if (plan) {
-                    await supabase
-                        .from('downloads')
-                        .insert([{
-                            post_id: plan.id,
-                            user_id: currentUser.id
-                        }]);
-                }
-                
-                // Download file
-                const response = await fetch(url);
-                const blob = await response.blob();
-                const downloadUrl = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = downloadUrl;
-                a.download = `${filename}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(downloadUrl);
-                
-                alert('Download started!');
-                
-            } catch (error) {
-                console.error('Error downloading:', error);
-                alert('Failed to download. Please try again.');
-            }
-        };
-        
-        window.sharePlan = async function(title, year) {
-            const shareText = `Check out AYF GWARIMPA ${year} Plan: ${title}`;
-            
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: `AYF Plan ${year}`,
-                        text: shareText,
-                        url: window.location.href
-                    });
-                } catch (error) {
-                    console.log('Share cancelled');
-                }
-            } else {
-                await navigator.clipboard.writeText(shareText);
-                alert('Plan info copied to clipboard!');
-            }
-        };
-        
-        window.navigateTo = function(page) {
-            switch(page) {
-                case 'home':
-                    window.location.href = 'home.html';
-                    break;
-                case 'parish':
-                    window.location.href = 'parish.html';
-                    break;
-                case 'plan':
-                    window.location.href = 'plan.html';
-                    break;
-                case 'profile':
-                    window.location.href = 'profile.html';
-                    break;
-            }
-        };
-        
-        function escapeHtml(text) {
-            if (!text) return '';
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        checkAuth();
-    </script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/modules/plan.js"></script>
 </body>
 </html>
