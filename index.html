@@ -1,497 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>AYF GWARIMPA - Login</title>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 500px;
-            width: 100%;
-            background: white;
-            border-radius: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 40px;
-            text-align: center;
-        }
-
-        .header h1 {
-            color: white;
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: rgba(255,255,255,0.9);
-            font-size: 14px;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #f0f0f0;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            background: white;
-            border: none;
-            font-size: 16px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .tab.active {
-            color: #667eea;
-            border-bottom: 2px solid #667eea;
-        }
-
-        .form-container {
-            padding: 30px;
-        }
-
-        .form {
-            display: none;
-        }
-
-        .form.active {
-            display: block;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-
-        .image-upload {
-            border: 2px dashed #e0e0e0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .image-upload:hover {
-            border-color: #667eea;
-        }
-
-        .image-preview {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin: 0 auto 10px;
-            display: none;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .checkbox-group {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .checkbox-group label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0;
-        }
-
-        .checkbox-group input {
-            width: auto;
-        }
-
-        .loading {
-            display: none;
-            text-align: center;
-            margin-top: 10px;
-            color: #667eea;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-            }
-            
-            .form-container {
-                padding: 20px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AYF GWARIMPA - Welcome</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+:root{--primary:#0088cc;--primary-dark:#006699;--bg:#0f1419;--surface:#17212b;--surface-light:#242f3d;--text:#ffffff;--text-secondary:#8a9bb0;--border:#242f3d;--success:#4cd964;--danger:#ff3b30;--warning:#ff9500}
+body{background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+.auth-container{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;max-width:420px;margin:0 auto;width:100%}
+.logo{width:120px;height:120px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:30px;display:flex;align-items:center;justify-content:center;margin-bottom:24px;box-shadow:0 8px32px rgba(0,136,204,0.3)}
+.logo svg{width:64px;height:64px;fill:white}
+.brand-name{font-size:28px;font-weight:700;margin-bottom:8px;text-align:center}
+.brand-sub{font-size:14px;color:var(--text-secondary);margin-bottom:40px;text-align:center}
+.auth-tabs{display:flex;width:100%;margin-bottom:24px;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:12px;text-align:center;cursor:pointer;font-size:15px;font-weight:500;color:var(--text-secondary);border-bottom:2px solid transparent;transition:all 0.3s}
+.auth-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.auth-form{width:100%;display:none}
+.auth-form.active{display:block}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.input-group input,.input-group select{width:100%;padding:14px16px;background:var(--surface-light);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:15px;outline:none;transition:border 0.3s}
+.input-group input:focus,.input-group select:focus{border-color:var(--primary)}
+.input-group input[type="file"]{padding:10px}
+.file-preview{width:80px;height:80px;border-radius:50%;background:var(--surface-light);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;overflow:hidden;border:2px solid var(--border);cursor:pointer}
+.file-preview img{width:100%;height:100%;object-fit:cover}
+.file-preview svg{width:32px;height:32px;fill:var(--text-secondary)}
+.role-check{display:flex;gap:16px;margin-bottom:16px}
+.role-check label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px}
+.role-check input{width:18px;height:18px;accent-color:var(--primary)}
+.btn{width:100%;padding:14px;background:var(--primary);color:white;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:background 0.3s;margin-top:8px}
+.btn:hover{background:var(--primary-dark)}
+.btn-secondary{background:var(--surface-light);color:var(--text)}
+.btn-secondary:hover{background:var(--border)}
+.divider{display:flex;align-items:center;margin:24px 0;color:var(--text-secondary);font-size:13px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--border)}
+.divider span{padding:0 16px}
+.error-msg{color:var(--danger);font-size:13px;margin-top:8px;text-align:center;display:none}
+.success-msg{color:var(--success);font-size:13px;margin-top:8px;text-align:center;display:none}
+.loading{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:1000;align-items:center;justify-content:center;flex-direction:column}
+.loading.active{display:flex}
+.spinner{width:48px;height:48px;border:3px solid var(--surface-light);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading p{margin-top:16px;color:var(--text-secondary)}
+.parish-select{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.parish-select label{display:flex;align-items:center;gap:6px;padding:10px;background:var(--surface-light);border-radius:8px;cursor:pointer;font-size:13px;border:1px solid transparent}
+.parish-select label.selected{border-color:var(--primary);background:rgba(0,136,204,0.1)}
+.parish-select input{display:none}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>AYF GWARIMPA</h1>
-            <p>Anglican Youth Fellowship - Gwarimpa</p>
-        </div>
-        
-        <div class="tabs">
-            <button class="tab active" id="loginTab">Login</button>
-            <button class="tab" id="registerTab">Register</button>
-        </div>
-        
-        <div class="form-container">
-            <!-- Login Form -->
-            <div id="loginForm" class="form active">
-                <form id="loginFormElement">
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="loginEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPassword" required>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
-                    <div class="loading" id="loginLoading">Logging in...</div>
-                </form>
-            </div>
-            
-            <!-- Register Form -->
-            <div id="registerForm" class="form">
-                <form id="registerFormElement">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="regName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="regEmail" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="regPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Confirm Password</label>
-                        <input type="password" id="regConfirmPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Parish Name</label>
-                        <select id="regParish" required>
-                            <option value="">Select Parish</option>
-                            <option value="St. Peter's Anglican Church">St. Peter's Anglican Church</option>
-                            <option value="St. Paul's Anglican Church">St. Paul's Anglican Church</option>
-                            <option value="St. John's Anglican Church">St. John's Anglican Church</option>
-                            <option value="Holy Trinity Anglican Church">Holy Trinity Anglican Church</option>
-                            <option value="Christ Anglican Church">Christ Anglican Church</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Gender</label>
-                        <select id="regGender" required>
-                            <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Profile Image</label>
-                        <div class="image-upload" id="imageUploadBtn">
-                            <img id="imagePreview" class="image-preview" alt="Preview">
-                            <p>Click to upload profile image</p>
-                        </div>
-                        <input type="file" id="profileImage" accept="image/*" style="display: none;">
-                    </div>
-                    <div class="form-group">
-                        <label>Position (Optional)</label>
-                        <div class="checkbox-group">
-                            <label>
-                                <input type="checkbox" id="excoParish"> Parish Exco
-                            </label>
-                            <label>
-                                <input type="checkbox" id="excoArchediceanry"> Archediceanry Exco
-                            </label>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn">Register</button>
-                    <div class="loading" id="registerLoading">Creating account...</div>
-                </form>
-            </div>
-        </div>
-    </div>
+<div class="loading" id="loading"><div class="spinner"></div><p>Please wait...</p></div>
 
-    <script>
-        // Supabase configuration - UPDATE THESE
-       const SUPABASE_URL = 'https://jvfdcuvinlimurlttiqy.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp2ZmRjdXZpbmxpbXVybHR0aXF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU0Njk0MTAsImV4cCI6MjA5MTA0NTQxMH0.ipezUsKqsEAbHvRqBLZYhagZj57rFJKG36uQL_4rFSg'; // ⚠️ Replace with real key
- const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        
-        let profileImageFile = null;
-        
-        // Tab switching
-        document.getElementById('loginTab').onclick = function() {
-            document.getElementById('loginTab').classList.add('active');
-            document.getElementById('registerTab').classList.remove('active');
-            document.getElementById('loginForm').classList.add('active');
-            document.getElementById('registerForm').classList.remove('active');
-        };
-        
-        document.getElementById('registerTab').onclick = function() {
-            document.getElementById('registerTab').classList.add('active');
-            document.getElementById('loginTab').classList.remove('active');
-            document.getElementById('registerForm').classList.add('active');
-            document.getElementById('loginForm').classList.remove('active');
-        };
-        
-        // Image upload
-        document.getElementById('imageUploadBtn').onclick = function() {
-            document.getElementById('profileImage').click();
-        };
-        
-        document.getElementById('profileImage').onchange = function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                profileImageFile = file;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                    document.querySelector('#imageUploadBtn p').style.display = 'none';
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-        
-        // Register handler
-        document.getElementById('registerFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            
-            const loading = document.getElementById('registerLoading');
-            loading.style.display = 'block';
-            
-            const name = document.getElementById('regName').value;
-            const email = document.getElementById('regEmail').value;
-            const password = document.getElementById('regPassword').value;
-            const confirmPassword = document.getElementById('regConfirmPassword').value;
-            const parish = document.getElementById('regParish').value;
-            const gender = document.getElementById('regGender').value;
-            const isExcoParish = document.getElementById('excoParish').checked;
-            const isExcoArchediceanry = document.getElementById('excoArchediceanry').checked;
-            
-            if (password !== confirmPassword) {
-                alert('Passwords do not match');
-                loading.style.display = 'none';
-                return;
-            }
-            
-            if (password.length < 6) {
-                alert('Password must be at least 6 characters');
-                loading.style.display = 'none';
-                return;
-            }
-            
-            try {
-                // Register user with Supabase Auth
-                const { data: authData, error: authError } = await supabase.auth.signUp({
-                    email: email,
-                    password: password
-                });
-                
-                if (authError) throw authError;
-                
-                let profileImageUrl = null;
-                if (profileImageFile) {
-                    const fileExt = profileImageFile.name.split('.').pop();
-                    const fileName = `${authData.user.id}/profile.${fileExt}`;
-                    const { error: uploadError } = await supabase.storage
-                        .from('profiles')
-                        .upload(fileName, profileImageFile);
-                    
-                    if (!uploadError) {
-                        const { data: { publicUrl } } = supabase.storage
-                            .from('profiles')
-                            .getPublicUrl(fileName);
-                        profileImageUrl = publicUrl;
-                    }
-                }
-                
-                // Create profile
-                const { error: profileError } = await supabase
-                    .from('profiles')
-                    .insert([{
-                        id: authData.user.id,
-                        full_name: name,
-                        email: email,
-                        parish_name: parish,
-                        gender: gender,
-                        profile_image_url: profileImageUrl,
-                        is_exco_parish: isExcoParish,
-                        is_exco_archediceanry: isExcoArchediceanry,
-                        exco_request_status: (isExcoParish || isExcoArchediceanry) ? 'pending' : 'approved'
-                    }]);
-                
-                if (profileError) throw profileError;
-                
-                // Add to parish members
-                const { error: memberError } = await supabase
-                    .from('parish_members')
-                    .insert([{
-                        user_id: authData.user.id,
-                        parish_name: parish,
-                        is_president: false
-                    }]);
-                
-                if (memberError) throw memberError;
-                
-                alert('Registration successful! Please login.');
-                document.getElementById('loginTab').click();
-                
-            } catch (error) {
-                console.error('Registration error:', error);
-                alert('Registration failed: ' + error.message);
-            } finally {
-                loading.style.display = 'none';
-            }
-        };
-        
-        // Login handler - FIXED: removed .single() issue
-        document.getElementById('loginFormElement').onsubmit = async (e) => {
-            e.preventDefault();
-            
-            const loading = document.getElementById('loginLoading');
-            loading.style.display = 'block';
-            
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
-            try {
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                if (error) throw error;
-                
-                // Get user profile - FIXED: using maybeSingle() instead of single()
-                const { data: profile, error: profileError } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', data.user.id)
-                    .maybeSingle();
-                
-                if (profileError && profileError.message !== 'JSON object requested, multiple (or no) rows returned') {
-                    console.error('Profile error:', profileError);
-                }
-                
-                if (!profile) {
-                    // Create profile if it doesn't exist (fallback)
-                    const { error: insertError } = await supabase
-                        .from('profiles')
-                        .insert([{
-                            id: data.user.id,
-                            full_name: email.split('@')[0],
-                            email: email,
-                            parish_name: 'St. Peter\'s Anglican Church',
-                            gender: 'other',
-                            is_exco_parish: false,
-                            is_exco_archediceanry: false,
-                            exco_request_status: 'approved'
-                        }]);
-                    
-                    if (insertError) throw insertError;
-                    
-                    // Fetch the newly created profile
-                    const { data: newProfile } = await supabase
-                        .from('profiles')
-                        .select('*')
-                        .eq('id', data.user.id)
-                        .maybeSingle();
-                    
-                    if (newProfile) {
-                        localStorage.setItem('ayf_user', JSON.stringify(data.user));
-                        localStorage.setItem('ayf_profile', JSON.stringify(newProfile));
-                        window.location.href = 'home.html';
-                        return;
-                    }
-                }
-                
-                // Check if user is suspended
-                if (profile && profile.is_suspended && profile.suspension_end_date && new Date(profile.suspension_end_date) > new Date()) {
-                    alert(`Your account is suspended until ${new Date(profile.suspension_end_date).toLocaleDateString()}`);
-                    loading.style.display = 'none';
-                    return;
-                }
-                
-                // Store user session
-                localStorage.setItem('ayf_user', JSON.stringify(data.user));
-                localStorage.setItem('ayf_profile', JSON.stringify(profile || {}));
-                
-                // Redirect to home page
-                window.location.href = 'home.html';
-                
-            } catch (error) {
-                console.error('Login error:', error);
-                alert('Login failed: ' + error.message);
-                loading.style.display = 'none';
-            }
-        };
-    </script>
+<div class="auth-container">
+<div class="logo">
+<svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+</div>
+<div class="brand-name">AYF GWARIMPA</div>
+<div class="brand-sub">Anglican Youth Fellowship</div>
+
+<div class="auth-tabs">
+<div class="auth-tab active" onclick="switchTab('login')">Login</div>
+<div class="auth-tab" onclick="switchTab('register')">Register</div>
+</div>
+
+<form class="auth-form active" id="loginForm">
+<div class="input-group">
+<label>Email</label>
+<input type="email" id="loginEmail" placeholder="your@email.com" required>
+</div>
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="loginPassword" placeholder="Enter password" required>
+</div>
+<div class="error-msg" id="loginError"></div>
+<button type="submit" class="btn">Login</button>
+</form>
+
+<form class="auth-form" id="registerForm">
+<div class="file-preview" onclick="document.getElementById('regPhoto').click()">
+<svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+</div>
+<input type="file" id="regPhoto" accept="image/*" style="display:none" onchange="previewImage(this)">
+
+<div class="input-group">
+<label>Full Name</label>
+<input type="text" id="regName" placeholder="John Doe" required>
+</div>
+
+<div class="input-group">
+<label>Parish</label>
+<div class="parish-select" id="parishSelect"></div>
+</div>
+
+<div class="input-group">
+<label>Gender</label>
+<select id="regGender" required>
+<option value="">Select Gender</option>
+<option value="male">Male</option>
+<option value="female">Female</option>
+</select>
+</div>
+
+<div class="input-group">
+<label>Email</label>
+<input type="email" id="regEmail" placeholder="your@email.com" required>
+</div>
+
+<div class="input-group">
+<label>Password</label>
+<input type="password" id="regPassword" placeholder="Min 6 characters" required minlength="6">
+</div>
+
+<div class="input-group">
+<label>Role (Select if applicable)</label>
+<div class="role-check">
+<label><input type="checkbox" id="isExcoParish" value="parish_exco"> Parish Exco</label>
+<label><input type="checkbox" id="isExcoArch" value="arch_exco"> Arch Exco</label>
+</div>
+</div>
+
+<div class="error-msg" id="regError"></div>
+<div class="success-msg" id="regSuccess"></div>
+<button type="submit" class="btn">Create Account</button>
+</form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key-here';
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const parishes = ['St. Matthews','St. Pauls','St. Johns','Christ Church','All Saints','Holy Trinity','St. Peters','St. Marys'];
+const parishSelect = document.getElementById('parishSelect');
+parishes.forEach(p => {
+const label = document.createElement('label');
+label.innerHTML = `<input type="radio" name="parish" value="${p}"> ${p}`;
+label.onclick = function(){document.querySelectorAll('.parish-select label').forEach(l=>l.classList.remove('selected'));this.classList.add('selected');}
+parishSelect.appendChild(label);
+});
+
+function switchTab(tab){
+document.querySelectorAll('.auth-tab').forEach(t=>t.classList.remove('active'));
+document.querySelectorAll('.auth-form').forEach(f=>f.classList.remove('active'));
+event.target.classList.add('active');
+document.getElementById(tab+'Form').classList.add('active');
+}
+
+function previewImage(input){
+if(input.files && input.files[0]){
+const reader = new FileReader();
+reader.onload = function(e){
+document.querySelector('.file-preview').innerHTML = `<img src="${e.target.result}">`;
+}
+reader.readAsDataURL(input.files[0]);
+}
+}
+
+function showLoading(show){document.getElementById('loading').classList.toggle('active',show);}
+
+async function uploadProfileImage(file,userId){
+if(!file)return null;
+const fileExt = file.name.split('.').pop();
+const fileName = `${userId}_${Date.now()}.${fileExt}`;
+const {data,error} = await supabase.storage.from('profiles').upload(fileName,file);
+if(error)return null;
+const {data:{publicUrl}} = supabase.storage.from('profiles').getPublicUrl(fileName);
+return publicUrl;
+}
+
+document.getElementById('registerForm').addEventListener('submit',async(e)=>{
+e.preventDefault();
+const name = document.getElementById('regName').value;
+const email = document.getElementById('regEmail').value;
+const password = document.getElementById('regPassword').value;
+const gender = document.getElementById('regGender').value;
+const parish = document.querySelector('input[name="parish"]:checked')?.value;
+const isExcoParish = document.getElementById('isExcoParish').checked;
+const isExcoArch = document.getElementById('isExcoArch').checked;
+const photoFile = document.getElementById('regPhoto').files[0];
+
+if(!parish){document.getElementById('regError').textContent='Select a parish';document.getElementById('regError').style.display='block';return;}
+
+showLoading(true);
+const {data:{user},error:signUpError} = await supabase.auth.signUp({email,password});
+if(signUpError){showLoading(false);document.getElementById('regError').textContent=signUpError.message;document.getElementById('regError').style.display='block';return;}
+
+const photoUrl = await uploadProfileImage(photoFile,user.id);
+
+const roles = [];
+if(isExcoParish)roles.push('parish_exco_pending');
+if(isExcoArch)roles.push('arch_exco_pending');
+
+const {error:profileError} = await supabase.from('profiles').insert({
+id:user.id,name,email,parish,gender,photo_url:photoUrl,roles:roles,created_at:new Date().toISOString()
+});
+
+showLoading(false);
+if(profileError){document.getElementById('regError').textContent=profileError.message;document.getElementById('regError').style.display='block';}
+else{
+document.getElementById('regSuccess').textContent='Account created! Please login.';
+document.getElementById('regSuccess').style.display='block';
+document.getElementById('regError').style.display='none';
+setTimeout(()=>switchTab('login'),2000);
+}
+});
+
+document.getElementById('loginForm').addEventListener('submit',async(e)=>{
+e.preventDefault();
+showLoading(true);
+const email = document.getElementById('loginEmail').value;
+const password = document.getElementById('loginPassword').value;
+const {data,error} = await supabase.auth.signInWithPassword({email,password});
+showLoading(false);
+if(error){document.getElementById('loginError').textContent=error.message;document.getElementById('loginError').style.display='block';}
+else{localStorage.setItem('ayf_session',JSON.stringify(data.session));window.location.href='home.html';}
+});
+
+(async()=>{
+const {data:{session}} = await supabase.auth.getSession();
+if(session){window.location.href='home.html';}
+})();
+</script>
 </body>
 </html>
+
+print("Created: index.html, .env")
